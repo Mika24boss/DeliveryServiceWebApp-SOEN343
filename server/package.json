@@ -11,10 +11,10 @@
   "name": "wanderingmangoes-soen343project2023",
   "description": "SOEN 343 Project repository",
   "version": "1.0.0",
-  "main": "server/index.js",
+  "main": "index.js",
   "scripts": {
-    "start": "node server/index.js",
-    "dev": "nodemon server/index.js"
+    "start": "node index.js",
+    "dev": "../node_modules/.bin/nodemon server/index.js"
   },
   "author": "",
   "license": "ISC"
