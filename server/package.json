@@ -6,7 +6,9 @@
     "firebase": "^10.4.0",
     "graphql": "^15.8.0",
     "next": "^13.5.1",
-    "nodemon": "^3.0.1"
+    "nodemon": "^3.0.1",
+    "colors": "^1.4.0",
+    "mongoose": "^7.5.3"
   },
   "name": "wanderingmangoes-soen343project2023",
   "description": "SOEN 343 Project repository",
