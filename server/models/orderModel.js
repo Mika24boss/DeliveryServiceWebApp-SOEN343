@@ -1,8 +1,7 @@
 const mongoose = require('mongoose')
-
 const status = Object.freeze(["PICKUP", "DELIVERING", "DELIVERED", "NONE"])
 
-const Order = mongoose.Schema({
+const Order = new mongoose.Schema({
     orderID: {
         type: Number
     },
@@ -24,3 +23,4 @@ const Order = mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId
     }]
 });
+module.exports = mongoose.model('Order', Order)

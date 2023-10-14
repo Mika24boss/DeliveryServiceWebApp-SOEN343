@@ -1,8 +1,9 @@
 const mongoose = require('mongoose');
+const Person = require('./personModel')
 
 const role = Object.freeze(["GOLD-CLIENT", "SILVER-CLIENT", "BRONZE-CLIENT", "REGULAR-CLIENT"])
 
-const Client = new Schema({
+const Client = new mongoose.Schema({
     role: {
         type: String,
         trim: true,
@@ -24,4 +25,4 @@ const Client = new Schema({
 
 const ClientSignUp = Person.discriminator("client", Client)
 
-module.exports = { AdminSignUp }
+module.exports = { ClientSignUp }

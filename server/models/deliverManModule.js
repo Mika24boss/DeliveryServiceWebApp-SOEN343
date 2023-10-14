@@ -1,8 +1,8 @@
 const mongoose = require('mongoose');
-
+const Person = require('./personModel')
 const role = Object.freeze(["PICKUP-MAN", "DELIVERY-MAN", "DROPOFF-MAN"])
 
-const DeliveryMan = new Schema({
+const DeliveryMan = new mongoose.Schema({
     role: {
         type: String,
         trim: true,

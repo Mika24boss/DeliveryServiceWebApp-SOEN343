@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const ClientOrderJoin = mongoose.Schema({
+const ClientOrderJoin = new mongoose.Schema({
     clientID: {
         type: mongoose.Schema.Types.ObjectId,
         required: true
@@ -16,3 +16,4 @@ const ClientOrderJoin = mongoose.Schema({
         required: true,
     }
 });
+module.exports = mongoose.model('ClientOrderJoin', ClientOrderJoin)

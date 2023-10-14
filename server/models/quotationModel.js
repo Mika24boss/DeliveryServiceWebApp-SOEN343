@@ -32,4 +32,4 @@ const Quotation = new mongoose.Schema({
         ref: 'Order'
     }
 });
-module.exports.Quotation = mongoose.model('Quotation', Quotation);
+module.exports = mongoose.model('Quotation', Quotation);

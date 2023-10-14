@@ -1,14 +1,16 @@
 {
   "dependencies": {
+    "colors": "^1.4.0",
+    "cors": "^2.8.5",
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
     "express-graphql": "^0.12.0",
     "firebase": "^10.4.0",
     "graphql": "^15.8.0",
+    "mongodb": "^6.1.0",
+    "mongoose": "^7.5.3",
     "next": "^13.5.1",
-    "nodemon": "^3.0.1",
-    "colors": "^1.4.0",
-    "mongoose": "^7.5.3"
+    "nodemon": "^3.0.1"
   },
   "name": "wanderingmangoes-soen343project2023",
   "description": "SOEN 343 Project repository",

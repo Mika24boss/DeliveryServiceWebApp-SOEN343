@@ -1,11 +1,5 @@
 const mongoose = require('mongoose');
 
-const baseOption = {
-    discriminatorKey: "user",
-    collection: "user",
-    timestamps: true
-}
-
 const Person = new mongoose.Schema({
     name: {
         type: String,
@@ -26,7 +20,6 @@ const Person = new mongoose.Schema({
         type: String,
         required: [true, 'Please add an email']
     },
-    baseOption
 });
 
-module.exports.Person = mongoose.model('Person', Person);
+module.exports = mongoose.model('Person', Person);

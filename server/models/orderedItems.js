@@ -1,6 +1,6 @@
 const mongoose = require('mongoose')
 
-const OrderItems = mongoose.Schema({
+const OrderItems = new mongoose.Schema({
     size: {
         type: String
     },
@@ -11,3 +11,4 @@ const OrderItems = mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId
     }]
 })
+module.exports = mongoose.exports('OrderItems', OrderItems)

@@ -2,7 +2,7 @@ const mongoose = require('mongoose')
 
 const methodOfPayment = Object.freeze(["CASH", "CREDIT", "NONE"])
 
-const PaymentMethod = mongoose.Schema({
+const PaymentMethod = new mongoose.Schema({
     methodOfPayment: {
         type: String,
         trim: true,
@@ -18,5 +18,4 @@ const PaymentMethod = mongoose.Schema({
         require: true,
     }
 })
-
-module.exports.PaymentMethod = mongoose.model('PaymentMethod', PaymentMethod);
+module.exports = mongoose.model('PaymentMethod', PaymentMethod);

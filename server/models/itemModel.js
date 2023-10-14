@@ -1,6 +1,6 @@
 const mongoose = require('mongoose')
 
-const Item = mongoose.Schema({
+const Item = new mongoose.Schema({
     name: {
         type: String
     },
@@ -11,3 +11,4 @@ const Item = mongoose.Schema({
         type: Number
     }
 })
+module.exports = mongoose.model('Item', Item)

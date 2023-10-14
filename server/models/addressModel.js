@@ -20,3 +20,4 @@ const Address = mongoose.Schema({
         type: String,
     }
 })
+module.exports = mongoose.exports('Address', Address)
