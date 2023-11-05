@@ -13,6 +13,4 @@ const Admin = new Schema({
     },
 });
 
-const AdminSignUp = Person.discriminator("admin", Admin)
-
-module.exports = { AdminSignUp }
+module.exports = Person.discriminator("Admin", Admin)

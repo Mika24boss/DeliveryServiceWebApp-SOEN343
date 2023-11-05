@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const Person = require('./personModel')
-const role = Object.freeze(["PICKUP-MAN", "DELIVERY-MAN", "DROPOFF-MAN"])
+const role = Object.freeze(["PICKUP-MAN", "DELIVERY-MAN"])
 
 const DeliveryMan = new mongoose.Schema({
     role: {
@@ -18,6 +18,4 @@ const DeliveryMan = new mongoose.Schema({
     }]
 });
 
-const DeliveryManSignUp = Person.discriminator("deliveryMan", DeliveryMan)
-
-module.exports = { DeliveryManSignUp }
+module.exports = Person.discriminator("DeliveryMan", DeliveryMan)

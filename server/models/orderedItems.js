@@ -11,4 +11,4 @@ const OrderItems = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId
     }]
 })
-module.exports = mongoose.exports('OrderItems', OrderItems)
+module.exports = mongoose.model('OrderedItems', OrderItems)
