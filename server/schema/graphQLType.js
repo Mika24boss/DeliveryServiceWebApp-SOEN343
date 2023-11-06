@@ -1,7 +1,8 @@
 const graphql = require('graphql')
 const {GraphQLObjectType, GraphQLID, GraphQLString, GraphQLSchema,
     GraphQLList, GraphQLNonNull,GraphQLFloat,
-    GraphQLInt, GraphQLBoolean, GraphQLDateTime} = graphql
+    GraphQLInt, GraphQLBoolean} = graphql
+const { GraphQLDateTime} = require('graphql-iso-date')
 const PersonType = new GraphQLObjectType({
     name: 'Person',
     fields:() => ({
@@ -114,7 +115,6 @@ const OrderedItemType = new GraphQLObjectType({
 const ClientOrderJoinType = new GraphQLObjectType({
     name: 'ClientOrderJoin',
     fields: () => ({
-        id: { type: GraphQLID },
         clientID: { type: GraphQLID },
         orderID: { type: new GraphQLList(GraphQLID) },
         location: { type: GraphQLString },

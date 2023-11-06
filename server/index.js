@@ -5,17 +5,20 @@ const cors = require('cors')
 const { graphqlHTTP} = require('express-graphql')
 const mongoose = require('mongoose')
 const connectDB = require('./config/db')
-const schema = require('./schema/schema.js')
+const schema = require('./schema/schema')
 const port = process.env.PORT || 8000
 connectDB();
 
 const app = express()
 app.use(cors())
 app.use(express.json())
-app.use('/graphql', graphqlHTTP({
-    schema,
-    graphiql: process.env.NODE_ENV === 'development'
-}))
+app.use('/graphql',
+        graphqlHTTP({
+                schema,
+                graphiql: process.env.NODE_ENV === 'development'
+            }
+        )
+)
 
 mongoose.connection.once('open', () => {
     console.log('Connected to MongoDB')

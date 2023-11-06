@@ -8,13 +8,7 @@ const {GraphQLDateTime} = require('graphql-iso-date')
 const Person = require('../models/personModel')
 const Admin = require('../models/adminModel')
 const Client = require('../models/clientModel')
-const Quotation = require('../models/quotationModel')
-const Order = require('../models/orderModel')
-const Address = require('../models/addressModel')
-const Item = require('../models/itemModel')
 const DeliveryMan = require('../models/deliverManModel')
-const Payment = require('../models/paymentModel')
-const OrderedItems = require('../models/orderedItems')
 const ClientOrderJoin = require('../models/ClientOrderModel')
 const { PersonType,
     AdminType,
@@ -82,36 +76,6 @@ const RootQuery = new GraphQLObjectType({
             resolve(parent, args) {
                 return DeliveryMan.findById(args.id);
             },
-        },
-        quotations: {
-            type: new GraphQLList(QuotationType),
-            resolve() {
-                return Quotation.find();
-            }
-        },
-        addresses: {
-            type: new GraphQLList(AddressType),
-            resolve() {
-                return Address.find();
-            }
-        },
-        orders: {
-            type: new GraphQLList(OrderType),
-            resolve() {
-                return Order.find();
-            }
-        },
-        items: {
-            type: new GraphQLList(ItemType),
-            resolve() {
-                return Item.find();
-            }
-        },
-        payments: {
-            type: new GraphQLList(PaymentType),
-            resolve() {
-                return Payment.find();
-            }
         },
         clientOrders: {
             type: new GraphQLList(ClientOrderJoinType),
@@ -225,132 +189,6 @@ const mutation = new GraphQLObjectType({
                     role: args.role
                 });
                 return admin.save();
-            },
-        },
-        // @desc Register new Order
-        // @access Public
-        addOrder: {
-            type: OrderType, // Assuming you have an OrderType defined
-            args: {
-                orderID: { type: GraphQLNonNull(GraphQLInt) },
-                orderDate: { type: GraphQLNonNull(GraphQLString) },
-                status: { type: GraphQLNonNull(GraphQLString) },
-                payment: { type: GraphQLNonNull(GraphQLID) },
-                orderItems: { type: GraphQLNonNull(new GraphQLList(GraphQLID)) },
-            },
-            resolve(parent, args) {
-                const order = new Order({
-                    orderID: args.orderID,
-                    orderDate: args.orderDate,
-                    status: args.status,
-                    payment: args.payment,
-                    orderItems: args.orderItems,
-                });
-                return order.save();
-            },
-        },
-        // @desc Register new Quotation
-        // @access Public
-        addQuotation: {
-            type: QuotationType, // Assuming you have a QuotationType defined
-            args: {
-                name: { type: GraphQLNonNull(GraphQLString) },
-                pickUpAddress: { type: GraphQLNonNull(GraphQLID) },
-                distance: { type: GraphQLFloat }, // Adjust the data type as needed
-                shippingAddress: { type: GraphQLNonNull(GraphQLID) },
-                billingAddress: { type: GraphQLNonNull(GraphQLID) },
-                price: { type: GraphQLNonNull(GraphQLFloat) }, // Adjust the data type as needed
-                order: { type: GraphQLNonNull(GraphQLID) },
-            },
-            resolve(parent, args) {
-                const quotation = new Quotation({
-                    name: args.name,
-                    pickUpAddress: args.pickUpAddress,
-                    distance: args.distance,
-                    shippingAddress: args.shippingAddress,
-                    billingAddress: args.billingAddress,
-                    price: args.price,
-                    order: args.order,
-                });
-                return quotation.save();
-            },
-        },
-        // @desc Register new Address
-        // @access Public
-        addAddress: {
-            type: AddressType, // Assuming you have an AddressType defined
-            args: {
-                street: { type: GraphQLString },
-                city: { type: GraphQLString },
-                state: { type: GraphQLString },
-                province: { type: GraphQLString },
-                country: { type: GraphQLString },
-                postalCode: { type: GraphQLString },
-            },
-            resolve(parent, args) {
-                const address = new Address({
-                    street: args.street,
-                    city: args.city,
-                    state: args.state,
-                    province: args.province,
-                    country: args.country,
-                    postalCode: args.postalCode,
-                });
-                return address.save();
-            },
-        },
-        // @desc Register new Item
-        // @access Public
-        addItem: {
-            type: ItemType, // Assuming you have an ItemType defined
-            args: {
-                name: { type: GraphQLString },
-                isFragile: { type: GraphQLBoolean },
-                price: { type: GraphQLFloat },
-            },
-            resolve(parent, args) {
-                const item = new Item({
-                    name: args.name,
-                    isFragile: args.isFragile,
-                    price: args.price,
-                });
-                return item.save();
-            },
-        },
-        // @desc Register new Payment
-        // @access Public
-        addPayment: {
-            type: PaymentType, // Assuming you have a PaymentType defined
-            args: {
-                methodOfPayment: { type: GraphQLString },
-                dateOfPayment: { type: GraphQLString },
-                amount: { type: GraphQLFloat },
-            },
-            resolve(parent, args) {
-                const payment = new Payment({
-                    methodOfPayment: args.methodOfPayment,
-                    dateOfPayment: args.dateOfPayment,
-                    amount: args.amount,
-                });
-                return payment.save();
-            },
-        },
-        // @desc Register new OrderedItem
-        // @access Public
-        addOrderedItem: {
-            type: OrderedItemType, // Assuming you have an OrderedItemType defined
-            args: {
-                size: { type: GraphQLString },
-                quantity: { type: GraphQLInt },
-                items: { type: new GraphQLList(GraphQLString) }, // Assuming you store item IDs as strings
-            },
-            resolve(parent, args) {
-                const orderedItem = new OrderedItems({
-                    size: args.size,
-                    quantity: args.quantity,
-                    items: args.items,
-                });
-                return orderedItem.save();
             },
         },
         // @desc Register new ClientOrderJoin
