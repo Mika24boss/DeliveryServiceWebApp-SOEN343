@@ -1,7 +1,9 @@
 const graphql = require('graphql')
-const {GraphQLObjectType, GraphQLID, GraphQLString, GraphQLSchema,
+const jwt = require('jsonwebtoken')
+const bcrypt = require('bcryptjs')
+const { GraphQLObjectType, GraphQLID, GraphQLString, GraphQLSchema,
     GraphQLList, GraphQLNonNull,
-    GraphQLFloat, GraphQLInt, GraphQLBoolean, GraphQLDateTime} = graphql
+    GraphQLFloat, GraphQLInt, GraphQLBoolean, GraphQLDateTime } = graphql
 const Person = require('../models/personModel')
 const Admin = require('../models/adminModel')
 const Client = require('../models/clientModel')
@@ -13,7 +15,7 @@ const DeliveryMan = require('../models/deliverManModel')
 const Payment = require('../models/paymentModel')
 const OrderedItems = require('../models/orderedItems')
 const ClientOrderJoin = require('../models/ClientOrderModel')
-const {PersonType,
+const { PersonType,
     AdminType,
     ClientType,
     QuotationType,
@@ -23,30 +25,99 @@ const {PersonType,
     DeliveryManType,
     PaymentType,
     OrderedItemType,
-    ClientOrderJoinType} = require('./graphQLType')
+    ClientOrderJoinType } = require('./graphQLType')
 
 const RootQuery = new GraphQLObjectType({
     name: 'RootQueryType',
     fields: {
-        persons : {
+        persons: {
             type: new GraphQLList(PersonType),
-            resolve(parent, args){
+            resolve(parent, args) {
                 return Person.find();
             }
         },
         person: {
             type: PersonType,
-            args: {id: {type : GraphQLID}},
+            args: { id: { type: GraphQLID } },
             resolve(parent, args) {
                 return Person.findById(args.id);
             },
         },
         clients: {
             type: new GraphQLList(ClientType),
-            resolve(){
+            resolve() {
                 return Client.find();
             }
-        }
+        },
+        client: {
+            type: ClientType,
+            args: { id: { type: GraphQLID } },
+            resolve(parent, args) {
+                return Client.findById(args.id);
+            },
+        },
+        admins: {
+            type: new GraphQLList(AdminType),
+            resolve() {
+                return Admin.find();
+            }
+        },
+        admin: {
+            type: AdminType,
+            args: { id: { type: GraphQLID } },
+            resolve(parent, args) {
+                return Admin.findById(args.id);
+            },
+        },
+        deliverymans: {
+            type: new GraphQLList(DeliveryMan),
+            resolve() {
+                return DeliveryMan.find();
+            }
+        },
+        deliverman: {
+            type: DeliveryMan,
+            args: { id: { type: GraphQLID } },
+            resolve(parent, args) {
+                return DeliveryMan.findById(args.id);
+            },
+        },
+        quotations: {
+            type: new GraphQLList(QuotationType),
+            resolve() {
+                return Quotation.find();
+            }
+        },
+        addresses: {
+            type: new GraphQLList(AddressType),
+            resolve() {
+                return Address.find();
+            }
+        },
+        orders: {
+            type: new GraphQLList(OrderType),
+            resolve() {
+                return Order.find();
+            }
+        },
+        items: {
+            type: new GraphQLList(ItemType),
+            resolve() {
+                return Item.find();
+            }
+        },
+        payments: {
+            type: new GraphQLList(PaymentType),
+            resolve() {
+                return Payment.find();
+            }
+        },
+        clientorders: {
+            type: new GraphQLList(ClientOrderJoinType),
+            resolve() {
+                return ClientOrderJoin.find();
+            }
+        },
     },
 });
 
@@ -58,12 +129,16 @@ const mutation = new GraphQLObjectType({
         addPerson: {
             type: PersonType,
             args: {
-                name: {type: GraphQLNonNull(GraphQLString)},
-                phoneNumber: {type: GraphQLNonNull(GraphQLInt)},
-                emailAddress: {type: GraphQLNonNull(GraphQLString)},
-                loginInfo: {type: GraphQLNonNull(GraphQLString)}
+                name: { type: GraphQLNonNull(GraphQLString) },
+                phoneNumber: { type: GraphQLNonNull(GraphQLInt) },
+                emailAddress: { type: GraphQLNonNull(GraphQLString) },
+                loginInfo: { type: GraphQLNonNull(GraphQLString) }
             },
-            resolve(parent, args){
+            async resolve(parent, args) {
+                const password = args.loginInfo
+
+                const salt = await bcrypt.genSalt(10)
+                const hashedPassword = await bcrypt.hash(password, salt);
                 const person = new Person({
                     name: args.name,
                     emailAddress: args.emailAddress,
@@ -78,18 +153,22 @@ const mutation = new GraphQLObjectType({
         addClient: {
             type: ClientType,
             args: {
-                name: {type: GraphQLNonNull(GraphQLString)},
-                phoneNumber: {type: GraphQLNonNull(GraphQLInt)},
-                emailAddress: {type: GraphQLNonNull(GraphQLString)},
-                loginInfo: {type: GraphQLNonNull(GraphQLString)},
-                role: {type: GraphQLString},
+                name: { type: GraphQLNonNull(GraphQLString) },
+                phoneNumber: { type: GraphQLNonNull(GraphQLInt) },
+                emailAddress: { type: GraphQLNonNull(GraphQLString) },
+                loginInfo: { type: GraphQLNonNull(GraphQLString) },
+                role: { type: GraphQLString },
             },
-            resolve(parent, args){
+            async resolve(parent, args) {
+                const password = args.loginInfo
+
+                const salt = await bcrypt.genSalt(10)
+                const hashedPassword = await bcrypt.hash(password, salt);
                 const client = new Client({
                     name: args.name,
                     emailAddress: args.emailAddress,
                     phoneNumber: args.phoneNumber,
-                    loginInfo: args.emailAddress,
+                    loginInfo: hashedPassword,
                     role: args.role
                 });
                 return client.save();
@@ -100,18 +179,22 @@ const mutation = new GraphQLObjectType({
         addDeliveryMan: {
             type: DeliveryManType,
             args: {
-                name: {type: GraphQLNonNull(GraphQLString)},
-                phoneNumber: {type: GraphQLNonNull(GraphQLInt)},
-                emailAddress: {type: GraphQLNonNull(GraphQLString)},
-                loginInfo: {type: GraphQLNonNull(GraphQLString)},
-                role: {type: GraphQLString},
+                name: { type: GraphQLNonNull(GraphQLString) },
+                phoneNumber: { type: GraphQLNonNull(GraphQLInt) },
+                emailAddress: { type: GraphQLNonNull(GraphQLString) },
+                loginInfo: { type: GraphQLNonNull(GraphQLString) },
+                role: { type: GraphQLString },
             },
-            resolve(parent, args){
+            async resolve(parent, args) {
+                const password = args.loginInfo
+
+                const salt = await bcrypt.genSalt(10)
+                const hashedPassword = await bcrypt.hash(password, salt)
                 const deliveryMan = new DeliveryMan({
                     name: args.name,
                     emailAddress: args.emailAddress,
                     phoneNumber: args.phoneNumber,
-                    loginInfo: args.emailAddress,
+                    loginInfo: hashedPassword,
                     role: args.role
                 });
                 return deliveryMan.save();
@@ -122,13 +205,17 @@ const mutation = new GraphQLObjectType({
         addAdmin: {
             type: AdminType,
             args: {
-                name: {type: GraphQLNonNull(GraphQLString)},
-                phoneNumber: {type: GraphQLNonNull(GraphQLInt)},
-                emailAddress: {type: GraphQLNonNull(GraphQLString)},
-                loginInfo: {type: GraphQLNonNull(GraphQLString)},
-                role: {type: GraphQLString},
+                name: { type: GraphQLNonNull(GraphQLString) },
+                phoneNumber: { type: GraphQLNonNull(GraphQLInt) },
+                emailAddress: { type: GraphQLNonNull(GraphQLString) },
+                loginInfo: { type: GraphQLNonNull(GraphQLString) },
+                role: { type: GraphQLString },
             },
-            resolve(parent, args){
+            async resolve(parent, args) {
+                const password = args.loginInfo
+
+                const salt = await bcrypt.genSalt(10)
+                const hashedPassword = await bcrypt.hash(password, salt);
                 const admin = new Admin({
                     name: args.name,
                     emailAddress: args.emailAddress,
@@ -163,7 +250,7 @@ const mutation = new GraphQLObjectType({
         },
         // @desc Register new Quotation
         // @access Public
-        addQuotation:{
+        addQuotation: {
             type: QuotationType, // Assuming you have a QuotationType defined
             args: {
                 name: { type: GraphQLNonNull(GraphQLString) },
