@@ -149,6 +149,33 @@ const mutation = new GraphQLObjectType({
                 return person.save();
             },
         },
+        deletePerson: {
+            type: PersonType,
+            args: {//delete person's info through email
+                emailAddress: { type: GraphQLNonNull(GraphQLString) },
+            },
+            async resolve(parent, args){
+                return Person.findOneAndDelete(args.emailAddress);
+            },
+        },
+        deleteAdmin: {
+            type: PersonType,
+            args: {//delete person's info through email
+                emailAddress: { type: GraphQLNonNull(GraphQLString) },
+            },
+            async resolve(parent, args){
+                return Admin.findOneAndDelete(args.emailAddress);
+            },
+        },
+        // deleteClient: {
+        //     type: PersonType,
+        //     args: {//delete person's info through their name
+        //         emailAddress: { type: GraphQLNonNull(GraphQLString) },
+        //     },
+        //     async resolve(parent, args){
+        //         return Client.findOneAndDelete(args.emailAddress);
+        //     },
+        // },
         // @desc Register new Client
         // @access Public
         addClient: {
