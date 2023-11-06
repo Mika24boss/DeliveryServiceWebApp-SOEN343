@@ -1,6 +1,4 @@
 const graphql = require('graphql')
-const jwt = require('jsonwebtoken')
-const bcrypt = require('bcryptjs')
 const { GraphQLObjectType, GraphQLID, GraphQLString, GraphQLSchema,
     GraphQLList, GraphQLNonNull,
     GraphQLFloat, GraphQLInt, GraphQLBoolean } = graphql
@@ -16,12 +14,6 @@ const RootQuery = new GraphQLObjectType({
             type: new GraphQLList(OrderType),
             resolve() {
                 return Order.find();
-            }
-        },
-        clientOrders: {
-            type: new GraphQLList(ClientOrderJoinType),
-            resolve() {
-                return ClientOrderJoin.find();
             }
         },
     },
