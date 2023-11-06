@@ -70,7 +70,7 @@ const RootQuery = new GraphQLObjectType({
             },
         },
         deliverymans: {
-            type: new GraphQLList(DeliveryMan),
+            type: new GraphQLList(DeliveryManType),
             resolve() {
                 return DeliveryMan.find();
             }
