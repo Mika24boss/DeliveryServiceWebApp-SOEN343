@@ -18,6 +18,7 @@ const {
     DeliveryManType
 } = require('./graphQLType')
 const { JWT_SECRET } = require('../env')
+
 const RootQuery = new GraphQLObjectType({
     name: 'RootQueryType',
     fields: {
@@ -190,7 +191,6 @@ const mutation = new GraphQLObjectType({
                 return Client.findOneAndDelete(args.emailAddress);
             },
         },
-
     },
 });
 
