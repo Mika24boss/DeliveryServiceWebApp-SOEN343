@@ -4,7 +4,7 @@ const bcrypt = require('bcryptjs')
 const {
     GraphQLObjectType, GraphQLID, GraphQLString, GraphQLSchema,
     GraphQLList, GraphQLNonNull,
-    GraphQLFloat, GraphQLInt, GraphQLBoolean
+    GraphQLFloat, GraphQLInt, GraphQLBoolean, GraphQLError
 } = graphql
 const { GraphQLDateTime } = require('graphql-iso-date')
 const Person = require('../models/personModel')
@@ -17,8 +17,7 @@ const {
     ClientType,
     DeliveryManType
 } = require('./graphQLType')
-const { JWT_SECRET } = require('../env')
-
+const { validateRegisterInput, validateLoginInput } = require('../middleware/validators')
 const RootQuery = new GraphQLObjectType({
     name: 'RootQueryType',
     fields: {
@@ -125,9 +124,14 @@ const mutation = new GraphQLObjectType({
                     emailAddress: args.emailAddress,
                     phoneNumber: args.phoneNumber,
                     loginInfo: hashedPassword,
-                    role: args.role
+                    role: args.role || "REGULAR-CLIENT"
                 });
-                return client.save();
+                await client.save();
+                return {
+                    ...client._doc,
+                    id: client._id,
+                    token: generateToken(client)
+                };
             },
         },
         // @desc Register new DeliveryMan
@@ -191,10 +195,58 @@ const mutation = new GraphQLObjectType({
                 return Client.findOneAndDelete(args.emailAddress);
             },
         },
+        login: {
+            type: PersonType,
+            args: {
+                emailAddress: { type: GraphQLNonNull(GraphQLString) },
+                password: { type: GraphQLNonNull(GraphQLString) },
+            },
+            async resolve(_, args) {
+                const { error, valid } = validateLoginInput(args.emailAddress, args.password);
+
+                if (!valid) {
+                    throw new GraphQLError(error, {
+                        extensions: {
+                            code: 'INVALID',
+                        },
+                    });
+                }
+
+                const user = await Person.findOne({ emailAddress: args.emailAddress });
+
+                if (!user) {
+                    throw new Error('User not found');
+                }
+
+                const passwordMatch = await bcrypt.compare(args.password, user.loginInfo);
+
+                if (!passwordMatch) {
+                    throw new Error('Invalid password');
+                }
+
+                const token = generateToken(user);
+                console.log(token)
+                return {
+                    ...user._doc,
+                    id: user._id,
+                    token
+                };
+            },
+        },
     },
 });
 
-
+function generateToken(user) {
+    return jwt.sign(
+        {
+            id: user.id,
+            email: user.emailAddress,
+            username: user.name
+        },
+        process.env.JWT_SECRET,
+        { expiresIn: '30d' }
+    );
+}
 module.exports = new GraphQLSchema({
     query: RootQuery,
     mutation,

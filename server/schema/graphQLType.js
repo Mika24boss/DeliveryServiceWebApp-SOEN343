@@ -1,54 +1,58 @@
 const graphql = require('graphql')
-const {GraphQLObjectType, GraphQLID, GraphQLString, GraphQLSchema,
-    GraphQLList, GraphQLNonNull,GraphQLFloat,
-    GraphQLInt, GraphQLBoolean} = graphql
-const { GraphQLDateTime} = require('graphql-iso-date')
+const { GraphQLObjectType, GraphQLID, GraphQLString, GraphQLSchema,
+    GraphQLList, GraphQLNonNull, GraphQLFloat,
+    GraphQLInt, GraphQLBoolean } = graphql
+const { GraphQLDateTime } = require('graphql-iso-date')
 const PersonType = new GraphQLObjectType({
     name: 'Person',
-    fields:() => ({
-        id: {type: GraphQLID},
-        name: {type: GraphQLString},
-        phoneNumber: {type: GraphQLInt},
-        emailAddress: {type: GraphQLString},
-        loginInfo: {type: GraphQLString}
+    fields: () => ({
+        id: { type: GraphQLID },
+        name: { type: GraphQLString },
+        phoneNumber: { type: GraphQLInt },
+        emailAddress: { type: GraphQLString },
+        loginInfo: { type: GraphQLString },
+        token: { type: GraphQLString },
     }),
 });
 
 const ClientType = new GraphQLObjectType({
     name: 'Client',
-    fields:() => ({
-        id: {type: GraphQLID},
-        name: {type: GraphQLString},
-        phoneNumber: {type: GraphQLInt},
-        emailAddress: {type: GraphQLString},
-        loginInfo: {type: GraphQLString},
-        role: {type: GraphQLString},
-        quotations: {type: new GraphQLList(GraphQLID)},
-        orders: { type: new GraphQLList(GraphQLID) }
+    fields: () => ({
+        id: { type: GraphQLID },
+        name: { type: GraphQLString },
+        phoneNumber: { type: GraphQLInt },
+        emailAddress: { type: GraphQLString },
+        loginInfo: { type: GraphQLString },
+        role: { type: GraphQLString },
+        quotations: { type: new GraphQLList(GraphQLID) },
+        orders: { type: new GraphQLList(GraphQLID) },
+        token: { type: GraphQLString },
     })
 })
 const AdminType = new GraphQLObjectType({
     name: 'Admin',
-    fields:() => ({
-        id: {type: GraphQLID},
-        name: {type: GraphQLString},
-        phoneNumber: {type: GraphQLInt},
-        emailAddress: {type: GraphQLString},
-        loginInfo: {type: GraphQLString},
-        role: {type: GraphQLString},
+    fields: () => ({
+        id: { type: GraphQLID },
+        name: { type: GraphQLString },
+        phoneNumber: { type: GraphQLInt },
+        emailAddress: { type: GraphQLString },
+        loginInfo: { type: GraphQLString },
+        role: { type: GraphQLString },
+        token: { type: GraphQLString },
     })
 })
 const DeliveryManType = new GraphQLObjectType({
     name: 'DeliveryMan',
-    fields:() => ({
-        id: {type: GraphQLID},
-        name: {type: GraphQLString},
-        phoneNumber: {type: GraphQLInt},
-        emailAddress: {type: GraphQLString},
-        loginInfo: {type: GraphQLString},
-        role: {type: GraphQLString},
-        numberOfOrder: {type: GraphQLInt},
-        orders: { type: new GraphQLList(GraphQLID) }
+    fields: () => ({
+        id: { type: GraphQLID },
+        name: { type: GraphQLString },
+        phoneNumber: { type: GraphQLInt },
+        emailAddress: { type: GraphQLString },
+        loginInfo: { type: GraphQLString },
+        role: { type: GraphQLString },
+        numberOfOrder: { type: GraphQLInt },
+        orders: { type: new GraphQLList(GraphQLID) },
+        token: { type: GraphQLString },
     })
 })
 const OrderType = new GraphQLObjectType({
@@ -121,4 +125,4 @@ const ClientOrderJoinType = new GraphQLObjectType({
         arrivalEstimatedTime: { type: GraphQLDateTime },
     }),
 });
-module.exports = { PersonType, AdminType, ClientType, DeliveryManType, QuotationType, OrderType, AddressType, ItemType, PaymentType, OrderedItemType, ClientOrderJoinType}
+module.exports = { PersonType, AdminType, ClientType, DeliveryManType, QuotationType, OrderType, AddressType, ItemType, PaymentType, OrderedItemType, ClientOrderJoinType }
