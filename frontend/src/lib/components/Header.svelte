@@ -98,7 +98,7 @@
         position: fixed;
         display: flex;
         justify-content: center;
-        --background: #141414;
+        --background: rgb(230,121,13);
         width: 100%;
     }
 
@@ -135,7 +135,7 @@
         height: 100%;
         align-items: center;
         padding: 0 0.5rem;
-        color: #3A98B9;
+        color: black;
         font-weight: 700;
         font-size: 0.8rem;
         text-transform: uppercase;

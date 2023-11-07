@@ -92,7 +92,7 @@
 <style>
     * {
         font-family: 'Barlow', sans-serif;
-        color: white;
+        color: black;
     }
 
     section {
@@ -123,12 +123,12 @@
     }
 
     * a:hover {
-        color: white;
+        color: black;
         transition: 0.7s;
     }
 
     * a:focus {
-        color: #3A98B9;
+        color: orange;
     }
 
     .centerBlock {
@@ -141,16 +141,16 @@
     .formGroup input, .formGroup input:focus {
         border: none;
         width: 45%;
-        border-bottom: 2px solid #3A98B9;
+        border-bottom: 2px solid orange;
         margin-bottom: 20px;
         font-size: 14px;
         font-weight: bold;
         background-color: transparent;
-        color: white;
+        color: black;
     }
 
     .formGroup input::placeholder {
-        color: white;
+        color: black;
     }
 
     .btn-container {
@@ -162,9 +162,9 @@
 
     .missingFields-box > p {
         width: 40%;
-        color: #cc0000;
+        color: black;
         font-weight: bold;
-        background-color: #EF9A9A;
+        background-color: darkred;
         text-align: center;
         margin: 1em auto;
         padding: 0.5em;
@@ -175,8 +175,8 @@
         padding: 0.9rem 1.8rem;
         font-size: 16px;
         font-weight: 700;
-        color: white;
-        border: 3px solid #3A98B9;
+        color: black;
+        border: 3px solid orange;
         cursor: pointer;
         position: relative;
         background-color: transparent;
@@ -194,7 +194,7 @@
         top: 0;
         width: 100%;
         height: 100%;
-        background-color: #3A98B9;
+        background-color: orange;
         transform: translateX(-100%);
         transition: all .3s;
         z-index: -1;
@@ -233,7 +233,7 @@
         left: -29.45px;
         width: 1.3em;
         height: 0.2em;
-        background-color: #3A98B9;
+        background-color: orange;
         rotate: 45deg;
         scale: 0;
         border-radius: 5px;
@@ -244,7 +244,7 @@
         position: relative;
         width: 1.3em;
         height: 0.2em;
-        background-color: #3A98B9;
+        background-color: orange;
         transform: rotate(90deg);
         border-radius: 5px;
         transition: .4s ease-in-out;

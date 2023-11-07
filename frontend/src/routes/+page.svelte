@@ -47,6 +47,7 @@
             <span></span>
             <span></span>
             <p style="font-size: 30px;">Welcome to WanderingMangoes!</p>
+            <p style="font-size: 20px;">We meet strangers so you don't have to.</p>
         </span>
         <form class='centerBlock'>
             <div class='formGroup'><input type="text" id="email" placeholder="Email" required style='color:white'></div>
@@ -71,7 +72,7 @@
 <style>
     * {
         font-family: 'Barlow', sans-serif;
-        color: white;
+        color: black;
     }
 
     section {
@@ -92,12 +93,12 @@
     }
 
     * a:focus {
-        color: #3A98B9;
+        color: orange;
     }
 
     .signup {
         font-size: 15px;
-        color: #3A98B9;
+        color: black;
     }
 
     .centerBlock {
@@ -109,7 +110,7 @@
     .formGroup input, .formGroup input:focus {
         border: none;
         width: 45%;
-        border-bottom: 2px solid #3A98B9;
+        border-bottom: 2px solid orange;
         margin-bottom: 20px;
         font-size: 14px;
         font-weight: bold;
@@ -117,7 +118,7 @@
     }
 
     .formGroup input::placeholder {
-        color: white;
+        color: black;
     }
 
     .centerBlock input {
@@ -127,9 +128,9 @@
 
     .invalidCredentials-box > p {
         width: 40%;
-        color: #cc0000;
+        color: black;
         font-weight: bold;
-        background-color: #EF9A9A;
+        background-color: darkred;
         text-align: center;
         margin: 1em auto;
         padding: 0.5em;
@@ -140,8 +141,8 @@
         padding: 0.9rem 1.8rem;
         font-size: 16px;
         font-weight: 700;
-        color: white;
-        border: 3px solid #3A98B9;
+        color: black;
+        border: 3px solid orange;
         cursor: pointer;
         position: relative;
         background-color: transparent;
@@ -159,7 +160,7 @@
         top: 0;
         width: 100%;
         height: 100%;
-        background-color: #3A98B9;
+        background-color: orange;
         transform: translateX(-100%);
         transition: all .3s;
         z-index: -1;
@@ -181,11 +182,11 @@
     }
 
     .welcome * {
-        color: #3A98B9;
+        color: black;
     }
 
     .welcome:hover {
-        box-shadow: 0 0 10px #FFFFFF, 0 0 25px #008080, 0 0 50px #008080;
+        box-shadow: 0 0 10px #FFFFFF, 0 0 25px darkred, 0 0 50px orange;
         transition-delay: 0.6s;
         cursor: default;
     }
@@ -199,7 +200,7 @@
         left: -100%;
         width: 100%;
         height: 2px;
-        background: linear-gradient(90deg, transparent, #008080);
+        background: linear-gradient(90deg, transparent, orange);
     }
 
     .welcome:hover span:nth-child(1) {
@@ -212,7 +213,7 @@
         right: -100%;
         width: 100%;
         height: 2px;
-        background: linear-gradient(90deg, transparent, #001eff);
+        background: linear-gradient(90deg, transparent, darkorange);
     }
 
     .welcome:hover span:nth-child(3) {
@@ -226,7 +227,7 @@
         right: 0;
         width: 2px;
         height: 100%;
-        background: linear-gradient(180deg, transparent, #008080);
+        background: linear-gradient(180deg, transparent, orange);
     }
 
     .welcome:hover span:nth-child(2) {
@@ -240,7 +241,7 @@
         left: 0;
         width: 2px;
         height: 100%;
-        background: linear-gradient(360deg, transparent, #001eff);
+        background: linear-gradient(360deg, transparent, darkorange);
     }
 
     .welcome:hover span:nth-child(4) {
