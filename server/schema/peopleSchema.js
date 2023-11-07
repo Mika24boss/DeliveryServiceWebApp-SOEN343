@@ -4,7 +4,7 @@ const bcrypt = require('bcryptjs')
 const {
     GraphQLObjectType, GraphQLID, GraphQLString, GraphQLSchema,
     GraphQLList, GraphQLNonNull,
-    GraphQLFloat, GraphQLInt, GraphQLBoolean, GraphQLError
+    GraphQLFloat, GraphQLBoolean, GraphQLError
 } = graphql
 const { GraphQLDateTime } = require('graphql-iso-date')
 const Person = require('../models/personModel')
@@ -85,7 +85,7 @@ const mutation = new GraphQLObjectType({
             type: PersonType,
             args: {
                 name: { type: GraphQLNonNull(GraphQLString) },
-                phoneNumber: { type: GraphQLNonNull(GraphQLInt) },
+                phoneNumber: { type: GraphQLNonNull(GraphQLString) },
                 emailAddress: { type: GraphQLNonNull(GraphQLString) },
                 loginInfo: { type: GraphQLNonNull(GraphQLString) }
             },
@@ -109,7 +109,7 @@ const mutation = new GraphQLObjectType({
             type: ClientType,
             args: {
                 name: { type: GraphQLNonNull(GraphQLString) },
-                phoneNumber: { type: GraphQLNonNull(GraphQLInt) },
+                phoneNumber: { type: GraphQLNonNull(GraphQLString) },
                 emailAddress: { type: GraphQLNonNull(GraphQLString) },
                 loginInfo: { type: GraphQLNonNull(GraphQLString) },
                 role: { type: GraphQLString },
@@ -140,7 +140,7 @@ const mutation = new GraphQLObjectType({
             type: DeliveryManType,
             args: {
                 name: { type: GraphQLNonNull(GraphQLString) },
-                phoneNumber: { type: GraphQLNonNull(GraphQLInt) },
+                phoneNumber: { type: GraphQLNonNull(GraphQLString) },
                 emailAddress: { type: GraphQLNonNull(GraphQLString) },
                 loginInfo: { type: GraphQLNonNull(GraphQLString) },
                 role: { type: GraphQLString },
@@ -166,7 +166,7 @@ const mutation = new GraphQLObjectType({
             type: AdminType,
             args: {
                 name: { type: GraphQLNonNull(GraphQLString) },
-                phoneNumber: { type: GraphQLNonNull(GraphQLInt) },
+                phoneNumber: { type: GraphQLNonNull(GraphQLString) },
                 emailAddress: { type: GraphQLNonNull(GraphQLString) },
                 loginInfo: { type: GraphQLNonNull(GraphQLString) },
                 role: { type: GraphQLString },
@@ -194,6 +194,36 @@ const mutation = new GraphQLObjectType({
             async resolve(parent, args) {
                 return Client.findOneAndDelete(args.emailAddress);
             },
+        },
+        updatePerson: {
+            type: PersonType,
+            args: {
+                name: { type: GraphQLString },
+                emailAddress: { type: GraphQLString },
+                phoneNumber: { type: GraphQLString },
+                loginInfo: { type: GraphQLString },
+            },
+            async resolve(parent, args) {
+                const person = await Person.findById(args.id);
+
+                if (!person) {
+                    throw new Error("Person Not found")
+                }
+                if (args.name) {
+                    person.name = args.name;
+                }
+                if (args.emailAddress) {
+                    person.emailAddress = args.emailAddress;
+                }
+                if (args.phoneNumber) {
+                    person.phoneNumber = args.phoneNumber;
+                }
+                if (args.loginInfo) {
+                    person.loginInfo = args.loginInfo
+                }
+                await person.save();
+                return person;
+            }
         },
         login: {
             type: PersonType,

@@ -8,7 +8,7 @@ const PersonType = new GraphQLObjectType({
     fields: () => ({
         id: { type: GraphQLID },
         name: { type: GraphQLString },
-        phoneNumber: { type: GraphQLInt },
+        phoneNumber: { type: GraphQLString },
         emailAddress: { type: GraphQLString },
         loginInfo: { type: GraphQLString },
         token: { type: GraphQLString },
@@ -20,7 +20,7 @@ const ClientType = new GraphQLObjectType({
     fields: () => ({
         id: { type: GraphQLID },
         name: { type: GraphQLString },
-        phoneNumber: { type: GraphQLInt },
+        phoneNumber: { type: GraphQLString },
         emailAddress: { type: GraphQLString },
         loginInfo: { type: GraphQLString },
         role: { type: GraphQLString },
@@ -34,7 +34,7 @@ const AdminType = new GraphQLObjectType({
     fields: () => ({
         id: { type: GraphQLID },
         name: { type: GraphQLString },
-        phoneNumber: { type: GraphQLInt },
+        phoneNumber: { type: GraphQLString },
         emailAddress: { type: GraphQLString },
         loginInfo: { type: GraphQLString },
         role: { type: GraphQLString },
@@ -46,7 +46,7 @@ const DeliveryManType = new GraphQLObjectType({
     fields: () => ({
         id: { type: GraphQLID },
         name: { type: GraphQLString },
-        phoneNumber: { type: GraphQLInt },
+        phoneNumber: { type: GraphQLString },
         emailAddress: { type: GraphQLString },
         loginInfo: { type: GraphQLString },
         role: { type: GraphQLString },
@@ -59,7 +59,7 @@ const OrderType = new GraphQLObjectType({
     name: 'Order',
     fields: () => ({
         id: { type: GraphQLID },
-        orderID: { type: GraphQLInt },
+        orderID: { type: GraphQLID },
         orderDate: { type: GraphQLString },
         status: { type: GraphQLString },
         payment: { type: GraphQLID },
