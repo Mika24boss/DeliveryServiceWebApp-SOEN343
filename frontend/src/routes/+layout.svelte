@@ -14,6 +14,12 @@
 </div>
 
 <style>
+    :global(:root) {
+        --primary-color: rgb(230, 121, 13, 1);
+        --primary-color2: rgba(199, 116, 0, 1);
+        --secondary-color: rgba(232, 167, 13, 1);
+    }
+
     .app {
         display: flex;
         flex-direction: column;

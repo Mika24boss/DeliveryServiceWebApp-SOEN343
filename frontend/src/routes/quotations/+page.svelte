@@ -31,7 +31,6 @@
     {#if !finishedLoading}
         <LoadingAnimation/>
     {:else}
-
         <div class='quotations-section'>
             <button class="btn-createQuotation" type="submit"> + Create New Quotation</button>
             <h1>Quotations</h1>
