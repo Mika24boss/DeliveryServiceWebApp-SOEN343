@@ -10,23 +10,24 @@
     let isWaiting = false;
 
     async function onSubmit() {
-        email = document.getElementById("email").value;
-        password = document.getElementById("password").value;
-        const userData = {
-            email,
-            password
-        };
-        isWaiting = true;
-        response = await authService.login(userData);
-        //console.log('Response: ', response);
-
-        hasUpdated.set(true);
-        if (!response) {
-            setTimeout(() => isWaiting = false, 100);
-            hasInvalidCredentials = true;
-        } else {
-            await goto('/dashboard_employer');
-        }
+        await goto('/quotations');
+        // email = document.getElementById("email").value;
+        // password = document.getElementById("password").value;
+        // const userData = {
+        //     email,
+        //     password
+        // };
+        // isWaiting = true;
+        // response = await authService.login(userData);
+        // //console.log('Response: ', response);
+        //
+        // hasUpdated.set(true);
+        // if (!response) {
+        //     setTimeout(() => isWaiting = false, 100);
+        //     hasInvalidCredentials = true;
+        // } else {
+        //     await goto('/quotations');
+        // }
 
     }
 

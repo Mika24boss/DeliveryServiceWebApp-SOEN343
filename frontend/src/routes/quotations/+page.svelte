@@ -7,6 +7,7 @@
     import {onMount} from 'svelte';
     import LoadingAnimation from '$lib/components/LoadingAnimation.svelte';
     import {goto} from "$app/navigation";
+    import Quotation from "$lib/components/Quotation.svelte";
 
     let user;
     let finishedLoading = false;
@@ -17,28 +18,28 @@
     });
 
     async function loadPage() {
-        if (user == null) {
-            //await goto('/');
-        }
-        setTimeout(() => {finishedLoading = true;}, 300);
+        // if (user == null) {
+        //     await goto('/');
+        // }
+        // setTimeout(() => {finishedLoading = true;}, 300);
+        finishedLoading = true;
     }
 
 </script>
 
-Customer quotation list
-
-<div class='employer-dashboard'>
+<div class='quotations'>
     {#if !finishedLoading}
         <LoadingAnimation/>
     {:else}
-
-        <!-- Some Section-->
-        <div class='thing-section'>
-            <div class='thing'>
-                <h1 class='badge'>0</h1>
-                <h1 class='label'>Thing(s)</h1>
+        <div class='quotations-section'>
+            <button class="btn-createQuotation" type="submit"> + Create New Quotation</button>
+            <h1>Quotations</h1>
+            <div class='quotations-container'>
+                <Quotation {...Quotation}/>
+                <Quotation {...Quotation}/>
+                <Quotation {...Quotation}/>
+                <Quotation {...Quotation}/>
             </div>
-            <p>Nothing new since your last login</p>
         </div>
     {/if}
 </div>
@@ -49,35 +50,56 @@ Customer quotation list
     }
 
     h1, p {
-        color: lightgray;
+        color: black;
     }
 
-    .employer-dashboard {
+    .quotations {
         width: 80%;
         margin-left: 10%;
     }
 
-    .thing-section {
+    .quotations-section {
         margin-top: 2%;
     }
 
-    .thing {
-        text-align: left;
-        margin-bottom: 1em;
+    .btn-createQuotation {
+        display: inline-block;
+        padding: 0.9rem 1.8rem;
+        font-size: 16px;
+        font-weight: 700;
+        color: black;
+        border: 3px solid orange;
+        cursor: pointer;
+        position: relative;
+        background-color: transparent;
+        text-decoration: none;
+        overflow: hidden;
+        z-index: 1;
+        font-family: inherit;
+        border-radius: 1em;
     }
 
-    .badge, .label {
-        display: inline;
+    .btn-createQuotation::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: orange;
+        transform: translateX(-100%);
+        transition: all .3s;
+        z-index: -1;
     }
 
-    .badge {
-        border-radius: 50%;
-        padding-left: 0.3em;
-        padding-right: 0.3em;
+    .btn-createQuotation:hover::before {
+        transform: translateX(0);
+    }
 
-        text-align: center;
-        background: #3A98B9;
-        color: white;
+    .quotations-container{
+        display:flex;
+        flex-direction: column;
+        gap: 1.5em;
     }
 
 </style>
