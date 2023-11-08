@@ -58,15 +58,15 @@
                 {:else}
                     {#if isCustomer}
                         <li>
-                            <a href="/dashboard_employer">Customer</a>
+                            <a href="/quotations">Customer</a>
                         </li>
                     {:else if isEmployer}
                         <li>
-                            <a href='/dashboard_employer'>Employer</a>
+                            <a href='/quotations'>Employer</a>
                         </li>
                     {:else if isAdmin}
                         <li>
-                            <a href='/dashboard_employer'>Admin</a>
+                            <a href='/quotations'>Admin</a>
                         </li>
                     {/if}
                     <li>
