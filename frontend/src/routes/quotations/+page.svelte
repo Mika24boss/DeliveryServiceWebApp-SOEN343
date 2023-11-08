@@ -1,5 +1,5 @@
 <svelte:head>
-    <title>Dashboard</title>
+    <title>Quotations</title>
 </svelte:head>
 
 <script>
@@ -18,12 +18,14 @@
 
     async function loadPage() {
         if (user == null) {
-            await goto('/');
+            //await goto('/');
         }
         setTimeout(() => {finishedLoading = true;}, 300);
     }
 
 </script>
+
+Customer quotation list
 
 <div class='employer-dashboard'>
     {#if !finishedLoading}
