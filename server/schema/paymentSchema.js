@@ -40,6 +40,16 @@ const mutation = new GraphQLObjectType({
                 return payment.save();
             },
         },
+        // Delete an order
+        deletePayment: {
+            type: PaymentType,
+            args: {
+                orderID: { type: GraphQLNonNull(GraphQLID) },
+            },
+            resolve(parent, args) {
+                return Payment.findByIdAndRemove(args.id);
+            },
+        },
     },
 });
 

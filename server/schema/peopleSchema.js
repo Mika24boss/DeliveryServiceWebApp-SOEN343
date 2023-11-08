@@ -195,6 +195,17 @@ const mutation = new GraphQLObjectType({
                 return Client.findOneAndDelete(args.emailAddress);
             },
         },
+        deletePerson: {
+            type: PersonType,
+            args: {//delete person's info through email
+                emailAddress: { type: GraphQLNonNull(GraphQLString) },
+            },
+            async resolve(parent, args){
+                return Person.findOneAndDelete(args.emailAddress);
+            },
+        },
+
+
         updatePerson: {
             type: PersonType,
             args: {
