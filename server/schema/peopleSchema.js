@@ -198,6 +198,7 @@ const mutation = new GraphQLObjectType({
         updatePerson: {
             type: PersonType,
             args: {
+                id: { type: GraphQLID },
                 name: { type: GraphQLString },
                 emailAddress: { type: GraphQLString },
                 phoneNumber: { type: GraphQLString },
