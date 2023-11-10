@@ -38,6 +38,22 @@ const mutation = new GraphQLObjectType({
                 return item.save();
             },
         },
+        // Deleting an item
+        deleteItem: {
+            type: ItemType,
+            args: {
+                name: { type: GraphQLNonNull(GraphQLID) },
+            },
+            resolve(parent, args) {
+                Item.find({ clientId: args.id }).then((projects) => {
+                    projects.forEach((project) => {
+                        project.deleteOne();
+                    });
+                });
+
+                return Item.findByIdAndRemove(args.id);
+            },
+        },
     },
 });
 

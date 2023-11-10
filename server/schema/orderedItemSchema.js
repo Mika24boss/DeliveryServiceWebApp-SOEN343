@@ -38,6 +38,16 @@ const mutation = new GraphQLObjectType({
                 return orderedItem.save();
             },
         },
+        // Delete an order
+        deleteOrderedItem: {
+            type: OrderedItemType,
+            args: {
+                orderID: { type: GraphQLNonNull(GraphQLID) },
+            },
+            resolve(parent, args) {
+                return OrderedItems.findByIdAndRemove(args.id);
+            },
+        },
     },
 });
 
