@@ -189,7 +189,7 @@ const mutation = new GraphQLObjectType({
                 });
                 return admin.save();
             },
-        },
+        },//ji
         deleteClient: {
             type: PersonType,
             args: {//delete person's info through their name
