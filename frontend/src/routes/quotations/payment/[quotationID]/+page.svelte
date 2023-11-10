@@ -5,8 +5,7 @@
 <script>
     import {page} from "$app/stores";
 
-    const urlElements = $page.url.pathname.split('/');
-    const quotationID = urlElements[urlElements.length - 2];
+    const quotationID = $page.url.pathname.split('/').pop();
     let pageTitle = "Payment | Quotation #" + quotationID;
 </script>
 

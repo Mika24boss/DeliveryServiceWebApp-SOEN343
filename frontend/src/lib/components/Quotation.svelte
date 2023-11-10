@@ -20,7 +20,7 @@
     }
 
     async function onClick() {
-        await goto('/quotations/' + quotationID + '/payment');
+        await goto('/quotations' + '/payment/' + quotationID);
     }
 
 </script>
