@@ -8,6 +8,7 @@
     let response;
     let hasInvalidCredentials = false;
     let isWaiting = false;
+    let isCustomer = true;
 
     async function onSubmit() {
         await goto('/quotations');
@@ -51,9 +52,9 @@
             <p style="font-size: 20px;">We meet strangers so you don't have to.</p>
         </span>
         <form class='centerBlock'>
-            <div class='formGroup'><input type="text" id="email" placeholder="Email" required style='color:white'></div>
+            <div class='formGroup'><input type="text" id="email" placeholder="Email" required style='color:black'></div>
             <div class='formGroup'><input type="password" id="password" placeholder="Password" required
-                                          style='color:white'></div>
+                                          style='color:black'></div>
             <div class='btn-container'>
                 <button class="btn-signin centerBlock" type="submit" on:click="{onSubmit}">Sign-In</button>
             </div>
@@ -71,10 +72,6 @@
 {/if}
 
 <style>
-    * {
-        font-family: 'Barlow', sans-serif;
-        color: black;
-    }
 
     section {
         width: 70%;

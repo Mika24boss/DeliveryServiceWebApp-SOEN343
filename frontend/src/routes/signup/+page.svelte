@@ -64,12 +64,12 @@
                 </div>
                 <div class='inputs-form centerBlock'>
                     <div class='formGroup'><input type='text' id='name' name='Name' placeholder='Full Name' required
-                                                  style='color:white'></div>
+                                                  style='color:black'></div>
                     <div class='formGroup'><input type='text' id='email' name='Email' placeholder='Email' required
-                                                  style='color:white'></div>
+                                                  style='color:black'></div>
                     <div class='formGroup'><input type='password' id='password' name='Password' placeholder='Password'
                                                   required
-                                                  style='color:white'></div>
+                                                  style='color:black'></div>
                 </div>
 
                 {#if hasMissingFields}
@@ -90,10 +90,6 @@
 {/if}
 
 <style>
-    * {
-        font-family: 'Barlow', sans-serif;
-        color: black;
-    }
 
     section {
         width: 70%;
