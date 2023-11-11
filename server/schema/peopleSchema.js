@@ -11,13 +11,17 @@ const Person = require('../models/personModel')
 const Admin = require('../models/adminModel')
 const Client = require('../models/clientModel')
 const DeliveryMan = require('../models/deliverManModel')
+const orderModel = require('../models/orderModel')
+
 const {
     PersonType,
     AdminType,
     ClientType,
-    DeliveryManType
+    DeliveryManType, OrderedItemType, OrderType
 } = require('./graphQLType')
 const { validateRegisterInput, validateLoginInput } = require('../middleware/validators')
+const OrderedItems = require("../models/orderedItems");
+const Order = require("../models/orderModel");
 const RootQuery = new GraphQLObjectType({
     name: 'RootQueryType',
     fields: {
@@ -185,16 +189,53 @@ const mutation = new GraphQLObjectType({
                 });
                 return admin.save();
             },
-        },
+        },//ji
         deleteClient: {
             type: PersonType,
             args: {//delete person's info through their name
                 emailAddress: { type: GraphQLNonNull(GraphQLString) },
             },
             async resolve(parent, args) {
+                const client=Client.findOne(args.emailAddress);
+                for(const order of client.order){
+                    if(order != "DELIVERED" || order != "NONE"){
+                        throw new Error("unable to delete");
+                    }
+                }
                 return Client.findOneAndDelete(args.emailAddress);
             },
         },
+        deletePerson: {
+            type: PersonType,
+            args: {//delete person's info through email
+                emailAddress: { type: GraphQLNonNull(GraphQLString) },
+            },
+            async resolve(parent, args){
+                return Person.findOneAndDelete(args.emailAddress);
+            },
+        },
+        // Delete an order
+        deleteOrder: {
+            type: OrderType,
+            args: {
+                orderID: { type: GraphQLNonNull(GraphQLID) },
+            },
+            resolve(parent, args) {
+                return Order.findByIdAndRemove(args.id);
+            },
+        },
+        deleteDeliveryMan: {
+            type: PersonType,
+            args: {//delete person's info through email also has to delete the order itself
+                emailAddress: { type: GraphQLNonNull(GraphQLString) },
+            },
+
+            async resolve(parent, args){
+                return Person.findOneAndDelete(args.emailAddress);
+            },
+        },
+
+
         updatePerson: {
             type: PersonType,
             args: {

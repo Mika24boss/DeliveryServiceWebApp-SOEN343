@@ -44,6 +44,16 @@ const mutation = new GraphQLObjectType({
                 return quotation.save();
             },
         },
+        // Delete an order
+        deleteQuotation: {
+            type: QuotationType,
+            args: {
+                quotationID: { type: GraphQLNonNull(GraphQLID) },
+            },
+            resolve(parent, args) {
+                return quotation.findByIdAndRemove(args.id);
+            },
+        },
     },
 });
 
