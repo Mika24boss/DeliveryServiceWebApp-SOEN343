@@ -11,7 +11,8 @@ const Payment = new mongoose.Schema({
         default: "NONE",
     },
     dateOfPayment: {
-
+        type: Date,
+        required: true
     },
     amount: {
         type: Number,

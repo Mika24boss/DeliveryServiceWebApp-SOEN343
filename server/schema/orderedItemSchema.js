@@ -1,9 +1,12 @@
 const graphql = require('graphql')
-const { GraphQLObjectType, GraphQLID, GraphQLString, GraphQLSchema,
+const {
+    GraphQLObjectType, GraphQLID, GraphQLString, GraphQLSchema,
     GraphQLList, GraphQLNonNull,
-    GraphQLFloat, GraphQLInt, GraphQLBoolean } = graphql
+    GraphQLFloat, GraphQLInt, GraphQLBoolean
+} = graphql
 const OrderedItems = require('../models/orderedItems')
-const { OrderedItemType} = require('./graphQLType')
+const {OrderedItemType, AddressType} = require('./graphQLType')
+const Address = require("../models/addressModel");
 
 const RootQuery = new GraphQLObjectType({
     name: 'RootQueryType',
@@ -13,6 +16,13 @@ const RootQuery = new GraphQLObjectType({
             resolve() {
                 return OrderedItems.find();
             }
+        },
+        orderedItem: {
+            type: OrderedItemType,
+            args: {id: {type: GraphQLID}},
+            resolve(parent, args) {
+                return OrderedItems.findById(args.id);
+            },
         },
     },
 });
@@ -25,9 +35,9 @@ const mutation = new GraphQLObjectType({
         addOrderedItem: {
             type: OrderedItemType, // Assuming you have an OrderedItemType defined
             args: {
-                size: { type: GraphQLString },
-                quantity: { type: GraphQLInt },
-                items: { type: new GraphQLList(GraphQLString) }, // Assuming you store item IDs as strings
+                size: {type: GraphQLString},
+                quantity: {type: GraphQLInt},
+                items: {type: new GraphQLList(GraphQLString)}, // Assuming you store item IDs as strings
             },
             resolve(parent, args) {
                 const orderedItem = new OrderedItems({
@@ -42,7 +52,7 @@ const mutation = new GraphQLObjectType({
         deleteOrderedItem: {
             type: OrderedItemType,
             args: {
-                orderID: { type: GraphQLNonNull(GraphQLID) },
+                orderID: {type: GraphQLNonNull(GraphQLID)},
             },
             resolve(parent, args) {
                 return OrderedItems.findByIdAndRemove(args.id);

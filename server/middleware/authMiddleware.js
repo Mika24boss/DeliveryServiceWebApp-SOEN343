@@ -1,36 +1,19 @@
-const jwt = require('jsonwebtoken')
-const asyncHandler = require('express-async-handler')
+const jwt = require('jsonwebtoken');
 const Person = require('../models/personModel')
-
-const protect = asyncHandler(async (req, res, next) => {
-    let token
-
-    if (
-        req.headers.authorization &&
-        req.headers.authorization.startsWith('Bearer')
-    ) {
-        try {
-            // Get token from header
-            token = req.headers.authorization.split(' ')[1]
-
-            // Verify token
-            const decoded = jwt.verify(token, process.env.JWT_SECRET)
-
-            // Get user from the token
-            req.user = await Person.findById(decoded.id).select('-password')
-
-            next()
-        } catch (error) {
-            console.log(error)
-            res.status(401)
-            throw new Error('Not authorized')
+const {decode} = require("jsonwebtoken");
+module.exports = (context) => {
+    // context = { ... headers }
+    if (context) {
+        // Bearer ....
+        const token = context.split('Bearer ')[1];
+        if (token) {
+            try {
+                return jwt.verify(token, process.env.JWT_SECRET);
+            } catch (err) {
+                throw new Error('Invalid/Expired token');
+            }
         }
+        throw new Error("Authentication token must be 'Bearer [token]");
     }
-
-    if (!token) {
-        res.status(401)
-        throw new Error('Not authorized, no token')
-    }
-})
-
-module.exports = { protect }
+    throw new Error('Authorization header must be provided');
+};

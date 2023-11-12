@@ -7,7 +7,8 @@ const {
     GraphQLFloat, GraphQLInt, GraphQLBoolean
 } = graphql
 const Payment = require('../models/paymentModel')
-const {PaymentType} = require('./graphQLType')
+const {PaymentType, OrderedItemType} = require('./graphQLType')
+const OrderedItems = require("../models/orderedItems");
 
 const RootQuery = new GraphQLObjectType({
     name: 'RootQueryType',
@@ -17,6 +18,13 @@ const RootQuery = new GraphQLObjectType({
             resolve() {
                 return Payment.find();
             }
+        },
+        payment: {
+            type: PaymentType,
+            args: {id: {type: GraphQLID}},
+            resolve(parent, args) {
+                return Payment.findById(args.id);
+            },
         },
     },
 });
@@ -36,7 +44,7 @@ const mutation = new GraphQLObjectType({
             async resolve(parent, args) {
                 const payment = new Payment({
                     methodOfPayment: args.methodOfPayment,
-                    dateOfPayment: args.dateOfPayment,
+                    dateOfPayment: new Date(),
                     amount: args.amount,
                 });
                 return payment.save();
@@ -46,7 +54,7 @@ const mutation = new GraphQLObjectType({
         deletePayment: {
             type: PaymentType,
             args: {
-                orderID: { type: GraphQLNonNull(GraphQLID) },
+                orderID: {type: GraphQLNonNull(GraphQLID)},
             },
             resolve(parent, args) {
                 return Payment.findByIdAndRemove(args.id);

@@ -306,7 +306,6 @@ const mutation = new GraphQLObjectType({
                 }
 
                 const token = generateToken(user._id);
-                console.log(token)
                 return {
                     ...user._doc,
                     id: user._id,

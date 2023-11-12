@@ -19,6 +19,16 @@ const RootQuery = new GraphQLObjectType({
                 return ClientOrderJoin.find();
             }
         },
+        clientOrder: {
+            type: ClientOrderJoinType,
+            args: {
+                clientID: {type: GraphQLID},
+                orderID: {type: GraphQLID},
+            },
+            resolve(parent, args) {
+                return ClientOrderJoin.find({clientID: args.clientID, orderID: args.orderID});
+            }
+        },
     },
 });
 
@@ -51,18 +61,13 @@ const mutation = new GraphQLObjectType({
                 orderID: {type: GraphQLID},
             },
             resolve: async (_, args) => {
-                const clientOrderJoin = await ClientOrderJoin.findOne(args.orderID);
+                const clientOrderJoin = await ClientOrderJoin.findOne({orderID: args.orderID});
 
                 if (!clientOrderJoin) {
                     throw new Error('ClientOrderJoin Entry not found')
                 }
 
-                const client = await Client.findById(clientOrderJoin.clientID);
-                if (!client) {
-                    throw new Error('Client not found');
-                }
-                // Delete the client
-                await client.remove();
+                const client = await Client.findByIdAndRemove(clientOrderJoin.clientID);
 
                 // Delete the order
                 const deletedOrder = await Order.findByIdAndRemove(orderID);
