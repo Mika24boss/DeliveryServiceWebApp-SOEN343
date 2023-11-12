@@ -5,9 +5,9 @@ const ClientOrderJoin = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         required: true
     },
-    orderID: [{
+    orderID: {
         type: mongoose.Schema.Types.ObjectId
-    }],
+    },
     location: {
         type: String
     },
