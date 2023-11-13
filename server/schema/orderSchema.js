@@ -40,7 +40,7 @@ const mutation = new GraphQLObjectType({
         addOrder: {
             type: OrderType, // Assuming you have an OrderType defined
             args: {
-                orderID: {type: GraphQLNonNull(GraphQLInt)},
+                orderID: {type: GraphQLInt},
                 status: {type: GraphQLString},
                 orderItems: {type: new GraphQLList(GraphQLID)},
                 payment: {type: GraphQLID}
@@ -94,8 +94,6 @@ const mutation = new GraphQLObjectType({
                 orderID: {type: GraphQLInt},
             },
             async resolve(parent, args, context) {
-                const {req} = context;
-
                 const admin = await Admin.findById(protect(context.headers['authorization']).id).select('-password');
 
                 if (!admin) {
@@ -118,6 +116,62 @@ const mutation = new GraphQLObjectType({
                 }
             },
         },
+        updateOrder: {
+            type: OrderType,
+            args: {
+                orderID: {type: GraphQLInt},
+                orderDate: {type: GraphQLString},
+                status: {type: GraphQLString},
+                payment: {type: GraphQLID},
+                orderItems: {type: new GraphQLList(GraphQLID)}
+            },
+            async resolve(args, context) {
+                const admin = await Admin.findById(protect(context.headers['authorization']).id).select('-password');
+                if (!admin) {
+                    throw new Error('User not authorized')
+                }
+                const order = await Order.findOne({orderID: {$eq: args.orderID}});
+                if (!order) {
+                    throw new Error('Order not found')
+                }
+                if (args.orderDate) {
+                    order.orderDate = args.orderDate;
+                }
+                if (args.status) {
+                    order.status = args.status;
+                }
+                if (args.payment) {
+                    order.payment = args.payment;
+                }
+                if (args.orderItems) {
+                    order.orderItems = args.orderItems
+                }
+                await order.save();
+                return order;
+            }
+        },
+        updateOrderStatus: {
+            type: OrderType,
+            args: {
+                orderID: {type: GraphQLInt},
+                status: {type: GraphQLString},
+            },
+            async resolve(args, context) {
+                const deliveryMan = await DeliveryMan.findById(protect(context.headers['authorization']).id).select('-password');
+                if (!deliveryMan) {
+                    throw new Error('User not authorized')
+                }
+                const order = await Order.findOne({orderID: {$eq: args.orderID}});
+                if (!order) {
+                    throw new Error('Order not found')
+                }
+                if (args.status) {
+                    order.status = args.status;
+                }
+                await order.save();
+                return order;
+            }
+        }
     },
 });
 
