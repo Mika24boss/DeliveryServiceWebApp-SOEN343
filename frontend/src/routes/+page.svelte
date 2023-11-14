@@ -1,19 +1,22 @@
 <script>
-    import {goto} from "$app/navigation";
     import LoadingAnimation from "$lib/components/LoadingAnimation.svelte";
-    import {LOGIN} from "../../mutations/peopleMutation/personMutation.js";
-    import {mutation} from "svelte-apollo";
-    // const client = new ApolloClient({
-    //     uri: "http://localhost:8000/graphql/people",
-    //     cache: new InMemoryCache(),
-    // });
-    //
-    // setClient(client);
+    import {ApolloClient, InMemoryCache} from '@apollo/client/core';
+    import {mutation, setClient} from "svelte-apollo";
+    import {LOGIN} from "../mutations/peopleMutation/personMutation.js";
+    import {goto} from "$app/navigation";
+
+    const client = new ApolloClient({
+        uri: "http://localhost:8000/graphql/people",
+        cache: new InMemoryCache(),
+    });
+
+    setClient(client);
     let email, password;
     let response;
     let hasInvalidCredentials = false;
     let isWaiting = false;
-    const [login, {loading, error}] = mutation(LOGIN);
+
+    // const [login, {loading, error}] = mutation(LOGIN);
 
     async function onSubmit() {
         // await goto('/quotations');
