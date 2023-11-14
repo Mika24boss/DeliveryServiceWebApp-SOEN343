@@ -1,6 +1,7 @@
 <script>
     import LoadingAnimation from "$lib/components/LoadingAnimation.svelte";
     import {ApolloClient, InMemoryCache} from '@apollo/client/core';
+    import {onMount} from "svelte";
     import {mutation, setClient} from "svelte-apollo";
     import {LOGIN} from "../mutations/peopleMutation/personMutation.js";
     import {goto} from "$app/navigation";
@@ -11,45 +12,47 @@
     });
 
     setClient(client);
+    const signInMutation = mutation(LOGIN);
     let email, password;
     let response;
     let hasInvalidCredentials = false;
     let isWaiting = false;
 
     // const [login, {loading, error}] = mutation(LOGIN);
-
     async function onSubmit() {
-        // await goto('/quotations');
         email = document.getElementById("email").value;
         password = document.getElementById("password").value;
-        const [login] = mutation(LOGIN, {
-            variables: {
-                emailAddress: email,
-                password: password,
-            },
-            onCompleted: ({login}) => {
-                console.log()
-                localStorage.setItem('AUTH_TOKEN', login.token);
-                goto('/quotations')
-            }
-        })
-        // const userData = {
-        //     email,
-        //     password
-        // };
-        // isWaiting = true;
-        // response = await authService.login(userData);
-        // //console.log('Response: ', response);
-        //
-        // hasUpdated.set(true);
-        // if (!response) {
-        //     setTimeout(() => isWaiting = false, 100);
-        //     hasInvalidCredentials = true;
-        // } else {
-        //     await goto('/quotations');
-        // }
 
+        try {
+            const response = await signInMutation({
+                variables: {
+                    emailAddress: email,
+                    password: password,
+                },
+            });
+
+            console.log(response);
+            localStorage.setItem('user', JSON.stringify(response.data));
+
+            // Navigate to the desired page
+            if (!response) {
+                setTimeout(() => isWaiting = false, 100);
+                hasInvalidCredentials = true;
+            } else if (response.data.login.role === 'ADMIN') {
+                await goto('/requests');
+            } else if (response.data.login.role === 'CLIENT') {
+                await goto('/quotations');
+            } else if (response.data.login.role === 'DELIVERYMAN') {
+                await goto('/orders');
+            }
+        } catch (error) {
+            console.error(error);
+
+            // Handle the error, set a flag, show a message, etc.
+        }
     }
+
+    onMount(onSubmit);
 
 </script>
 

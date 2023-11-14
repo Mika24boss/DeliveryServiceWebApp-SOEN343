@@ -306,13 +306,34 @@ const mutation = new GraphQLObjectType({
                 }
 
                 const token = generateToken(user._id);
+                let userRole;
+
+                // Determine user role based on the type of user (Client, Admin, DeliveryMan)
+                const client = await Client.findById(user._id);
+                if (client) {
+                    userRole = "CLIENT";
+                } else {
+                    const admin = await Admin.findById(user._id);
+                    if (admin) {
+                        userRole = "ADMIN";
+                    } else {
+                        const deliveryMan = await DeliveryMan.findById(user._id);
+                        if (deliveryMan) {
+                            userRole = "DELIVERYMAN";
+                        } else {
+                            userRole = "NONE";
+                        }
+                    }
+                }
                 return {
                     ...user._doc,
                     id: user._id,
-                    token
+                    token,
+                    role: userRole,
                 };
             },
         },
+
     },
 });
 

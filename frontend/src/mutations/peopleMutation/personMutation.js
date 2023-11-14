@@ -60,6 +60,7 @@ const LOGIN = gql`
 			emailAddress
 			loginInfo
 			token
+			role
 		}
 	}
 `;
