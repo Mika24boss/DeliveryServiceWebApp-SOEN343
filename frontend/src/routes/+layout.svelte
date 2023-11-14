@@ -31,7 +31,7 @@
         display: flex;
         flex-direction: column;
         padding: 1em;
-        width: 100%;
+        width: 80%;
         margin: 3em auto 0;
         box-sizing: border-box;
     }
