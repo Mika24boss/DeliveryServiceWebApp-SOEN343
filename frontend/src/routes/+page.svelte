@@ -28,6 +28,7 @@
                 password: password,
             },
             onCompleted: ({login}) => {
+                console.log()
                 localStorage.setItem('AUTH_TOKEN', login.token);
                 goto('/quotations')
             }
