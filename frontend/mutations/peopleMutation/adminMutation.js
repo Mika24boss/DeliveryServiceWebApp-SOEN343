@@ -1,4 +1,4 @@
-import {gql} from '@apollo/client';
+import {gql} from '@apollo/client/core';
 
 // Mutation to delete an admin
 const DELETE_ADMIN = gql`

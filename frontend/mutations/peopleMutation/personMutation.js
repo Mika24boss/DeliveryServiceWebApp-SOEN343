@@ -1,4 +1,4 @@
-import { gql } from '@apollo/client';
+import { gql } from '@apollo/client/core';
 
 const ADD_PERSON = gql`
 	mutation addPerson($name: String!, $emailAddress: String!, $phoneNumber: String!) {

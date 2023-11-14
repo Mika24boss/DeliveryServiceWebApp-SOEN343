@@ -1,4 +1,4 @@
-import {gql} from '@apollo/client';
+import {gql} from '@apollo/client/core';
 
 // Mutation to add a quotation
 const ADD_QUOTATION = gql`

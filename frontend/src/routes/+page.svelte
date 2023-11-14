@@ -1,20 +1,25 @@
 <script>
     import {goto} from "$app/navigation";
     import LoadingAnimation from "$lib/components/LoadingAnimation.svelte";
-    import {useMutation} from "@apollo/client";
     import {LOGIN} from "../../mutations/peopleMutation/personMutation.js";
-
+    import {mutation} from "svelte-apollo";
+    // const client = new ApolloClient({
+    //     uri: "http://localhost:8000/graphql/people",
+    //     cache: new InMemoryCache(),
+    // });
+    //
+    // setClient(client);
     let email, password;
     let response;
     let hasInvalidCredentials = false;
     let isWaiting = false;
-    const [login, {loading, error}] = useMutation(LOGIN);
+    const [login, {loading, error}] = mutation(LOGIN);
 
     async function onSubmit() {
         // await goto('/quotations');
         email = document.getElementById("email").value;
         password = document.getElementById("password").value;
-        const [login] = useMutation(LOGIN, {
+        const [login] = mutation(LOGIN, {
             variables: {
                 emailAddress: email,
                 password: password,
