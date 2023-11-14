@@ -11,7 +11,7 @@
     let pageTitle = "Create Delivery Request";
     let date = new Date();
     let maxDate = new Date((date.getFullYear() + 1) + '-' + date.getMonth() + '-' + date.getDate());
-    let orderItems = [{itemID: 0, itemName: "", quantity: ""}];
+    let orderItems = [];
 
     function changedText() {
         hasChanged = true;
@@ -26,7 +26,7 @@
         let newID = 0;
         if (orderItems.length > 0)
             newID = orderItems[orderItems.length - 1].itemID + 1;
-        orderItems.push({itemID: newID, itemName: "", quantity: ""});
+        orderItems.push({itemID: newID, itemName: "", quantity: 1});
         orderItems = orderItems;
     }
 
@@ -42,11 +42,77 @@
             orderItems[e.target.dataset.index].quantity = e.target.value;
         }
     }
+
+    async function createRequest() {
+        const data = getFieldData();
+        if (!data) return;
+
+        //const response = await jobService.createJob(data, user.token);
+        //if (!response) {
+        alert('Failed to create job.');
+        //} else {
+        //    await goto('/postings');
+        //}
+    }
+
+    function getFieldData() {
+        let buyerName = document.getElementById('buyerName').value;
+        let deliveryStreet = document.getElementById('deliveryStreet').value;
+        let deliveryCity = document.getElementById('deliveryCity').value;
+        let deliveryProvince = document.getElementById('deliveryProvince').value;
+        let deliveryCountry = document.getElementById('deliveryCountry').value;
+        let deliveryPostalCode = document.getElementById('deliveryPostalCode').value;
+        let sellerName = document.getElementById('sellerName').value;
+        let pickupStreet = document.getElementById('pickupStreet').value;
+        let pickupCity = document.getElementById('pickupCity').value;
+        let pickupProvince = document.getElementById('pickupProvince').value;
+        let pickupCountry = document.getElementById('pickupCountry').value;
+        let pickupPostalCode = document.getElementById('pickupPostalCode').value;
+        let alertText = '';
+        if (!buyerName.trim()) alertText += 'Missing your name!\n';
+        if (!deliveryStreet.trim()) alertText += 'Missing delivery street!\n';
+        if (!deliveryCity.trim()) alertText += 'Missing delivery city!\n';
+        if (!deliveryProvince.trim()) alertText += 'Missing delivery province!\n';
+        if (!deliveryCountry.trim()) alertText += 'Missing delivery country!\n';
+        if (!deliveryPostalCode.trim()) alertText += 'Missing delivery postal code!\n';
+        if (!sellerName.trim()) alertText += 'Missing seller\'s name!\n';
+        if (!pickupStreet.trim()) alertText += 'Missing pickup street!\n';
+        if (!pickupCity.trim()) alertText += 'Missing pickup city!\n';
+        if (!pickupProvince.trim()) alertText += 'Missing pickup province!\n';
+        if (!pickupCountry.trim()) alertText += 'Missing pickup country!\n';
+        if (!pickupPostalCode.trim()) alertText += 'Missing pickup postal code!\n';
+        if (date < new Date()) alertText += 'Missing pickup date!\n';
+        if (orderItems.length === 0) alertText += 'Missing order item(s)!\n';
+        for (let i = 0; i < orderItems.length; i++) {
+            if (orderItems[i].itemName.trim().length === 0)
+                alertText += 'Missing name for item #' + (i + 1) + '!\n';
+            if (orderItems[i].quantity < 1)
+                alertText += 'Invalid quantity for item #' + (i + 1) + '!\n';
+        }
+        if (alertText) {
+            alert(alertText);
+            return null;
+        } else return {
+            buyerName,
+            deliveryStreet,
+            deliveryCity,
+            deliveryProvince,
+            deliveryCountry,
+            deliveryPostalCode,
+            sellerName,
+            pickupStreet,
+            pickupCity,
+            pickupProvince,
+            pickupCountry,
+            pickupPostalCode,
+            date
+        };
+    }
 </script>
 
 <div class="header">
     <h1 class="title" use:preventTabClose={hasChanged}>Create A Delivery Request</h1>
-    <button class="submitBtn" on:click={submit}>Submit</button>
+    <button class="submitBtn" on:click="{createRequest}">Submit</button>
 </div>
 
 <div class="informationSection">
