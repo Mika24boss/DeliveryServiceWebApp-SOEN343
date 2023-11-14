@@ -54,7 +54,7 @@ const mutation = new GraphQLObjectType({
                     pickUpAddress: args.pickUpAddress,
                     distance: args.distance,
                     shippingAddress: args.shippingAddress,
-                    billingAddress: args.billingAddress,
+                    // billingAddress: args.billingAddress,
                     price: args.price,
                     order: args.order,
                 });
@@ -95,6 +95,7 @@ const mutation = new GraphQLObjectType({
                 await Quotation.findByIdAndRemove(args.id);
             },
         },
+        // updateQuotation by client with the price
     },
 });
 

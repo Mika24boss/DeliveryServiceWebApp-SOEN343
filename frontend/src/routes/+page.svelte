@@ -1,18 +1,29 @@
 <script>
-    import {authService} from '$lib/features/authService.js';
     import {goto} from "$app/navigation";
-    import {hasUpdated} from "../lib/stores/updateUser.js";
     import LoadingAnimation from "$lib/components/LoadingAnimation.svelte";
+    import {useMutation} from "@apollo/client";
+    import {LOGIN} from "../../mutations/peopleMutation/personMutation.js";
 
     let email, password;
     let response;
     let hasInvalidCredentials = false;
     let isWaiting = false;
+    const [login, {loading, error}] = useMutation(LOGIN);
 
     async function onSubmit() {
-        await goto('/quotations');
-        // email = document.getElementById("email").value;
-        // password = document.getElementById("password").value;
+        // await goto('/quotations');
+        email = document.getElementById("email").value;
+        password = document.getElementById("password").value;
+        const [login] = useMutation(LOGIN, {
+            variables: {
+                emailAddress: email,
+                password: password,
+            },
+            onCompleted: ({login}) => {
+                localStorage.setItem('AUTH_TOKEN', login.token);
+                goto('/quotations')
+            }
+        })
         // const userData = {
         //     email,
         //     password
@@ -35,7 +46,7 @@
 
 <svelte:head>
     <title>Login</title>
-    <meta name="description" content="Delivery service website"/>
+    <meta content="Delivery service website" name="description"/>
 </svelte:head>
 
 {#if isWaiting}
