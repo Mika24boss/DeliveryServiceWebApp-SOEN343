@@ -50,16 +50,7 @@
 
 <style>
 
-    h1, p {
-        color: black;
-    }
-
-    .order {
-        width: 80%;
-        margin-left: 10%;
-    }
-
-    .order-section {
+    .quotation-section {
         margin-top: 2%;
     }
 

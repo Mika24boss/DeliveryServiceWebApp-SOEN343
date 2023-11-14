@@ -46,15 +46,6 @@
 
 <style>
 
-    h1, p {
-        color: black;
-    }
-
-    .orders {
-        width: 80%;
-        margin-left: 10%;
-    }
-
     .orders-section {
         margin-top: 2%;
     }

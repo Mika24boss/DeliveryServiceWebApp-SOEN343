@@ -65,7 +65,7 @@
                         </li>
                     {:else if isEmployer}
                         <li>
-                            <a href='/orders_employee'>Orders</a>
+                            <a href='/orders'>Orders</a>
                         </li>
                     {:else if isAdmin}
                         <li>

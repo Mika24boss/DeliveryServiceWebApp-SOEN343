@@ -47,15 +47,6 @@
 
 <style>
 
-    h1, p {
-        color: black;
-    }
-
-    .quotations {
-        width: 80%;
-        margin-left: 10%;
-    }
-
     .quotations-section {
         margin-top: 2%;
     }

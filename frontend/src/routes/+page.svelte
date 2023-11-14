@@ -56,7 +56,7 @@
             <div class='formGroup'><input type="password" id="password" placeholder="Password" required
                                           style='color:black'></div>
             <div class='btn-container'>
-                <button class="btn-signin centerBlock" type="submit" on:click="{onSubmit}">Sign-In</button>
+                <button class="btn-pay centerBlock" type="submit" on:click="{onSubmit}">Sign-In</button>
             </div>
 
             {#if hasInvalidCredentials}
@@ -134,7 +134,7 @@
         padding: 0.5em;
     }
 
-    .btn-signin {
+    .btn-pay {
         display: inline-block;
         padding: 0.9rem 1.8rem;
         font-size: 16px;
@@ -151,7 +151,7 @@
         border-radius: 1em;
     }
 
-    .btn-signin::before {
+    .btn-pay::before {
         content: "";
         position: absolute;
         left: 0;
@@ -164,7 +164,7 @@
         z-index: -1;
     }
 
-    .btn-signin:hover::before {
+    .btn-pay:hover::before {
         transform: translateX(0);
     }
 
