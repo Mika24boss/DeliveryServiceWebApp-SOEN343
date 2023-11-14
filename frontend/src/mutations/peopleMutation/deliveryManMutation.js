@@ -7,14 +7,12 @@ const ADD_DELIVERY_MAN = gql`
 		$phoneNumber: String!
 		$emailAddress: String!
 		$loginInfo: String!
-		$role: String!
 	) {
 		addDeliveryMan(
 			name: $name
 			phoneNumber: $phoneNumber
 			emailAddress: $emailAddress
 			loginInfo: $loginInfo
-			role: $role
 		) {
 			id
 			name
@@ -43,4 +41,4 @@ const DELETE_DELIVERY_MAN = gql`
 	}
 `;
 
-export { ADD_DELIVERY_MAN, DELETE_DELIVERY_MAN, DELETE_ORDER };
+export { ADD_DELIVERY_MAN, DELETE_DELIVERY_MAN };

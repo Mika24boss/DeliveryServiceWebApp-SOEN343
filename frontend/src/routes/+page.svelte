@@ -22,7 +22,6 @@
     async function onSubmit() {
         email = document.getElementById("email").value;
         password = document.getElementById("password").value;
-
         try {
             const response = await signInMutation({
                 variables: {
@@ -32,8 +31,7 @@
             });
 
             console.log(response);
-            localStorage.setItem('user', JSON.stringify(response.data));
-
+            localStorage.setItem('user', JSON.stringify(response.data.login));
             // Navigate to the desired page
             if (!response) {
                 setTimeout(() => isWaiting = false, 100);
@@ -47,8 +45,6 @@
             }
         } catch (error) {
             console.error(error);
-
-            // Handle the error, set a flag, show a message, etc.
         }
     }
 

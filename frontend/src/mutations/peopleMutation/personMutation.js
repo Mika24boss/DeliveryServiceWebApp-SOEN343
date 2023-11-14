@@ -1,4 +1,5 @@
 import { gql } from '@apollo/client/core';
+import { mutation } from 'svelte-apollo';
 
 const ADD_PERSON = gql`
 	mutation addPerson($name: String!, $emailAddress: String!, $phoneNumber: String!) {
@@ -64,5 +65,18 @@ const LOGIN = gql`
 		}
 	}
 `;
+const register = async (userData) => {
+	const signInMutation = mutation(LOGIN);
+	const response = await signInMutation({
+		variables: {
+			emailAddress: userData.email,
+			password: userData.password
+		}
+	});
+
+	console.log(response);
+	localStorage.setItem('user', JSON.stringify(response.data));
+	return response;
+};
 
 export { ADD_PERSON, DELETE_PERSON, UPDATE_PERSON, LOGIN };

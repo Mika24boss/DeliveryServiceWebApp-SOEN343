@@ -161,7 +161,12 @@ const mutation = new GraphQLObjectType({
                     loginInfo: hashedPassword,
                     role: args.role
                 });
-                return deliveryMan.save();
+                await deliveryMan.save();
+                return {
+                    ...deliveryMan._doc,
+                    id: deliveryMan._id,
+                    token: generateToken(deliveryMan._id)
+                };
             },
         },
         // @desc Register new Admin
@@ -187,7 +192,12 @@ const mutation = new GraphQLObjectType({
                     loginInfo: hashedPassword,
                     role: args.role
                 });
-                return admin.save();
+                await admin.save();
+                return {
+                    ...admin._doc,
+                    id: admin._id,
+                    token: generateToken(admin._id)
+                };
             },
         },//ji
         deleteClient: {
@@ -198,7 +208,7 @@ const mutation = new GraphQLObjectType({
             async resolve(parent, args) {
                 const client = Client.findOne(args.emailAddress);
                 for (const order of client.order) {
-                    if (order != "DELIVERED" || order != "NONE") {
+                    if (order !== "DELIVERED" || order !== "NONE") {
                         throw new Error("unable to delete");
                     }
                 }

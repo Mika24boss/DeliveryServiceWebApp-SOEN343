@@ -7,14 +7,12 @@ const ADD_CLIENT = gql`
 		$phoneNumber: String!
 		$emailAddress: String!
 		$loginInfo: String!
-		$role: String!
 	) {
 		addClient(
 			name: $name
 			phoneNumber: $phoneNumber
 			emailAddress: $emailAddress
 			loginInfo: $loginInfo
-			role: $role
 		) {
 			id
 			name

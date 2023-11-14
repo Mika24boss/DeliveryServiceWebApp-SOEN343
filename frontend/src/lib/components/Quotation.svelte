@@ -1,7 +1,4 @@
 <script>
-    import authService from '$lib/features/authService.js';
-    import {onMount} from "svelte";
-    import {goto} from "$app/navigation";
 
     export var quotationID, creationDateQuotation;
 
@@ -10,7 +7,7 @@
 
     async function loadQuotation() {
         // await onMount(() => {
-        //     user = authService.getUser();
+        //     user = localStorage.getItem('user');
         // })
         // role = user.role;
         //
