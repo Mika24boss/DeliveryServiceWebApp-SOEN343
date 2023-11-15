@@ -25,9 +25,24 @@
 
 
 <style>
+    a{
+        text-decoration: none;
+    }
 
-    * {
-        font-family: 'Barlow', sans-serif;
+    a:link{
+        color: black;
+    }
+
+    a:visited{
+        color: black;
+    }
+
+    a:hover{
+        color: white;
+        transition: 0.7s;
+    }
+
+    a:active{
         color: black;
     }
 

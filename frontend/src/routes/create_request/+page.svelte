@@ -113,7 +113,7 @@
 
 <div class="header">
     <h1 use:preventTabClose={hasChanged}>Create A Delivery Request</h1>
-    <button class="btn" on:click="{createRequest}">Submit</button>
+    <button class="payment-button" on:click="{createRequest}">Submit</button>
 </div>
 
 <div class="informationSection">
@@ -143,7 +143,7 @@
 </div>
 
 <h2>Order items</h2>
-<button class="btn addItemBtn" on:click={addItem}>+ Add</button>
+<button class="payment-button addItemBtn" on:click={addItem}>+ Add</button>
 {#if orderItems.length > 0}
     <div class="columnTitles">
         <span class="itemNameTitle">Name</span>
@@ -162,14 +162,11 @@
         <input class="itemQty" type='number' id='quantity' placeholder='Qty' min=1 value=1 on:keydown={changedText}
                data-index={i}
                on:input={update}/>
-        <button class="btn removeItemBtn" on:click={() => remove(i)}>Remove</button>
+        <button class="payment-button removeItemBtn" on:click={() => remove(i)}>Remove</button>
     </div>
 {/each}
 
 <style>
-    * {
-        font-family: 'Barlow', sans-serif;
-    }
 
     h1 {
         color: black;
@@ -181,7 +178,7 @@
         margin-bottom: 3em;
     }
 
-    .btn {
+    .payment-button {
         display: inline-block;
         padding: 0.9em 1.8em;
         font-size: 24px;
@@ -199,7 +196,7 @@
         grid-column: 3;
     }
 
-    .btn::before {
+    .payment-button::before {
         content: "";
         position: absolute;
         left: 0;
@@ -212,7 +209,7 @@
         z-index: -1;
     }
 
-    .btn:hover::before {
+    .payment-button:hover::before {
         transform: translateX(0);
     }
 
@@ -246,7 +243,7 @@
         color: black;
         border: none;
         border-bottom: 2px solid orange;
-        font-size: 14px;
+        font-size: 18px;
         font-weight: bold;
         background-color: transparent;
     }

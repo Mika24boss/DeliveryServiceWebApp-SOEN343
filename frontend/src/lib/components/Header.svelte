@@ -31,9 +31,9 @@
         user = authService.getUser();
         if (user) {
             isLoggedOut = false;
-            if (user.role === "Customer") isCustomer = true;
-            else if (user.role === "Employee") isEmployee = true;
-            else if (user.role === "Admin") isAdmin = true;
+            if (user.role === "CLIENT") isCustomer = true;
+            else if (user.role === "DELIVERYMAN") isEmployee = true;
+            else if (user.role === "ADMIN") isAdmin = true;
             else isLoggedOut = true;
         }
         hasUpdated.set(false);
