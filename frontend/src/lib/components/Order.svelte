@@ -3,7 +3,7 @@
     import {onMount} from "svelte";
     import {goto} from "$app/navigation";
 
-    export var orderID, estimatedDeliveryDate, details, total;
+    export var orderID, submissionDate, orderItems, total;
 
     let role = 'Customer';
     let user = 'Michael';
@@ -33,10 +33,14 @@
 {:then user}
     <div class="outline" id={orderID}>
         <a href="/orders/{orderID}">
-            <div class="estimated-delivery-date">{estimatedDeliveryDate}</div>
+            <div class="submission-date">{submissionDate}</div>
         </a>
         <a href="/orders/{orderID}">
-            <div class="details">{details}</div>
+            <div class="items">
+                {#each orderItems as item, i}
+                    {item.quantity} X {item.itemName}{ i === orderItems.length - 1 ? '' : ', '}
+                {/each}
+            </div>
         </a>
         {#if user.role === "Customer"}
             <div class="total">{total}</div>
@@ -97,7 +101,7 @@
         place-items: center;
     }
 
-    .estimated-delivery-date {
+    .submission-date {
         text-align: left;
         grid-area: date;
     }

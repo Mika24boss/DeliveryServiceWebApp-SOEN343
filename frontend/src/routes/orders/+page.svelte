@@ -8,22 +8,39 @@
     import LoadingAnimation from '$lib/components/LoadingAnimation.svelte';
     import {goto} from "$app/navigation";
     import Order from "$lib/components/Order.svelte";
+    import {browser} from "$app/environment";
 
     let user;
     let finishedLoading = false;
     let orders = [];
 
     onMount(() => {
-        user = authService.getUser();
-        loadPage();
+        user = JSON.parse(localStorage.getItem('user'));
+        loadJobs();
     });
 
-    async function loadPage() {
-        // if (user == null) {
-        //     await goto('/');
-        // }
-        // setTimeout(() => {finishedLoading = true;}, 300);
-        orders.push({orderID:123, estimatedDeliveryDate: '12 December 2023', details: "mangoes, toys, candies", total: '888$'})
+    async function loadJobs() {
+        if (!browser) return;
+        // await onMount(() => {
+        //     //user = authService.getUser();
+        //
+        // })
+        user = 'TO CHANGE';
+        if (user == null) {
+            await goto('/');
+        } else {
+            //const requests = await jobService.getJobs(user.token);
+            let orderItems = [{itemName: 'Mango', quantity: '10'},
+                {itemName: 'Couch', quantity: '500'},
+                {itemName: 'Number 10 machine screw (0.190 inch major diameter)', quantity: '51700'}];
+            orders.push({
+                quotationID: '57f5en320a83',
+                submissionDate: 'Fri Nov 17 2023 17:11:22',
+                orderItems: orderItems,
+                distance: '5 km'
+            });
+            orders = orders;
+        }
         finishedLoading = true;
     }
 
