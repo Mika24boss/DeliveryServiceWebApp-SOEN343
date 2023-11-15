@@ -57,26 +57,26 @@
 
     function getFieldData() {
         let buyerName = document.getElementById('buyerName').value;
-        let deliveryStreet = document.getElementById('deliveryStreet').value;
+        let deliveryAddress = document.getElementById('deliveryAddress').value;
         let deliveryCity = document.getElementById('deliveryCity').value;
         let deliveryProvince = document.getElementById('deliveryProvince').value;
         let deliveryCountry = document.getElementById('deliveryCountry').value;
         let deliveryPostalCode = document.getElementById('deliveryPostalCode').value;
         let sellerName = document.getElementById('sellerName').value;
-        let pickupStreet = document.getElementById('pickupStreet').value;
+        let pickupAddress = document.getElementById('pickupAddress').value;
         let pickupCity = document.getElementById('pickupCity').value;
         let pickupProvince = document.getElementById('pickupProvince').value;
         let pickupCountry = document.getElementById('pickupCountry').value;
         let pickupPostalCode = document.getElementById('pickupPostalCode').value;
         let alertText = '';
         if (!buyerName.trim()) alertText += 'Missing your name!\n';
-        if (!deliveryStreet.trim()) alertText += 'Missing delivery street!\n';
+        if (!deliveryAddress.trim()) alertText += 'Missing delivery address!\n';
         if (!deliveryCity.trim()) alertText += 'Missing delivery city!\n';
         if (!deliveryProvince.trim()) alertText += 'Missing delivery province!\n';
         if (!deliveryCountry.trim()) alertText += 'Missing delivery country!\n';
         if (!deliveryPostalCode.trim()) alertText += 'Missing delivery postal code!\n';
         if (!sellerName.trim()) alertText += 'Missing seller\'s name!\n';
-        if (!pickupStreet.trim()) alertText += 'Missing pickup street!\n';
+        if (!pickupAddress.trim()) alertText += 'Missing pickup address!\n';
         if (!pickupCity.trim()) alertText += 'Missing pickup city!\n';
         if (!pickupProvince.trim()) alertText += 'Missing pickup province!\n';
         if (!pickupCountry.trim()) alertText += 'Missing pickup country!\n';
@@ -89,18 +89,19 @@
             if (orderItems[i].quantity < 1)
                 alertText += 'Invalid quantity for item #' + (i + 1) + '!\n';
         }
+        console.log(date)
         if (alertText) {
             alert(alertText);
             return null;
         } else return {
             buyerName,
-            deliveryStreet,
+            deliveryAddress,
             deliveryCity,
             deliveryProvince,
             deliveryCountry,
             deliveryPostalCode,
             sellerName,
-            pickupStreet,
+            pickupAddress,
             pickupCity,
             pickupProvince,
             pickupCountry,
@@ -111,8 +112,8 @@
 </script>
 
 <div class="header">
-    <h1 class="title" use:preventTabClose={hasChanged}>Create A Delivery Request</h1>
-    <button class="submitBtn" on:click="{createRequest}">Submit</button>
+    <h1 use:preventTabClose={hasChanged}>Create A Delivery Request</h1>
+    <button class="btn" on:click="{createRequest}">Submit</button>
 </div>
 
 <div class="informationSection">
@@ -120,7 +121,7 @@
     <div class="buyerInfo">
         <h2>Delivery address</h2>
         <input type='text' id='buyerName' placeholder='Your full name' on:keydown={changedText}/>
-        <input type='text' id='deliveryStreet' placeholder='Street' on:keydown={changedText}/>
+        <input type='text' id='deliveryAddress' placeholder='Address' on:keydown={changedText}/>
         <input type='text' id='deliveryCity' placeholder='City' on:keydown={changedText}/>
         <input type='text' id='deliveryProvince' placeholder='State/Province' on:keydown={changedText}/>
         <input type='text' id='deliveryCountry' placeholder='Country' on:keydown={changedText}/>
@@ -130,7 +131,7 @@
     <div class="sellerInfo">
         <h2>Pick up address</h2>
         <input type='text' id='sellerName' placeholder='Full name of seller' on:keydown={changedText}/>
-        <input type='text' id='pickupStreet' placeholder='Street' on:keydown={changedText}/>
+        <input type='text' id='pickupAddress' placeholder='Address' on:keydown={changedText}/>
         <input type='text' id='pickupCity' placeholder='City' on:keydown={changedText}/>
         <input type='text' id='pickupProvince' placeholder='State/Province' on:keydown={changedText}/>
         <input type='text' id='pickupCountry' placeholder='Country' on:keydown={changedText}/>
@@ -142,7 +143,7 @@
 </div>
 
 <h2>Order items</h2>
-<button class="addItemBtn" on:click={addItem}>+ Add</button>
+<button class="btn addItemBtn" on:click={addItem}>+ Add</button>
 {#if orderItems.length > 0}
     <div class="columnTitles">
         <span class="itemNameTitle">Name</span>
@@ -161,11 +162,18 @@
         <input class="itemQty" type='number' id='quantity' placeholder='Qty' min=1 value=1 on:keydown={changedText}
                data-index={i}
                on:input={update}/>
-        <button class="removeItemBtn" on:click={() => remove(i)}>Remove</button>
+        <button class="btn removeItemBtn" on:click={() => remove(i)}>Remove</button>
     </div>
 {/each}
 
 <style>
+    * {
+        font-family: 'Barlow', sans-serif;
+    }
+
+    h1 {
+        color: black;
+    }
 
     .header {
         display: grid;
@@ -173,7 +181,7 @@
         margin-bottom: 3em;
     }
 
-    .submitBtn {
+    .btn {
         display: inline-block;
         padding: 0.9em 1.8em;
         font-size: 24px;
@@ -191,7 +199,7 @@
         grid-column: 3;
     }
 
-    .submitBtn::before {
+    .btn::before {
         content: "";
         position: absolute;
         left: 0;
@@ -204,7 +212,7 @@
         z-index: -1;
     }
 
-    .submitBtn:hover::before {
+    .btn:hover::before {
         transform: translateX(0);
     }
 
@@ -234,6 +242,19 @@
         display: grid;
     }
 
+    input {
+        color: black;
+        border: none;
+        border-bottom: 2px solid orange;
+        font-size: 14px;
+        font-weight: bold;
+        background-color: transparent;
+    }
+
+    input::placeholder {
+        color: black;
+    }
+
     .buyerInfo {
         display: grid;
         justify-items: stretch;
@@ -249,77 +270,18 @@
 
     .addItemBtn {
         max-width: 200px;
-        display: inline-block;
-        padding: 0.9em 1.8em;
         font-size: 16px;
-        font-weight: 700;
-        color: black;
-        border: 3px solid orange;
-        cursor: pointer;
-        position: relative;
-        background-color: transparent;
-        text-decoration: none;
-        overflow: hidden;
-        z-index: 1;
-        font-family: inherit;
-        border-radius: 1em;
-    }
-
-    .addItemBtn::before {
-        content: "";
-        position: absolute;
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: 100%;
-        background-color: orange;
-        transform: translateX(-100%);
-        transition: all .3s;
-        z-index: -1;
-    }
-
-    .addItemBtn:hover::before {
-        transform: translateX(0);
     }
 
     .removeItemBtn {
-        max-width: 100px;
-        height: 3em;
-        display: inline-block;
+        max-width: 150px;
+        height: 3.5em;
         font-size: 16px;
-        font-weight: 700;
-        color: black;
-        border: 3px solid orange;
-        cursor: pointer;
-        position: relative;
-        background-color: transparent;
-        text-decoration: none;
-        overflow: hidden;
-        z-index: 1;
-        font-family: inherit;
-        border-radius: 1em;
-    }
-
-    .removeItemBtn::before {
-        content: "";
-        position: absolute;
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: 100%;
-        background-color: orange;
-        transform: translateX(-100%);
-        transition: all .3s;
-        z-index: -1;
-    }
-
-    .removeItemBtn:hover::before {
-        transform: translateX(0);
     }
 
     .columnTitles {
         display: grid;
-        grid-template-columns: 315px 50px;
+        grid-template-columns: 320px 50px;
         justify-items: center;
         margin-top: 1em;
     }
@@ -344,15 +306,12 @@
     .itemName {
         height: 3em;
         width: 300px;
+        margin-right: 10px;
     }
 
     .itemQty {
         height: 3em;
         width: 50px;
-    }
-
-    input {
-        font-size: 16px;
     }
 
 </style>

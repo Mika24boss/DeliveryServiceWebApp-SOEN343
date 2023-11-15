@@ -10,7 +10,7 @@
     let user;
     let isLoggedOut = true;
     let isCustomer = false;
-    let isEmployer = false;
+    let isEmployee = false;
     let isAdmin = false;
     let canLoad = false;
 
@@ -26,13 +26,13 @@
     function updateUser() {
         isLoggedOut = true;
         isCustomer = false;
-        isEmployer = false;
+        isEmployee = false;
         isAdmin = false;
         user = authService.getUser();
         if (user) {
             isLoggedOut = false;
             if (user.role === "Customer") isCustomer = true;
-            else if (user.role === "Employer") isEmployer = true;
+            else if (user.role === "Employee") isEmployee = true;
             else if (user.role === "Admin") isAdmin = true;
             else isLoggedOut = true;
         }
@@ -63,13 +63,13 @@
                         <li>
                             <a href='/orders'>Orders</a>
                         </li>
-                    {:else if isEmployer}
+                    {:else if isEmployee}
                         <li>
                             <a href='/orders'>Orders</a>
                         </li>
                     {:else if isAdmin}
                         <li>
-                            <a href='/requests'>Quotations</a>
+                            <a href='/requests'>Requests</a>
                         </li>
                     {/if}
                     <li>
