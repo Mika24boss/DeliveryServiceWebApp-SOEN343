@@ -19,6 +19,8 @@
     let isWaiting = false;
     let isCustomer = true;
 
+    onMount(onSubmit);
+
     // const [login, {loading, error}] = mutation(LOGIN);
     async function onSubmit() {
         email = document.getElementById("email").value;
@@ -48,8 +50,6 @@
             console.error(error);
         }
     }
-
-    onMount(onSubmit);
 
 </script>
 
