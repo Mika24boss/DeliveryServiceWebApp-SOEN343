@@ -1,6 +1,6 @@
 <script>
 
-    export var quotationID, creationDateQuotation;
+    export var quotationID, creationDate;
 
     let user, role = 'Customer';
     loadQuotation();
@@ -17,16 +17,14 @@
     }
 
     async function onClick() {
-        // await goto('/payment');
+        await goto('/quotations' + '/payment/' + quotationID);
     }
 
 </script>
 {#await user}
 {:then user}
     <div class="outline" id={quotationID}>
-        <div class="creation-date">
-            25-December-2023
-        </div>
+        <div class="creation-date">{creationDate}</div>
         {#if role === 'Customer'}
             <button class="payment-button" type="submit" on:click={onClick}>
                 Pay
@@ -40,11 +38,6 @@
 
 
 <style>
-
-    * {
-        font-family: 'Barlow', sans-serif;
-        color: black;
-    }
 
     .outline {
         min-width: 50em;

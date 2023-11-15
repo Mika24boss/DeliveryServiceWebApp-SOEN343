@@ -17,6 +17,7 @@
     let response;
     let hasInvalidCredentials = false;
     let isWaiting = false;
+    let isCustomer = true;
 
     // const [login, {loading, error}] = mutation(LOGIN);
     async function onSubmit() {
@@ -70,11 +71,11 @@
             <p style="font-size: 20px;">We meet strangers so you don't have to.</p>
         </span>
         <form class='centerBlock'>
-            <div class='formGroup'><input type="text" id="email" placeholder="Email" required style='color:white'></div>
+            <div class='formGroup'><input type="text" id="email" placeholder="Email" required style='color:black'></div>
             <div class='formGroup'><input type="password" id="password" placeholder="Password" required
-                                          style='color:white'></div>
+                                          style='color:black'></div>
             <div class='btn-container'>
-                <button class="btn-signin centerBlock" type="submit" on:click="{onSubmit}">Sign-In</button>
+                <button class="btn-pay centerBlock" type="submit" on:click="{onSubmit}">Sign-In</button>
             </div>
 
             {#if hasInvalidCredentials}
@@ -90,10 +91,6 @@
 {/if}
 
 <style>
-    * {
-        font-family: 'Barlow', sans-serif;
-        color: black;
-    }
 
     section {
         width: 70%;
@@ -156,7 +153,7 @@
         padding: 0.5em;
     }
 
-    .btn-signin {
+    .btn-pay {
         display: inline-block;
         padding: 0.9rem 1.8rem;
         font-size: 16px;
@@ -173,7 +170,7 @@
         border-radius: 1em;
     }
 
-    .btn-signin::before {
+    .btn-pay::before {
         content: "";
         position: absolute;
         left: 0;
@@ -186,7 +183,7 @@
         z-index: -1;
     }
 
-    .btn-signin:hover::before {
+    .btn-pay:hover::before {
         transform: translateX(0);
     }
 

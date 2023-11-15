@@ -1,37 +1,26 @@
-<svelte:head>
-    <title>{pageTitle}</title>
-</svelte:head>
-
 <script>
-    import {page} from "$app/stores";
-    import Map from '$lib/images/tracking-map.png';
-    import {goto} from "$app/navigation";
     import authService from '$lib/features/authService.js';
-    import {onMount} from 'svelte';
-    import LoadingAnimation from '$lib/components/LoadingAnimation.svelte';
+    import {onMount} from "svelte";
+    import {goto} from "$app/navigation";
 
-    let user;
-    let finishedLoading = false;
-    const orderID = $page.url.pathname.split('/').pop();
-    let pageTitle = "Order #" + orderID;
-    let estimatedDeliveryDate = '12 December 2023';
-    let details = "mangoes, toys, candies";
-    let total = '888$';
-    let deliveryType = 'Small trucks';
-    let statusOrder = 'paid';
+    export var orderID, estimatedDeliveryDate, details, total;
+
+    let role = 'Customer';
+    let user = 'Michael';
     let statusOrderText = 'Paid';
+    let statusOrder = 'paid';
 
-    onMount(() => {
-        user = authService.getUser();
-        loadPage();
-    });
+    loadOrder();
 
-    async function loadPage() {
+    async function loadOrder() {
+        // await onMount(() => {
+        //     user = authService.getUser();
+        // })
+        // role = user.role;
+        //
         // if (user == null) {
         //     await goto('/');
         // }
-        // setTimeout(() => {finishedLoading = true;}, 300);
-        finishedLoading = true;
     }
 
     function UpdateStatusOrder(status) {
@@ -40,19 +29,20 @@
     }
 
 </script>
-
-<div class='order'>
-    {#if !finishedLoading}
-        <LoadingAnimation/>
-    {:else}
-        <div class='order-section'>
-            <h1>Order #{orderID}</h1>
-            <h2>Estimated delivery date: {estimatedDeliveryDate}</h2>
-            <div class="details">Summary of order: {details}</div>
-            <div class='order-container'>
-                <div class="delivery-type">Delivery type: {deliveryType}</div>
-                <div class="update-status">
-                    <span>Status: {statusOrderText}
+{#await user}
+{:then user}
+    <div class="outline" id={orderID}>
+        <a href="/orders/{orderID}">
+            <div class="estimated-delivery-date">{estimatedDeliveryDate}</div>
+        </a>
+        <a href="/orders/{orderID}">
+            <div class="details">{details}</div>
+        </a>
+        {#if user.role === "Customer"}
+            <div class="total">{total}</div>
+        {:else}
+            <div class="update-status">
+                <span id="status-span">Status: {statusOrderText}
                     <label class="popup">
                     <input type="checkbox">
                     <div class="burger" tabindex="0">
@@ -87,26 +77,50 @@
                     </nav>
                 </label>
                 </span>
-                </div>
             </div>
-            <img src={Map} alt="map_image"/>
-        </div>
-    {/if}
-</div>
+        {/if}
+
+    </div>
+
+{/await}
 
 <style>
 
-    .order-section {
-        margin-top: 2%;
+    .outline {
+        min-width: 50em;
+        height: 4em;
+        outline: 2px solid black;
+        border-radius: 1em;
+        grid-template-columns: 1fr 3fr 1fr;
+        grid-template-areas: "date details total";
+        display: grid;
+        place-items: center;
     }
 
-    img {
-        display: block;
-        margin-left: auto;
-        margin-right: auto;
-        border: 0.4em solid black;
-        width: 50%;
-        height: 50%;
+    .estimated-delivery-date {
+        text-align: left;
+        grid-area: date;
+    }
+
+    a{
+        text-decoration: none;
+    }
+
+    a:link{
+        color: black;
+    }
+
+    a:visited{
+        color: black;
+    }
+
+    a:hover{
+        color: white;
+        transition: 0.7s;
+    }
+
+    a:active{
+        color: black;
     }
 
     .popup {

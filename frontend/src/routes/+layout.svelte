@@ -20,6 +20,11 @@
         --secondary-color: rgba(232, 167, 13, 1);
     }
 
+    *{
+        font-family: 'Inter',serif;
+        color: black;
+    }
+
     .app {
         display: flex;
         flex-direction: column;

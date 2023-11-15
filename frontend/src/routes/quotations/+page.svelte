@@ -9,6 +9,7 @@
 
     let user;
     let finishedLoading = false;
+    let quotations = [];
 
     onMount(() => {
         user = JSON.parse(localStorage.getItem('user'));
@@ -21,6 +22,7 @@
         //     await goto('/');
         // }
         // setTimeout(() => {finishedLoading = true;}, 300);
+        quotations.push({quotationID:123, creationDate: '12 December 2023'})
         finishedLoading = true;
     }
 
@@ -31,31 +33,18 @@
         <LoadingAnimation/>
     {:else}
         <div class='quotations-section'>
-            <button class="btn-createQuotation" type="submit"> + Create New Quotation</button>
+            <button class="btn-createQuotation" type="submit" on:click={()=> goto('/create_request')}> + Create New Quotation</button>
             <h1>Quotations</h1>
             <div class='quotations-container'>
-                <Quotation {...Quotation}/>
-                <Quotation {...Quotation}/>
-                <Quotation {...Quotation}/>
-                <Quotation {...Quotation}/>
+                {#each quotations as quotation(quotation.quotationID)}
+                <Quotation {...quotation}/>
+                {/each}
             </div>
         </div>
     {/if}
 </div>
 
 <style>
-    * {
-        font-family: 'Barlow', sans-serif;
-    }
-
-    h1, p {
-        color: black;
-    }
-
-    .quotations {
-        width: 80%;
-        margin-left: 10%;
-    }
 
     .quotations-section {
         margin-top: 2%;

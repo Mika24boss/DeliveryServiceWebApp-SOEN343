@@ -58,15 +58,18 @@
                 {:else}
                     {#if isCustomer}
                         <li>
-                            <a href="/quotations">Customer</a>
+                            <a href="/quotations">Quotations</a>
+                        </li>
+                        <li>
+                            <a href='/orders'>Orders</a>
                         </li>
                     {:else if isEmployer}
                         <li>
-                            <a href='/quotations'>Employer</a>
+                            <a href='/orders'>Orders</a>
                         </li>
                     {:else if isAdmin}
                         <li>
-                            <a href='/quotations'>Admin</a>
+                            <a href='/requests'>Quotations</a>
                         </li>
                     {/if}
                     <li>
@@ -82,9 +85,6 @@
 </header>
 
 <style>
-    * {
-        font-family: 'Barlow', sans-serif;
-    }
 
     header {
         display: flex;
