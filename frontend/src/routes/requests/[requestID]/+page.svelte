@@ -54,7 +54,8 @@
     })
 
     function accept() {
-        alert("Accepted at " + price + "$!");
+        if (price === undefined) alert("Please enter a price.")
+        else alert("Accepted at " + price + "$!");
     }
 
     function reject() {
@@ -102,10 +103,6 @@
 {/if}
 
 <style>
-    * {
-        font-family: 'Barlow', sans-serif;
-    }
-
     h1 {
         color: black;
     }
