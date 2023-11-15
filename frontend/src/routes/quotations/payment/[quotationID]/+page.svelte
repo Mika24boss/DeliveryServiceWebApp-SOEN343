@@ -24,7 +24,7 @@
 
 </script>
 
-<h1>Payment for quotation #{quotationID}</h1>
+<h1>Payment for quotation</h1>
 <h2>Enter payment details:</h2>
 <div class="payment-page">
     <div class="payment-section">
@@ -111,7 +111,7 @@
     .btn-pay {
         width: 20em;
         height: 5em;
-        font-size: 18px;
+        font-size: 24px;
         font-weight: 700;
         color: black;
         border: 3px solid orange;

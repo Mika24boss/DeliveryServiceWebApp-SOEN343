@@ -68,8 +68,8 @@
 {:else}
     <div class="header">
         <h1>Delivery request</h1>
-        <button class="btn" on:click={accept}>Accept</button>
-        <button class="btn" on:click={reject}>Reject</button>
+        <button class="payment-button" on:click={accept}>Accept</button>
+        <button class="payment-button" on:click={reject}>Reject</button>
     </div>
 
     <h2>Delivery</h2>
@@ -148,7 +148,7 @@
         color: black;
     }
 
-    .btn {
+    .payment-button {
         max-width: 20em;
         width: 100%;
         margin-right: 1em;
@@ -168,7 +168,7 @@
         border-radius: 1em;
     }
 
-    .btn::before {
+    .payment-button::before {
         content: "";
         position: absolute;
         left: 0;
@@ -181,7 +181,7 @@
         z-index: -1;
     }
 
-    .btn:hover::before {
+    .payment-button:hover::before {
         transform: translateX(0);
     }
 

@@ -1,20 +1,9 @@
 <script>
+    import {goto} from "$app/navigation";
 
-    export var quotationID, creationDate;
+    export var quotationID, submissionDate, orderItems, distance;
 
     let user, role = 'Customer';
-    loadQuotation();
-
-    async function loadQuotation() {
-        // await onMount(() => {
-        //     user = localStorage.getItem('user');
-        // })
-        // role = user.role;
-        //
-        // if (user == null) {
-        //     await goto('/');
-        // }
-    }
 
     async function onClick() {
         await goto('/quotations' + '/payment/' + quotationID);
@@ -24,16 +13,23 @@
 {#await user}
 {:then user}
     <div class="outline" id={quotationID}>
-        <div class="creation-date">{creationDate}</div>
-        {#if role === 'Customer'}
-            <button class="payment-button" type="submit" on:click={onClick}>
-                Pay
-            </button>
-
-        {:else if role === 'Admin'}
-            <p>Nothing</p>
-        {/if}
+        <a class="date" href="/quotations/{quotationID}">
+            {submissionDate}
+        </a>
+        <a class="items" href="/quotations/{quotationID}">
+            {#each orderItems as item, i}
+                {item.quantity} X {item.itemName}{ i === orderItems.length - 1 ? '' : ', '}
+            {/each}
+        </a>
+        <a class="distance" href="/quotations/{quotationID}">
+            {distance}
+        </a>
+        <button class="payment-button" type="submit" on:click={onClick}>
+            Pay
+        </button>
     </div>
+
+
 {/await}
 
 
@@ -44,15 +40,44 @@
         height: 4em;
         outline: 2px solid black;
         border-radius: 1em;
-        grid-template-columns: 1fr 3fr 1fr;
-        grid-template-areas: "date details paymentBtn";
+        grid-template-columns: 2fr 8fr 1fr 1fr;
         display: grid;
-        place-items: center;
+        align-items: center;
+        gap: 1em;
+        padding: 0 1em;
+        text-decoration: none;
     }
 
-    .creation-date {
+    .items {
+        width: 100%;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .date {
         text-align: left;
-        grid-area: date;
+    }
+
+    a {
+        text-decoration: none;
+    }
+
+    a:link {
+        color: black;
+    }
+
+    a:visited {
+        color: black;
+    }
+
+    a:hover {
+        color: white;
+        transition: 0.7s;
+    }
+
+    a:active {
+        color: black;
     }
 
     .payment-button {
@@ -70,8 +95,6 @@
         z-index: 1;
         font-family: inherit;
         border-radius: 1em;
-        grid-area: paymentBtn;
-
     }
 
     .payment-button::before {

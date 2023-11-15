@@ -13,23 +13,48 @@
     let finishedLoading = false;
     const quotationID = $page.url.pathname.split('/').pop();
     let pageTitle = "Quotation #" + quotationID;
-    let estimatedDeliveryDate = '12 December 2023';
-    let details = "mangoes, toys, candies";
-    let total = '888$';
-    let deliveryType = 'Small trucks';
-    let statusOrder = 'ongoing';
+    let quotation = [];
+    let orderItems = [];
 
-    onMount(() => {
-        user = authService.getUser();
-        loadPage();
-    });
-
-    async function loadPage() {
+    onMount(async () => {
+        // user = authService.getUser();
         // if (user == null) {
         //     await goto('/');
+        //     return;
         // }
-        // setTimeout(() => {finishedLoading = true;}, 300);
+        user = 'TO CHANGE';
+
+        //quotation = (await jobService.getJobByID(jobID, user.token))[0];
+
+        quotation = {
+            buyerName: 'John Smith',
+            deliveryAddress: '550 Dat Street',
+            deliveryCity: 'Pi',
+            deliveryProvince: 'Nutkuabec',
+            deliveryCountry: 'Uganda',
+            deliveryPostalCode: '13579',
+            sellerName: 'Mohammed Li',
+            pickupAddress: '550 Dis Street',
+            pickupCity: 'Golden Ratio',
+            pickupProvince: 'Kuabec',
+            pickupCountry: 'Uruguay',
+            pickupPostalCode: '24680',
+            date: 'Fri Nov 17 2023 17:11:22',
+            distance: '5 km'
+        }
+        orderItems = [{itemName: 'Mango', quantity: '10'},
+            {itemName: 'Couch', quantity: '500'},
+            {itemName: 'Number 10 machine screw (0.190 inch major diameter)', quantity: '51700'}];
+
+        if (quotation == null) {
+            alert('No quotation has an ID #' + quotationID + '.');
+            await goto('/quotations');
+        }
         finishedLoading = true;
+    })
+
+    async function onClick() {
+        await goto('/quotations' + '/payment/' + quotationID);
     }
 
 </script>
@@ -38,29 +63,107 @@
     {#if !finishedLoading}
         <LoadingAnimation/>
     {:else}
-        <div class='quotation-section'>
-            <h1>Quotation #{quotationID}</h1>
-            <div class='quotation-container'>
-                <div class="details">{details}</div>
-
-            </div>
+        <div class="header">
+            <h1>Delivery quotation</h1>
+            <button class="payment-button" on:click={onClick}>Pay</button>
         </div>
+
+        <h2>Delivery</h2>
+        <div>{quotation.buyerName}</div>
+        <div>{quotation.deliveryAddress}</div>
+        <div>{quotation.deliveryCity} {quotation.deliveryProvince} {quotation.deliveryPostalCode} {quotation.deliveryCountry}</div>
+
+        <h2>Pickup</h2>
+        <div>{quotation.sellerName}</div>
+        <div>{quotation.pickupAddress}</div>
+        <div>{quotation.pickupCity} {quotation.pickupProvince} {quotation.pickupPostalCode} {quotation.pickupCountry}</div>
+        <br/>
+        <div>{quotation.date}</div>
+        <br/>
+        <div>{quotation.distance}</div>
+
+        <h2>Order items</h2>
+        <table>
+            {#each orderItems as item, i}
+                <tr>
+                    <td>#{i + 1}</td>
+                    <td>{item.quantity}</td>
+                    <td>X</td>
+                    <td>{item.itemName}</td>
+                </tr>
+            {/each}
+        </table>
     {/if}
 </div>
 
 <style>
-
-    .quotation-section {
-        margin-top: 2%;
+    h1 {
+        color: black;
     }
 
-    img {
-        display: block;
-        margin-left: auto;
-        margin-right: auto;
-        border: 0.4em solid black;
-        width: 50%;
-        height: 50%;
+    h2 {
+        margin: 2em 0 1em 0;
+    }
+
+    tr:nth-child(odd) {
+        background-color: var(--secondary-color);
+    }
+
+    table {
+        max-width: 1000px;
+    }
+
+    table td:nth-child(1) {
+        width: 3%;
+    }
+
+    table td:nth-child(2) {
+        width: 5%;
+    }
+
+    table td:nth-child(3) {
+        width: 2%;
+    }
+
+    table td:nth-child(4) {
+        width: 90%;
+    }
+
+    .payment-button {
+        max-width: 20em;
+        width: 100%;
+        margin-right: 1em;
+        display: inline-block;
+        padding: 0.9rem 1.8rem;
+        font-size: 16px;
+        font-weight: 700;
+        color: black;
+        border: 3px solid orange;
+        cursor: pointer;
+        position: relative;
+        background-color: transparent;
+        text-decoration: none;
+        overflow: hidden;
+        z-index: 1;
+        font-family: inherit;
+        border-radius: 1em;
+    }
+
+    .payment-button::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: orange;
+        transform: translateX(-100%);
+        transition: all .3s;
+        z-index: -1;
+    }
+
+    .payment-button:hover::before {
+        transform: translateX(0);
     }
 
 
