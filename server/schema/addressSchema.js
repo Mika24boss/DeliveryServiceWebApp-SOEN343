@@ -1,10 +1,13 @@
 const graphql = require('graphql')
-const { GraphQLObjectType, GraphQLID, GraphQLString, GraphQLSchema,
+const {
+    GraphQLObjectType, GraphQLID, GraphQLString, GraphQLSchema,
     GraphQLList, GraphQLNonNull,
-    GraphQLFloat, GraphQLInt, GraphQLBoolean } = graphql
+    GraphQLFloat, GraphQLInt, GraphQLBoolean
+} = graphql
 const {GraphQLDateTime} = require('graphql-iso-date')
 const Address = require('../models/addressModel')
-const { AddressType} = require('./graphQLType')
+const {AddressType, AdminType} = require('./graphQLType')
+const Admin = require("../models/adminModel");
 
 const RootQuery = new GraphQLObjectType({
     name: 'RootQueryType',
@@ -14,6 +17,13 @@ const RootQuery = new GraphQLObjectType({
             resolve() {
                 return Address.find();
             }
+        },
+        address: {
+            type: AddressType,
+            args: {id: {type: GraphQLID}},
+            resolve(parent, args) {
+                return Address.findById(args.id);
+            },
         },
     },
 });
@@ -26,12 +36,12 @@ const mutation = new GraphQLObjectType({
         addAddress: {
             type: AddressType, // Assuming you have an AddressType defined
             args: {
-                street: { type: GraphQLString },
-                city: { type: GraphQLString },
-                state: { type: GraphQLString },
-                province: { type: GraphQLString },
-                country: { type: GraphQLString },
-                postalCode: { type: GraphQLString },
+                street: {type: GraphQLString},
+                city: {type: GraphQLString},
+                state: {type: GraphQLString},
+                province: {type: GraphQLString},
+                country: {type: GraphQLString},
+                postalCode: {type: GraphQLString},
             },
             resolve(parent, args) {
                 const address = new Address({
@@ -43,6 +53,16 @@ const mutation = new GraphQLObjectType({
                     postalCode: args.postalCode,
                 });
                 return address.save();
+            },
+        },
+        // Delete a client
+        deleteAddress: {
+            type: AddressType,
+            args: {
+                id: {type: GraphQLNonNull(GraphQLID)},
+            },
+            resolve(parent, args) {
+                return Client.findByIdAndRemove(args.id);
             },
         },
     },

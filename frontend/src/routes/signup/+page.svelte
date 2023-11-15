@@ -3,12 +3,23 @@
 </svelte:head>
 
 <script>
-    import authService from '$lib/features/authService.js';
     import {goto} from '$app/navigation';
-    import {hasUpdated} from '$lib/stores/updateUser.js';
     import LoadingAnimation from '$lib/components/LoadingAnimation.svelte';
+    import {mutation, setClient} from "svelte-apollo";
+    import {ApolloClient, InMemoryCache} from "@apollo/client/core";
+    import {ADD_DELIVERY_MAN} from "../../mutations/peopleMutation/deliveryManMutation.js";
+    import {ADD_CLIENT} from "../../mutations/peopleMutation/clientMutation.js";
 
-    let name, email, password, role;
+    const client = new ApolloClient({
+        uri: "https://bwm.happyfir.com/graphql/people",
+        cache: new InMemoryCache(),
+    });
+
+    setClient(client);
+    const signUpDeliveryManMutation = mutation(ADD_DELIVERY_MAN);
+    const signUpClientMutation = mutation(ADD_CLIENT);
+
+    let name, email, password, role, phoneNumber;
     let response;
     let isWaiting = false;
     let hasMissingFields = false;
@@ -18,24 +29,57 @@
         role = role;
         email = document.getElementById('email').value;
         password = document.getElementById('password').value;
-        const userData = {
-            name,
-            email,
-            password,
-            role
-        };
+        phoneNumber = document.getElementById('phone').value;
+
         isWaiting = true;
-        response = await authService.register(userData);
-        //console.log('Response: ', response);
-        if (!response) {
-            setTimeout(() => {
-                alert('Error when creating your account!');
-                isWaiting = false;
-            }, 100);
+        if (role === "Employer") {
+            const response = await signUpDeliveryManMutation({
+                variables: {
+                    name: name,
+                    emailAddress: email,
+                    loginInfo: password,
+                    phoneNumber: phoneNumber
+                }
+            })
+            localStorage.setItem('user', JSON.stringify(response.data.addDeliveryMan));
+            // Navigate to the desired page
+            if (!response) {
+                setTimeout(() => {
+                    alert('Error when creating your account!');
+                    isWaiting = false;
+                }, 100);
+            } else
+                await goto('/orders');
         } else {
-            hasUpdated.set(true);
-            await goto('/profile');
+            const response = await signUpClientMutation({
+                variables: {
+                    name: name,
+                    emailAddress: email,
+                    phoneNumber: phoneNumber,
+                    loginInfo: password,
+                }
+            })
+            localStorage.setItem('user', JSON.stringify(response.data.addClient));
+            // Navigate to the desired page
+            if (!response) {
+                setTimeout(() => {
+                    alert('Error when creating your account!');
+                    isWaiting = false;
+                }, 100);
+            } else
+                await goto('/quotations');
         }
+        // response = await authService.register(userData);
+        // //console.log('Response: ', response);
+        // if (!response) {
+        //     setTimeout(() => {
+        //         alert('Error when creating your account!');
+        //         isWaiting = false;
+        //     }, 100);
+        // } else {
+        //     hasUpdated.set(true);
+        //     await goto('/profile');
+        // }
     }
 
 </script>
@@ -68,8 +112,11 @@
                     <div class='formGroup'><input type='text' id='email' name='Email' placeholder='Email' required
                                                   style='color:black'></div>
                     <div class='formGroup'><input type='password' id='password' name='Password' placeholder='Password'
+                                                  required style='color:white'></div>
+                    <div class='formGroup'><input type='tel' id='phone' name='Phone' placeholder="123-45-678"
+                                                  pattern="[0-9]{3}-[0-9]{2}-[0-9]{3}"
                                                   required
-                                                  style='color:black'></div>
+                                                  style='color:white'></div>
                 </div>
 
                 {#if hasMissingFields}
@@ -255,8 +302,8 @@
         scale: 1;
     }
 
-		label{
-				position: relative;
-				left: -0.5em;
-		}
+    label {
+        position: relative;
+        left: -0.5em;
+    }
 </style>

@@ -1,7 +1,7 @@
 const express = require('express')
 const dotenv = require('dotenv').config();
 const cors = require('cors')
-const { graphqlHTTP } = require('express-graphql')
+const {graphqlHTTP} = require('express-graphql')
 const mongoose = require('mongoose')
 const connectDB = require('./config/db')
 const port = process.env.PORT || 8000
@@ -19,55 +19,55 @@ const app = express()
 app.use(cors())
 app.use(express.json())
 app.use('/graphql/people', graphqlHTTP({
-    schema: peopleSchema,
-    graphiql: process.env.NODE_ENV === 'development'
-}
-)
+            schema: peopleSchema,
+            graphiql: process.env.NODE_ENV === 'development'
+        }
+    )
 )
 app.use('/graphql/addresses', graphqlHTTP({
-    schema: addressSchema,
-    graphiql: process.env.NODE_ENV === 'development'
-}
-)
+            schema: addressSchema,
+            graphiql: process.env.NODE_ENV === 'development'
+        }
+    )
 )
 app.use('/graphql/clientOrderJoins', graphqlHTTP({
-    schema: clientOrderJoinsSchema,
-    graphiql: process.env.NODE_ENV === 'development'
-}
-)
+            schema: clientOrderJoinsSchema,
+            graphiql: process.env.NODE_ENV === 'development'
+        }
+    )
 )
 app.use('/graphql/items', graphqlHTTP({
-    schema: itemSchema,
-    graphiql: process.env.NODE_ENV === 'development'
-}
-)
+            schema: itemSchema,
+            graphiql: process.env.NODE_ENV === 'development'
+        }
+    )
 )
 app.use('/graphql/orderedItems',
     graphqlHTTP({
-        schema: orderedItemSchema,
-        graphiql: process.env.NODE_ENV === 'development'
-    }
+            schema: orderedItemSchema,
+            graphiql: process.env.NODE_ENV === 'development'
+        }
     )
 )
 app.use('/graphql/orders',
     graphqlHTTP({
-        schema: orderSchema,
-        graphiql: process.env.NODE_ENV === 'development'
-    }
+            schema: orderSchema,
+            graphiql: process.env.NODE_ENV === 'development'
+        }
     )
 )
 app.use('/graphql/payments',
     graphqlHTTP({
-        paymentSchema,
-        graphiql: process.env.NODE_ENV === 'development'
-    }
+            schema: paymentSchema,
+            graphiql: process.env.NODE_ENV === 'development'
+        }
     )
 )
 app.use('/graphql/quotations',
     graphqlHTTP({
-        quotationSchema,
-        graphiql: process.env.NODE_ENV === 'development'
-    }
+            schema: quotationSchema,
+            graphiql: process.env.NODE_ENV === 'development'
+        }
     )
 )
 

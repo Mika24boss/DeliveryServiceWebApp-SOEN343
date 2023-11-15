@@ -1,42 +1,61 @@
 <script>
-    import {authService} from '$lib/features/authService.js';
-    import {goto} from "$app/navigation";
-    import {hasUpdated} from "../lib/stores/updateUser.js";
     import LoadingAnimation from "$lib/components/LoadingAnimation.svelte";
+    import {ApolloClient, InMemoryCache} from '@apollo/client/core';
+    import {onMount} from "svelte";
+    import {mutation, setClient} from "svelte-apollo";
+    import {LOGIN} from "../mutations/peopleMutation/personMutation.js";
+    import {goto} from "$app/navigation";
 
+    const client = new ApolloClient({
+        uri: "https://bwm.happyfir.com/graphql/people",
+        cache: new InMemoryCache(),
+    });
+
+    setClient(client);
+    const signInMutation = mutation(LOGIN);
     let email, password;
     let response;
     let hasInvalidCredentials = false;
     let isWaiting = false;
     let isCustomer = true;
 
+    // const [login, {loading, error}] = mutation(LOGIN);
     async function onSubmit() {
-        await goto('/quotations');
-        // email = document.getElementById("email").value;
-        // password = document.getElementById("password").value;
-        // const userData = {
-        //     email,
-        //     password
-        // };
-        // isWaiting = true;
-        // response = await authService.login(userData);
-        // //console.log('Response: ', response);
-        //
-        // hasUpdated.set(true);
-        // if (!response) {
-        //     setTimeout(() => isWaiting = false, 100);
-        //     hasInvalidCredentials = true;
-        // } else {
-        //     await goto('/quotations');
-        // }
+        email = document.getElementById("email").value;
+        password = document.getElementById("password").value;
+        try {
+            const response = await signInMutation({
+                variables: {
+                    emailAddress: email,
+                    password: password,
+                },
+            });
 
+            console.log(response);
+            localStorage.setItem('user', JSON.stringify(response.data.login));
+            // Navigate to the desired page
+            if (!response) {
+                setTimeout(() => isWaiting = false, 100);
+                hasInvalidCredentials = true;
+            } else if (response.data.login.role === 'ADMIN') {
+                await goto('/requests');
+            } else if (response.data.login.role === 'CLIENT') {
+                await goto('/quotations');
+            } else if (response.data.login.role === 'DELIVERYMAN') {
+                await goto('/orders');
+            }
+        } catch (error) {
+            console.error(error);
+        }
     }
+
+    onMount(onSubmit);
 
 </script>
 
 <svelte:head>
     <title>Login</title>
-    <meta name="description" content="Delivery service website"/>
+    <meta content="Delivery service website" name="description"/>
 </svelte:head>
 
 {#if isWaiting}

@@ -3,10 +3,8 @@
 </svelte:head>
 
 <script>
-    import authService from '$lib/features/authService.js';
     import {onMount} from 'svelte';
     import LoadingAnimation from '$lib/components/LoadingAnimation.svelte';
-    import {goto} from "$app/navigation";
     import Quotation from "$lib/components/Quotation.svelte";
 
     let user;
@@ -14,7 +12,8 @@
     let quotations = [];
 
     onMount(() => {
-        user = authService.getUser();
+        user = JSON.parse(localStorage.getItem('user'));
+
         loadPage();
     });
 
@@ -85,8 +84,8 @@
         transform: translateX(0);
     }
 
-    .quotations-container{
-        display:flex;
+    .quotations-container {
+        display: flex;
         flex-direction: column;
         gap: 1.5em;
     }

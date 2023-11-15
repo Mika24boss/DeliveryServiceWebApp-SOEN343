@@ -12,15 +12,15 @@ const Order = new mongoose.Schema({
         type: String,
         enum: status,
         trim: true,
-        required: true,
         default: "NONE",
     },
     payment: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'PaymentMethod'
+        ref: 'Payment'
     },
     orderItems: [{
-        type: mongoose.Schema.Types.ObjectId
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'OrderedItems'
     }]
 });
 module.exports = mongoose.model('Order', Order)

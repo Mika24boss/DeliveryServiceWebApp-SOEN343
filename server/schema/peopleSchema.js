@@ -6,18 +6,22 @@ const {
     GraphQLList, GraphQLNonNull,
     GraphQLFloat, GraphQLBoolean, GraphQLError
 } = graphql
-const { GraphQLDateTime } = require('graphql-iso-date')
+const {GraphQLDateTime} = require('graphql-iso-date')
 const Person = require('../models/personModel')
 const Admin = require('../models/adminModel')
 const Client = require('../models/clientModel')
 const DeliveryMan = require('../models/deliverManModel')
+const orderModel = require('../models/orderModel')
+
 const {
     PersonType,
     AdminType,
     ClientType,
-    DeliveryManType
+    DeliveryManType, OrderedItemType, OrderType
 } = require('./graphQLType')
-const { validateRegisterInput, validateLoginInput } = require('../middleware/validators')
+const {validateRegisterInput, validateLoginInput} = require('../middleware/validators')
+const OrderedItems = require("../models/orderedItems");
+const Order = require("../models/orderModel");
 const RootQuery = new GraphQLObjectType({
     name: 'RootQueryType',
     fields: {
@@ -29,7 +33,7 @@ const RootQuery = new GraphQLObjectType({
         },
         person: {
             type: PersonType,
-            args: { id: { type: GraphQLID } },
+            args: {id: {type: GraphQLID}},
             resolve(parent, args) {
                 return Person.findById(args.id);
             },
@@ -42,7 +46,7 @@ const RootQuery = new GraphQLObjectType({
         },
         client: {
             type: ClientType,
-            args: { id: { type: GraphQLID } },
+            args: {id: {type: GraphQLID}},
             resolve(parent, args) {
                 return Client.findById(args.id);
             },
@@ -55,7 +59,7 @@ const RootQuery = new GraphQLObjectType({
         },
         admin: {
             type: AdminType,
-            args: { id: { type: GraphQLID } },
+            args: {id: {type: GraphQLID}},
             resolve(parent, args) {
                 return Admin.findById(args.id);
             },
@@ -68,7 +72,7 @@ const RootQuery = new GraphQLObjectType({
         },
         deliveryman: {
             type: DeliveryManType,
-            args: { id: { type: GraphQLID } },
+            args: {id: {type: GraphQLID}},
             resolve(parent, args) {
                 return DeliveryMan.findById(args.id);
             },
@@ -84,10 +88,10 @@ const mutation = new GraphQLObjectType({
         addPerson: {
             type: PersonType,
             args: {
-                name: { type: GraphQLNonNull(GraphQLString) },
-                phoneNumber: { type: GraphQLNonNull(GraphQLString) },
-                emailAddress: { type: GraphQLNonNull(GraphQLString) },
-                loginInfo: { type: GraphQLNonNull(GraphQLString) }
+                name: {type: GraphQLNonNull(GraphQLString)},
+                phoneNumber: {type: GraphQLNonNull(GraphQLString)},
+                emailAddress: {type: GraphQLNonNull(GraphQLString)},
+                loginInfo: {type: GraphQLNonNull(GraphQLString)}
             },
             async resolve(parent, args) {
                 const password = args.loginInfo
@@ -98,7 +102,7 @@ const mutation = new GraphQLObjectType({
                     name: args.name,
                     emailAddress: args.emailAddress,
                     phoneNumber: args.phoneNumber,
-                    loginInfo: args.emailAddress,
+                    loginInfo: hashedPassword,
                 });
                 return person.save();
             },
@@ -108,11 +112,11 @@ const mutation = new GraphQLObjectType({
         addClient: {
             type: ClientType,
             args: {
-                name: { type: GraphQLNonNull(GraphQLString) },
-                phoneNumber: { type: GraphQLNonNull(GraphQLString) },
-                emailAddress: { type: GraphQLNonNull(GraphQLString) },
-                loginInfo: { type: GraphQLNonNull(GraphQLString) },
-                role: { type: GraphQLString },
+                name: {type: GraphQLNonNull(GraphQLString)},
+                phoneNumber: {type: GraphQLNonNull(GraphQLString)},
+                emailAddress: {type: GraphQLNonNull(GraphQLString)},
+                loginInfo: {type: GraphQLNonNull(GraphQLString)},
+                role: {type: GraphQLString},
             },
             async resolve(parent, args) {
                 const password = args.loginInfo
@@ -130,7 +134,7 @@ const mutation = new GraphQLObjectType({
                 return {
                     ...client._doc,
                     id: client._id,
-                    token: generateToken(client)
+                    token: generateToken(client._id)
                 };
             },
         },
@@ -139,11 +143,11 @@ const mutation = new GraphQLObjectType({
         addDeliveryMan: {
             type: DeliveryManType,
             args: {
-                name: { type: GraphQLNonNull(GraphQLString) },
-                phoneNumber: { type: GraphQLNonNull(GraphQLString) },
-                emailAddress: { type: GraphQLNonNull(GraphQLString) },
-                loginInfo: { type: GraphQLNonNull(GraphQLString) },
-                role: { type: GraphQLString },
+                name: {type: GraphQLNonNull(GraphQLString)},
+                phoneNumber: {type: GraphQLNonNull(GraphQLString)},
+                emailAddress: {type: GraphQLNonNull(GraphQLString)},
+                loginInfo: {type: GraphQLNonNull(GraphQLString)},
+                role: {type: GraphQLString},
             },
             async resolve(parent, args) {
                 const password = args.loginInfo
@@ -157,7 +161,12 @@ const mutation = new GraphQLObjectType({
                     loginInfo: hashedPassword,
                     role: args.role
                 });
-                return deliveryMan.save();
+                await deliveryMan.save();
+                return {
+                    ...deliveryMan._doc,
+                    id: deliveryMan._id,
+                    token: generateToken(deliveryMan._id)
+                };
             },
         },
         // @desc Register new Admin
@@ -165,11 +174,11 @@ const mutation = new GraphQLObjectType({
         addAdmin: {
             type: AdminType,
             args: {
-                name: { type: GraphQLNonNull(GraphQLString) },
-                phoneNumber: { type: GraphQLNonNull(GraphQLString) },
-                emailAddress: { type: GraphQLNonNull(GraphQLString) },
-                loginInfo: { type: GraphQLNonNull(GraphQLString) },
-                role: { type: GraphQLString },
+                name: {type: GraphQLNonNull(GraphQLString)},
+                phoneNumber: {type: GraphQLNonNull(GraphQLString)},
+                emailAddress: {type: GraphQLNonNull(GraphQLString)},
+                loginInfo: {type: GraphQLNonNull(GraphQLString)},
+                role: {type: GraphQLString},
             },
             async resolve(parent, args) {
                 const password = args.loginInfo
@@ -180,29 +189,80 @@ const mutation = new GraphQLObjectType({
                     name: args.name,
                     emailAddress: args.emailAddress,
                     phoneNumber: args.phoneNumber,
-                    loginInfo: args.emailAddress,
+                    loginInfo: hashedPassword,
                     role: args.role
                 });
-                return admin.save();
+                await admin.save();
+                return {
+                    ...admin._doc,
+                    id: admin._id,
+                    token: generateToken(admin._id)
+                };
             },
-        },
+        },//ji
         deleteClient: {
             type: PersonType,
             args: {//delete person's info through their name
-                emailAddress: { type: GraphQLNonNull(GraphQLString) },
+                emailAddress: {type: GraphQLNonNull(GraphQLString)},
             },
             async resolve(parent, args) {
+                const client = Client.findOne(args.emailAddress);
+                for (const order of client.order) {
+                    if (order !== "DELIVERED" || order !== "NONE") {
+                        throw new Error("unable to delete");
+                    }
+                }
                 return Client.findOneAndDelete(args.emailAddress);
             },
         },
+        deletePerson: {
+            type: PersonType,
+            args: {//delete person's info through email
+                emailAddress: {type: GraphQLNonNull(GraphQLString)},
+            },
+            async resolve(parent, args) {
+                return Person.findOneAndDelete(args.emailAddress);
+            },
+        },
+        deleteAdmin: {
+            type: PersonType,
+            args: {//delete person's info through email
+                emailAddress: {type: GraphQLNonNull(GraphQLString)},
+            },
+            async resolve(parent, args) {
+                return Admin.findOneAndDelete(args.emailAddress);
+            },
+        },
+        // Delete an order
+        deleteOrder: {
+            type: OrderType,
+            args: {
+                orderID: {type: GraphQLNonNull(GraphQLID)},
+            },
+            resolve(parent, args) {
+                return Order.findByIdAndRemove(args.id);
+            },
+        },
+        deleteDeliveryMan: {
+            type: PersonType,
+            args: {//delete person's info through email also has to delete the order itself
+                emailAddress: {type: GraphQLNonNull(GraphQLString)},
+            },
+
+            async resolve(parent, args) {
+                return Person.findOneAndDelete(args.emailAddress);
+            },
+        },
+
+
         updatePerson: {
             type: PersonType,
             args: {
-                id: { type: GraphQLID },
-                name: { type: GraphQLString },
-                emailAddress: { type: GraphQLString },
-                phoneNumber: { type: GraphQLString },
-                loginInfo: { type: GraphQLString },
+                id: {type: GraphQLID},
+                name: {type: GraphQLString},
+                emailAddress: {type: GraphQLString},
+                phoneNumber: {type: GraphQLString},
+                loginInfo: {type: GraphQLString},
             },
             async resolve(parent, args) {
                 const person = await Person.findById(args.id);
@@ -229,11 +289,11 @@ const mutation = new GraphQLObjectType({
         login: {
             type: PersonType,
             args: {
-                emailAddress: { type: GraphQLNonNull(GraphQLString) },
-                password: { type: GraphQLNonNull(GraphQLString) },
+                emailAddress: {type: GraphQLNonNull(GraphQLString)},
+                password: {type: GraphQLNonNull(GraphQLString)},
             },
             async resolve(_, args) {
-                const { error, valid } = validateLoginInput(args.emailAddress, args.password);
+                const {error, valid} = validateLoginInput(args.emailAddress, args.password);
 
                 if (!valid) {
                     throw new GraphQLError(error, {
@@ -243,7 +303,7 @@ const mutation = new GraphQLObjectType({
                     });
                 }
 
-                const user = await Person.findOne({ emailAddress: args.emailAddress });
+                const user = await Person.findOne({emailAddress: args.emailAddress});
 
                 if (!user) {
                     throw new Error('User not found');
@@ -255,28 +315,42 @@ const mutation = new GraphQLObjectType({
                     throw new Error('Invalid password');
                 }
 
-                const token = generateToken(user);
-                console.log(token)
+                const token = generateToken(user._id);
+                let userRole;
+
+                // Determine user role based on the type of user (Client, Admin, DeliveryMan)
+                const client = await Client.findById(user._id);
+                if (client) {
+                    userRole = "CLIENT";
+                } else {
+                    const admin = await Admin.findById(user._id);
+                    if (admin) {
+                        userRole = "ADMIN";
+                    } else {
+                        const deliveryMan = await DeliveryMan.findById(user._id);
+                        if (deliveryMan) {
+                            userRole = "DELIVERYMAN";
+                        } else {
+                            userRole = "NONE";
+                        }
+                    }
+                }
                 return {
                     ...user._doc,
                     id: user._id,
-                    token
+                    token,
+                    role: userRole,
                 };
             },
         },
+
     },
 });
 
-function generateToken(user) {
-    return jwt.sign(
-        {
-            id: user.id,
-            email: user.emailAddress,
-            username: user.name
-        },
-        process.env.JWT_SECRET,
-        { expiresIn: '30d' }
-    );
+const generateToken = (id) => {
+    return jwt.sign({id}, process.env.JWT_SECRET, {
+        expiresIn: '30d',
+    })
 }
 module.exports = new GraphQLSchema({
     query: RootQuery,
