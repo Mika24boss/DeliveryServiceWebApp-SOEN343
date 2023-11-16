@@ -22,11 +22,46 @@ const RootQuery = new GraphQLObjectType({
                 return Order.find();
             }
         },
-        order: {
+        ordersForEachClient: {
+            type: new GraphQLList(OrderType),
+            args: {
+                clientID: { type: GraphQLID }
+            },
+            async resolve(parent, args) {
+                const client = await Client.findById(args.clientID);
+                const orders = await Order.find({ _id: { $in: client.order } });
+                return orders;
+            },
+        },
+        ordersForEachDeliveryMan: {
+            type: new GraphQLList(OrderType),
+            args: {
+                clientID: { type: GraphQLID }
+            },
+            async resolve(parent, args) {
+                const deliveryMan = await DeliveryMan.findById(args.clientID);
+                const orders = await Order.find({ _id: { $in: deliveryMan.order } });
+                return orders;
+            },
+        },
+        orderForEachClient: {
             type: OrderType,
-            args: { id: { type: GraphQLInt } },
+            args: {
+                orderID: { type: GraphQLInt },
+                clientID: { type: GraphQLID }
+            },
             resolve(parent, args) {
-                return Order.findOne({ orderID: { $eq: args.id } });
+                return Client.findById(args.clientID).order[args.orderID];
+            },
+        },
+        orderForEachDeliveryMan: {
+            type: OrderType,
+            args: {
+                orderID: { type: GraphQLInt },
+                deliveryManID: { type: GraphQLID }
+            },
+            resolve(parent, args) {
+                return DeliveryMan.findById(args.deliveryManID).order[args.orderID];
             },
         },
     },
@@ -40,14 +75,13 @@ const mutation = new GraphQLObjectType({
         addOrder: {
             type: OrderType, // Assuming you have an OrderType defined
             args: {
-                orderID: { type: GraphQLInt },
                 orderItems: { type: new GraphQLList(GraphQLID) },
                 payment: { type: GraphQLID }
             },
             async resolve(parent, args, context) {
-                const user = await Person.findById(protect(context.headers['authorization']).id).select('-password');
+                const client = await Client.findById(protect(context.headers['authorization']).id).select('-password');
                 const order = new Order({
-                    orderID: args.orderID,
+                    orderID: 0,
                     orderDate: new Date(),
                     status: "PAID",
                     orderItems: args.orderItems,
@@ -55,10 +89,19 @@ const mutation = new GraphQLObjectType({
                 });
                 await order.save();
                 await Client.findOneAndUpdate(
-                    { _id: user._id },
+                    { _id: client._id },
                     { $push: { order: order._id } },
                     { new: true }
                 );
+                await client.save();
+                order.orderID = client.order.length;
+                await order.save();
+                await Promise.all(client.order.map(async (orderID, index) => {
+                    await Order.updateOne(
+                        { _id: orderID },
+                        { $set: { quotationID: index } }
+                    );
+                }));
                 return order;
             },
         },
@@ -73,7 +116,9 @@ const mutation = new GraphQLObjectType({
                 if (!admin) {
                     throw new Error('User not authorized')
                 }
+                console.log(args.deliveryManID)
                 const deliveryMan = await DeliveryMan.findById(args.deliveryManID)
+                console.log(deliveryMan);
                 if (!deliveryMan) {
                     throw new Error('DeliveryMan not found')
                 }
@@ -81,13 +126,19 @@ const mutation = new GraphQLObjectType({
 
                 await DeliveryMan.findOneAndUpdate(
                     { _id: deliveryMan._id },
-                    { $push: { 'orders': order._id } },
+                    {
+                        $set: { 'numberOfOrder': deliveryMan.numberOfOrder + 1 },
+                        $push: { 'orders': order._id }
+                    },
                     { new: true }
                 )
+                return {
+                    ...order._doc
+                }
             }
         },
         // Delete an order
-        deleteOrder: {
+        deleteOrderForDeliveryMan: {
             type: OrderType,
             args: {
                 orderID: { type: GraphQLInt },
@@ -107,13 +158,54 @@ const mutation = new GraphQLObjectType({
                     if (deliveryMan) {
                         await DeliveryMan.findOneAndUpdate(
                             { _id: deliveryMan._id },
-                            { $pull: { 'orders': order._id } },
+                            {
+                                $set: { 'numberOfOrder': deliveryMan.numberOfOrder - 1 },
+                                $pull: { 'orders': order._id }
+                            },
                             { new: true }
                         )
                     }
                     return Order.findByIdAndRemove(args.orderID);
                 }
             },
+        },
+        deleteOrderForClient: {
+            type: OrderType,
+            args: {
+                orderID: { type: GraphQLInt },
+                clientID: { type: GraphQLID }
+            },
+            async resolve(parent, args, context) {
+                const admin = await Admin.findById(protect(context.headers['authorization']).id).select('-password');
+
+                if (!admin) {
+                    throw new Error('User not authorized')
+                }
+                let client = await Client.findById(args.clientID)
+                const order = client.order[args.orderID];
+                if (!order) throw new Error("order ID is not found")
+                if (client) {
+                    await Client.findOneAndUpdate(
+                        { _id: client._id },
+                        {
+                            $pull: { 'order': order._id }
+                        },
+                        { new: true }
+                    )
+                } else {
+                    throw new Error('No client')
+                }
+                await client.save();
+                client = await Client.findById(client._id);
+                await Promise.all(client.quotations.map(async (orderId, index) => {
+                    await Order.updateOne(
+                        { _id: orderId },
+                        { $set: { orderID: index } }
+                    );
+                }));
+                return Order.findByIdAndRemove(order._id);
+
+            }
         },
         updateOrder: {
             type: OrderType,
