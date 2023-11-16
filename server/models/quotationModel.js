@@ -1,9 +1,8 @@
 const mongoose = require('mongoose');
 
 const Quotation = new mongoose.Schema({
-    name: {
-        type: String,
-        required: true,
+    quotationID: {
+        type: Number
     },
     pickUpAddress: {
         type: mongoose.Schema.Types.ObjectId,
@@ -18,18 +17,9 @@ const Quotation = new mongoose.Schema({
         required: true,
         ref: 'Address'
     },
-    billingAddress: {
-        type: mongoose.Schema.Types.ObjectId,
-        required: true,
-        ref: 'Address'
-    },
     price: {
         type: Number,
         required: true
     },
-    order: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Order'
-    }
 });
 module.exports = mongoose.model('Quotation', Quotation);
