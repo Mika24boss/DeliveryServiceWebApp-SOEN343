@@ -9,6 +9,7 @@
     import {ApolloClient, InMemoryCache} from "@apollo/client/core";
     import {ADD_DELIVERY_MAN} from "../../mutations/peopleMutation/deliveryManMutation.js";
     import {ADD_CLIENT} from "../../mutations/peopleMutation/clientMutation.js";
+    import {hasUpdated} from "$lib/stores/updateUser.js";
 
     const client = new ApolloClient({
         uri: "https://bwm.happyfir.com/graphql/people",
@@ -32,7 +33,7 @@
         phoneNumber = document.getElementById('phone').value;
 
         isWaiting = true;
-        if (role === "Employer") {
+        if (role === "DELIVERYMAN") {
             const response = await signUpDeliveryManMutation({
                 variables: {
                     name: name,
@@ -42,6 +43,7 @@
                 }
             })
             localStorage.setItem('user', JSON.stringify(response.data.addDeliveryMan));
+            hasUpdated.set(true);
             // Navigate to the desired page
             if (!response) {
                 setTimeout(() => {
@@ -60,6 +62,7 @@
                 }
             })
             localStorage.setItem('user', JSON.stringify(response.data.addClient));
+            hasUpdated.set(true);
             // Navigate to the desired page
             if (!response) {
                 setTimeout(() => {
@@ -100,11 +103,11 @@
                         <div class="plus2"></div>
                     </div>
                     <label for='customer'>Customer</label>
-                    <input type='radio' id='employer' name='user-type' value='Employer' required bind:group={role}>
+                    <input type='radio' id='employee' name='user-type' value='Employee' required bind:group={role}>
                     <div class="plus1">
                         <div class="plus2"></div>
                     </div>
-                    <label for='employer'>Employer</label>
+                    <label for='employee'>Employee</label>
                 </div>
                 <div class='inputs-form centerBlock'>
                     <div class='formGroup'><input type='text' id='name' name='Name' placeholder='Full Name' required
@@ -112,11 +115,10 @@
                     <div class='formGroup'><input type='text' id='email' name='Email' placeholder='Email' required
                                                   style='color:black'></div>
                     <div class='formGroup'><input type='password' id='password' name='Password' placeholder='Password'
-                                                  required style='color:white'></div>
-                    <div class='formGroup'><input type='tel' id='phone' name='Phone' placeholder="123-45-678"
-                                                  pattern="[0-9]{3}-[0-9]{2}-[0-9]{3}"
+                                                  required style='color:black'></div>
+                    <div class='formGroup'><input type='tel' id='phone' name='Phone' placeholder="Phone Number (e.g 123-456-7890)"
                                                   required
-                                                  style='color:white'></div>
+                                                  style='color:black'></div>
                 </div>
 
                 {#if hasMissingFields}

@@ -46,7 +46,7 @@
         <LoadingAnimation/>
     {:else}
         <div class='order-section'>
-            <h1>Order #{orderID}</h1>
+            <h1>Order</h1>
             <h2>Estimated delivery date: {estimatedDeliveryDate}</h2>
             <div class="details">Summary of order: {details}</div>
             <div class='order-container'>

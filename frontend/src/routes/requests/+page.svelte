@@ -46,9 +46,6 @@
 {/if}
 
 <style>
-    * {
-        font-family: 'Barlow', sans-serif;
-    }
 
     h1, p {
         color: black;
