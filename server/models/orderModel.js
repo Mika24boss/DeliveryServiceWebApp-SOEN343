@@ -1,5 +1,5 @@
 const mongoose = require('mongoose')
-const status = Object.freeze(["PICKUP", "DELIVERING", "DELIVERED", "NONE"])
+const status = Object.freeze(["PICKUP", "DELIVERING", "DELIVERED", "PAID"])
 
 const Order = new mongoose.Schema({
     orderID: {
@@ -12,7 +12,7 @@ const Order = new mongoose.Schema({
         type: String,
         enum: status,
         trim: true,
-        default: "NONE",
+        default: "PAID",
     },
     payment: {
         type: mongoose.Schema.Types.ObjectId,
