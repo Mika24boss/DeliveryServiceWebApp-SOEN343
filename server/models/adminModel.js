@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema
 const Person = require('./personModel')
-const role = Object.freeze(["HR-ADMIN", "TECHNOLOGY-ADMIN", "FINANCE-ADMIN", "GENERAL-ADMIN"])
+const role = Object.freeze(["ADMIN"])
 
 const Admin = new Schema({
     role: {
@@ -9,7 +9,7 @@ const Admin = new Schema({
         trim: true,
         enum: role,
         required: true,
-        default: "GENERAL-ADMIN",
+        default: "ADMIN",
     },
 });
 
