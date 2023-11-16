@@ -6,12 +6,22 @@
     import {preventTabClose} from '$lib/features/preventTabClose.js'
     import {DateInput} from 'date-picker-svelte';
     import {goto} from "$app/navigation";
+    import {onMount} from "svelte";
+    import authService from "$lib/features/authService.js";
 
     let hasChanged = false;
     let pageTitle = "Create Delivery Request";
     let date = new Date();
     let maxDate = new Date((date.getFullYear() + 1) + '-' + date.getMonth() + '-' + date.getDate());
     let orderItems = [];
+    let user;
+
+    onMount(async () => {
+        user = authService.getUser();
+        if (user == null || (user.role !== 'GOLD-CLIENT' && user.role !== 'REGULAR-CLIENT')) {
+            await goto('/');
+        }
+    });
 
     function changedText() {
         hasChanged = true;
@@ -111,60 +121,65 @@
     }
 </script>
 
-<div class="header">
-    <h1 use:preventTabClose={hasChanged}>Create A Delivery Request</h1>
-    <button class="payment-button" on:click="{createRequest}">Submit</button>
-</div>
+{#await user}
+{:then user}
 
-<div class="informationSection">
-
-    <div class="buyerInfo">
-        <h2>Delivery address</h2>
-        <input type='text' id='buyerName' placeholder='Your full name' on:keydown={changedText}/>
-        <input type='text' id='deliveryAddress' placeholder='Address' on:keydown={changedText}/>
-        <input type='text' id='deliveryCity' placeholder='City' on:keydown={changedText}/>
-        <input type='text' id='deliveryProvince' placeholder='State/Province' on:keydown={changedText}/>
-        <input type='text' id='deliveryCountry' placeholder='Country' on:keydown={changedText}/>
-        <input type='text' id='deliveryPostalCode' placeholder='Postal code/ZIP code' on:keydown={changedText}/>
+    <div class="header">
+        <h1 use:preventTabClose={hasChanged}>Create A Delivery Request</h1>
+        <button class="payment-button" on:click="{createRequest}">Submit</button>
     </div>
 
-    <div class="sellerInfo">
-        <h2>Pick up address</h2>
-        <input type='text' id='sellerName' placeholder='Full name of seller' on:keydown={changedText}/>
-        <input type='text' id='pickupAddress' placeholder='Address' on:keydown={changedText}/>
-        <input type='text' id='pickupCity' placeholder='City' on:keydown={changedText}/>
-        <input type='text' id='pickupProvince' placeholder='State/Province' on:keydown={changedText}/>
-        <input type='text' id='pickupCountry' placeholder='Country' on:keydown={changedText}/>
-        <input type='text' id='pickupPostalCode' placeholder='Postal code/ZIP code' on:keydown={changedText}/>
-        <h3 class="dateTitle">Pick up date and time:</h3>
-        <DateInput class="datePicker" min='{new Date()}' max='{maxDate}' bind:value={date} format='yyyy-MM-dd HH:mm'/>
+    <div class="informationSection">
+
+        <div class="buyerInfo">
+            <h2>Delivery address</h2>
+            <input type='text' id='buyerName' placeholder='Your full name' on:keydown={changedText}/>
+            <input type='text' id='deliveryAddress' placeholder='Address' on:keydown={changedText}/>
+            <input type='text' id='deliveryCity' placeholder='City' on:keydown={changedText}/>
+            <input type='text' id='deliveryProvince' placeholder='State/Province' on:keydown={changedText}/>
+            <input type='text' id='deliveryCountry' placeholder='Country' on:keydown={changedText}/>
+            <input type='text' id='deliveryPostalCode' placeholder='Postal code/ZIP code' on:keydown={changedText}/>
+        </div>
+
+        <div class="sellerInfo">
+            <h2>Pick up address</h2>
+            <input type='text' id='sellerName' placeholder='Full name of seller' on:keydown={changedText}/>
+            <input type='text' id='pickupAddress' placeholder='Address' on:keydown={changedText}/>
+            <input type='text' id='pickupCity' placeholder='City' on:keydown={changedText}/>
+            <input type='text' id='pickupProvince' placeholder='State/Province' on:keydown={changedText}/>
+            <input type='text' id='pickupCountry' placeholder='Country' on:keydown={changedText}/>
+            <input type='text' id='pickupPostalCode' placeholder='Postal code/ZIP code' on:keydown={changedText}/>
+            <h3 class="dateTitle">Pick up date and time:</h3>
+            <DateInput class="datePicker" min='{new Date()}' max='{maxDate}' bind:value={date}
+                       format='yyyy-MM-dd HH:mm'/>
+        </div>
+
     </div>
 
-</div>
+    <h2>Order items</h2>
+    <button class="payment-button addItemBtn" on:click={addItem}>+ Add</button>
+    {#if orderItems.length > 0}
+        <div class="columnTitles">
+            <span class="itemNameTitle">Name</span>
+            <span class="itemQtyTitle">Quantity</span>
+        </div>
+    {/if}
 
-<h2>Order items</h2>
-<button class="payment-button addItemBtn" on:click={addItem}>+ Add</button>
-{#if orderItems.length > 0}
-    <div class="columnTitles">
-        <span class="itemNameTitle">Name</span>
-        <span class="itemQtyTitle">Quantity</span>
-    </div>
-{/if}
-
-{#each orderItems as item, i (item.itemID)}
-    <div class="itemNum">
-        #{i + 1}
-    </div>
-    <div class="item">
-        <input class="itemName" type='text' id='itemName' placeholder='Item name' on:keydown={changedText}
-               data-index={i}
-               on:input={update}/>
-        <input class="itemQty" type='number' id='quantity' placeholder='Qty' min=1 value=1 on:keydown={changedText}
-               data-index={i}
-               on:input={update}/>
-        <button class="payment-button removeItemBtn" on:click={() => remove(i)}>Remove</button>
-    </div>
-{/each}
+    {#each orderItems as item, i (item.itemID)}
+        <div class="itemNum">
+            #{i + 1}
+        </div>
+        <div class="item">
+            <input class="itemName" type='text' id='itemName' placeholder='Item name' on:keydown={changedText}
+                   data-index={i}
+                   on:input={update}/>
+            <input class="itemQty" type='number' id='quantity' placeholder='Qty' min=1 value=1 on:keydown={changedText}
+                   data-index={i}
+                   on:input={update}/>
+            <button class="payment-button removeItemBtn" on:click={() => remove(i)}>Remove</button>
+        </div>
+    {/each}
+{/await}
 
 <style>
 

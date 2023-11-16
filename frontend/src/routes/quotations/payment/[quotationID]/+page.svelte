@@ -14,41 +14,51 @@
     let total = '70$';
     const quotationID = $page.url.pathname.split('/').pop();
     let pageTitle = "Payment | Quotation #" + quotationID;
+    let user;
+
+    onMount(async () => {
+        user = authService.getUser();
+        if (user == null || (user.role !== 'GOLD-CLIENT' && user.role !== 'REGULAR-CLIENT')) {
+            await goto('/');
+        }
+    });
 
     async function makePayment() {
-        // if (user == null) {
-        //     await goto('/');
-        // }
-        // setTimeout(() => {finishedLoading = true;}, 300);
+        alert("Order created!");
     }
 
 </script>
+{#await user}
+{:then user}
+    <h1>Payment for quotation</h1>
+    <h2>Enter payment details:</h2>
+    <div class="payment-page">
+        <div class="payment-section">
+            <div class="payment-details column">
+                <div class='formGroup'><input type="text" id="cardNum" placeholder="Card number" required></div>
+                <div class='formGroup'><input type="text" id="expiryDate" placeholder="MM/YY" required></div>
+                <div class='formGroup'><input type="text" id="cvc" placeholder="CVC" required></div>
+                <div class='formGroup'><input type="text" id="streetAddress" placeholder="Street Address" required>
+                </div>
+                <div class='formGroup'><input type="text" id="apartment" placeholder="Apt, unit, suite, etc. (optional)"
+                                              required></div>
+                <div class='formGroup'><input type="text" id="country" placeholder="Country" required></div>
+                <div class='formGroup'><input type="text" id="city" placeholder="City" required></div>
+                <div class='formGroup'><input type="text" id="state" placeholder="State" required></div>
+                <div class='formGroup'><input type="text" id="zipCode" placeholder="Zip code" required></div>
+            </div>
+            <div class="order-summary column">
+                <div class='subtotal'>Subtotal: {subtotal}</div>
+                <div class='Taxes'>Taxes: {taxes}</div>
+                <div class='total'>Total: {total}</div>
+            </div>
+        </div>
+        <div class='btn-container'>
+            <button class="btn-pay centerBlock" type="submit" on:click="{makePayment}">Pay</button>
+        </div>
+    </div>
+{/await}
 
-<h1>Payment for quotation</h1>
-<h2>Enter payment details:</h2>
-<div class="payment-page">
-    <div class="payment-section">
-        <div class="payment-details column">
-            <div class='formGroup'><input type="text" id="cardNum" placeholder="Card number" required></div>
-            <div class='formGroup'><input type="text" id="expiryDate" placeholder="MM/YY" required></div>
-            <div class='formGroup'><input type="text" id="cvc" placeholder="CVC" required></div>
-            <div class='formGroup'><input type="text" id="streetAddress" placeholder="Street Address" required></div>
-            <div class='formGroup'><input type="text" id="apartment" placeholder="Apt, unit, suite, etc. (optional)" required></div>
-            <div class='formGroup'><input type="text" id="country" placeholder="Country" required></div>
-            <div class='formGroup'><input type="text" id="city" placeholder="City" required></div>
-            <div class='formGroup'><input type="text" id="state" placeholder="State" required></div>
-            <div class='formGroup'><input type="text" id="zipCode" placeholder="Zip code" required></div>
-        </div>
-        <div class="order-summary column">
-            <div class='subtotal'>Subtotal: {subtotal}</div>
-            <div class='Taxes'>Taxes: {taxes}</div>
-            <div class='total'>Total: {total}</div>
-        </div>
-    </div>
-    <div class='btn-container'>
-        <button class="btn-pay centerBlock" type="submit" on:click="{makePayment}">Pay</button>
-    </div>
-</div>
 <style>
 
     * {
@@ -72,7 +82,7 @@
         align-self: center;
     }
 
-    .formGroup{
+    .formGroup {
         text-align: right;
         width: 100%;
     }

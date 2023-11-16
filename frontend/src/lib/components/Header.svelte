@@ -31,8 +31,8 @@
         user = authService.getUser();
         if (user) {
             isLoggedOut = false;
-            if (user.role === "CLIENT") isCustomer = true;
-            else if (user.role === "DELIVERYMAN") isEmployee = true;
+            if (user.role === "GOLD-CLIENT" || user.role === "REGULAR-CLIENT") isCustomer = true;
+            else if (user.role === "DELIVERY-MAN" || user.role === "PICKUP-MAN") isEmployee = true;
             else if (user.role === "ADMIN") isAdmin = true;
             else isLoggedOut = true;
         }

@@ -1,48 +1,41 @@
 <script>
-    import authService from '$lib/features/authService.js';
-
     export var quotationID, submissionDate, orderItems, distance;
-
-    let user = 'TO CHANGE';
 </script>
 
-{#await user}
-{:then user}
-    <a class="outline" href="/requests/{quotationID}">
-        <div class="date">
-            {submissionDate}
-        </div>
-        <div class="items">
-            {#each orderItems as item, i}
-                {item.quantity} X {item.itemName}{ i === orderItems.length - 1 ? '' : ', '}
-            {/each}
-        </div>
-        <div class="distance">
-            {distance}
-        </div>
-    </a>
-{/await}
+<a class="outline" href="/requests/{quotationID}">
+    <div class="date">
+        {submissionDate}
+    </div>
+    <div class="items">
+        {#each orderItems as item, i}
+            {item.quantity} X {item.itemName}{ i === orderItems.length - 1 ? '' : ', '}
+        {/each}
+    </div>
+    <div class="distance">
+        {distance}
+    </div>
+</a>
 
 
 <style>
-    a{
+    a {
         text-decoration: none;
     }
 
-    a:link{
+    a:link {
         color: black;
     }
 
-    a:visited{
+    a:visited {
         color: black;
     }
 
-    a:hover{
+    a:hover {
         color: white;
         transition: 0.7s;
     }
 
-    a:active{
+    a:active {
         color: black;
     }
 

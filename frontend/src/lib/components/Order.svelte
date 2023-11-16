@@ -3,24 +3,23 @@
     import {onMount} from "svelte";
     import {goto} from "$app/navigation";
 
-    export var orderID, submissionDate, orderItems, total;
+    export var orderID, submissionDate, orderItems;
 
-    let role = 'DELIVERYMAN';
-    let user = 'Michael';
+    let user;
     let statusOrderText = 'Paid';
     let statusOrder = 'paid';
+    let finishedLoading = false;
 
     loadOrder();
 
     async function loadOrder() {
-        // await onMount(() => {
-        //     user = authService.getUser();
-        // })
-        // role = user.role;
-        //
-        // if (user == null) {
-        //     await goto('/');
-        // }
+        await onMount(() => {
+            user = authService.getUser();
+        })
+        if (user == null) {
+            await goto('/');
+        }
+        finishedLoading = true;
     }
 
     function UpdateStatusOrder(status) {
@@ -29,8 +28,8 @@
     }
 
 </script>
-{#await user}
-{:then user}
+{#if !finishedLoading}
+{:else}
     <div class="outline" id={orderID}>
         <a href="/orders/{orderID}">
             <div class="submission-date">{submissionDate}</div>
@@ -42,7 +41,7 @@
                 {/each}
             </div>
         </a>
-        {#if role === "CLIENT"}
+        {#if user.role === "GOLD-CLIENT" || user.role === "REGULAR-CLIENT"}
             <div class="total">Status: {statusOrderText}</div>
         {:else}
             <div class="update-status">
@@ -86,7 +85,7 @@
 
     </div>
 
-{/await}
+{/if}
 
 <style>
 
@@ -106,24 +105,24 @@
         grid-area: date;
     }
 
-    a{
+    a {
         text-decoration: none;
     }
 
-    a:link{
+    a:link {
         color: black;
     }
 
-    a:visited{
+    a:visited {
         color: black;
     }
 
-    a:hover{
+    a:hover {
         color: white;
         transition: 0.7s;
     }
 
-    a:active{
+    a:active {
         color: black;
     }
 

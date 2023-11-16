@@ -17,12 +17,11 @@
     let orderItems = [];
 
     onMount(async () => {
-        // user = authService.getUser();
-        // if (user == null) {
-        //     await goto('/');
-        //     return;
-        // }
-        user = 'TO CHANGE';
+        user = authService.getUser();
+        if (user == null || (user.role !== 'GOLD-CLIENT' && user.role !== 'REGULAR-CLIENT')) {
+            await goto('/');
+            return;
+        }
 
         //quotation = (await jobService.getJobByID(jobID, user.token))[0];
 

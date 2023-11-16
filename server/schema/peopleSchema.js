@@ -128,7 +128,7 @@ const mutation = new GraphQLObjectType({
                     emailAddress: args.emailAddress,
                     phoneNumber: args.phoneNumber,
                     loginInfo: hashedPassword,
-                    role: args.role || "REGULAR_CLIENT"
+                    role: args.role || "REGULAR-CLIENT"
                 });
                 await client.save();
                 return {

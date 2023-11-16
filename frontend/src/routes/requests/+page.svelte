@@ -8,20 +8,20 @@
     import {onMount} from "svelte";
     import LoadingAnimation from "$lib/components/LoadingAnimation.svelte";
     import Request from "$lib/components/Request.svelte";
+    import authService from "$lib/features/authService.js";
 
     let requests = [];
     let user;
 
-    loadJobs();
+    loadRequests();
 
-    async function loadJobs() {
+    async function loadRequests() {
         if (!browser) return;
         await onMount(() => {
-            //user = authService.getUser();
-            user = 'TO CHANGE';
+            user = authService.getUser();
         })
 
-        if (user == null) {
+        if (user == null || user.role !== 'ADMIN') {
             await goto('/');
         } else {
             //const requests = await jobService.getJobs(user.token);

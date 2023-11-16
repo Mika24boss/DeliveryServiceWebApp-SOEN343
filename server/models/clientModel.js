@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const Person = require('./personModel')
 
-const role = Object.freeze(["GOLD-CLIENT", "REGULAR_CLIENT"])
+const role = Object.freeze(["GOLD-CLIENT", "REGULAR-CLIENT"])
 
 const Client = new mongoose.Schema({
     role: {
@@ -9,7 +9,7 @@ const Client = new mongoose.Schema({
         trim: true,
         enum: role,
         required: true,
-        default: "REGULAR_CLIENT",
+        default: "REGULAR-CLIENT",
     },
     quotations: [{
         type: mongoose.Schema.Types.ObjectId,

@@ -3,35 +3,28 @@
 
     export var quotationID, submissionDate, orderItems, distance;
 
-    let user, role = 'Customer';
-
     async function onClick() {
         await goto('/quotations' + '/payment/' + quotationID);
     }
 
 </script>
-{#await user}
-{:then user}
-    <div class="outline" id={quotationID}>
-        <a class="date" href="/quotations/{quotationID}">
-            {submissionDate}
-        </a>
-        <a class="items" href="/quotations/{quotationID}">
-            {#each orderItems as item, i}
-                {item.quantity} X {item.itemName}{ i === orderItems.length - 1 ? '' : ', '}
-            {/each}
-        </a>
-        <a class="distance" href="/quotations/{quotationID}">
-            {distance}
-        </a>
-        <button class="payment-button" type="submit" on:click={onClick}>
-            Pay
-        </button>
-    </div>
 
-
-{/await}
-
+<div class="outline" id={quotationID}>
+    <a class="date" href="/quotations/{quotationID}">
+        {submissionDate}
+    </a>
+    <a class="items" href="/quotations/{quotationID}">
+        {#each orderItems as item, i}
+            {item.quantity} X {item.itemName}{ i === orderItems.length - 1 ? '' : ', '}
+        {/each}
+    </a>
+    <a class="distance" href="/quotations/{quotationID}">
+        {distance}
+    </a>
+    <button class="payment-button" type="submit" on:click={onClick}>
+        Pay
+    </button>
+</div>
 
 <style>
 

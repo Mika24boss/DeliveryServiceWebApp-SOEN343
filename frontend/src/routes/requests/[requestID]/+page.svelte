@@ -7,6 +7,7 @@
     import {goto} from "$app/navigation";
     import {onMount} from "svelte";
     import LoadingAnimation from "$lib/components/LoadingAnimation.svelte";
+    import authService from "$lib/features/authService.js";
 
     const quotationID = $page.url.pathname.split('/').pop();
     let pageTitle = "Delivery Request #" + quotationID;
@@ -17,12 +18,11 @@
     let price;
 
     onMount(async () => {
-        // user = authService.getUser();
-        // if (user == null) {
-        //     await goto('/');
-        //     return;
-        // }
-        user = 'TO CHANGE';
+        user = authService.getUser();
+        if (user == null || user.role !== 'ADMIN') {
+            await goto('/');
+            return;
+        }
 
         //request = (await jobService.getJobByID(jobID, user.token))[0];
 

@@ -21,18 +21,15 @@
     let statusOrder = 'paid';
     let statusOrderText = 'Paid';
 
-    onMount(() => {
+    onMount(async () => {
         user = authService.getUser();
-        loadPage();
+        if (user == null || user.role === 'ADMIN') {
+            await goto('/');
+        }
+        setTimeout(() => {
+            finishedLoading = true;
+        }, 300);
     });
-
-    async function loadPage() {
-        // if (user == null) {
-        //     await goto('/');
-        // }
-        // setTimeout(() => {finishedLoading = true;}, 300);
-        finishedLoading = true;
-    }
 
     function UpdateStatusOrder(status) {
         statusOrderText = document.getElementById(status).innerText;
@@ -53,8 +50,10 @@
                 <div class="delivery-type">Delivery type: {deliveryType}</div>
                 <div class="update-status">
                     <span>Status: {statusOrderText}
-                    <label class="popup">
+                        {#if user.role === "DELIVERY-MAN" || user.role === "PICKUP-MAN"}
+                        <label class="popup">
                     <input type="checkbox">
+
                     <div class="burger" tabindex="0">
                         <span></span>
                         <span></span>
@@ -85,8 +84,10 @@
                             </li>
                         </ul>
                     </nav>
-                </label>
+                        </label>
+                            {/if}
                 </span>
+
                 </div>
             </div>
             <img src={Map} alt="map_image"/>

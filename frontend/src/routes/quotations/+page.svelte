@@ -8,25 +8,21 @@
     import {goto} from "$app/navigation";
     import Quotation from "$lib/components/Quotation.svelte";
     import {browser} from "$app/environment";
+    import authService from "$lib/features/authService.js";
 
     let user;
     let finishedLoading = false;
     let quotations = [];
 
 
-    onMount(() => {
-        user = JSON.parse(localStorage.getItem('user'));
-        loadJobs();
-    });
+    loadQuotations();
 
-    async function loadJobs() {
+    async function loadQuotations() {
         if (!browser) return;
-        // await onMount(() => {
-        //     //user = authService.getUser();
-        //
-        // })
-        user = 'TO CHANGE';
-        if (user == null) {
+         await onMount(() => {
+             user = authService.getUser();
+         })
+        if (user == null || (user.role !== 'GOLD-CLIENT' && user.role !== 'REGULAR-CLIENT')) {
             await goto('/');
         } else {
             //const requests = await jobService.getJobs(user.token);

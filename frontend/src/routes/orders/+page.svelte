@@ -14,19 +14,14 @@
     let finishedLoading = false;
     let orders = [];
 
-    onMount(() => {
-        user = JSON.parse(localStorage.getItem('user'));
-        loadJobs();
-    });
+    loadOrders();
 
-    async function loadJobs() {
+    async function loadOrders() {
         if (!browser) return;
-        // await onMount(() => {
-        //     //user = authService.getUser();
-        //
-        // })
-        user = 'TO CHANGE';
-        if (user == null) {
+        await onMount(() => {
+            user = authService.getUser();
+        })
+        if (user == null || user.role === 'ADMIN') {
             await goto('/');
         } else {
             //const requests = await jobService.getJobs(user.token);
@@ -34,10 +29,9 @@
                 {itemName: 'Couch', quantity: '500'},
                 {itemName: 'Number 10 machine screw (0.190 inch major diameter)', quantity: '51700'}];
             orders.push({
-                quotationID: '57f5en320a83',
+                orderID: '57f5en320a83',
                 submissionDate: 'Fri Nov 17 2023 17:11:22',
-                orderItems: orderItems,
-                distance: '5 km'
+                orderItems: orderItems
             });
             orders = orders;
         }
@@ -67,8 +61,8 @@
         margin-top: 2%;
     }
 
-    .orders-container{
-        display:flex;
+    .orders-container {
+        display: flex;
         flex-direction: column;
         gap: 1.5em;
     }
