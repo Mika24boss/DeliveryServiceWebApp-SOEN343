@@ -159,6 +159,7 @@ const mutation = new GraphQLObjectType({
                     emailAddress: args.emailAddress,
                     phoneNumber: args.phoneNumber,
                     loginInfo: hashedPassword,
+                    numberOfOrder: 0,
                     role: args.role
                 });
                 await deliveryMan.save();

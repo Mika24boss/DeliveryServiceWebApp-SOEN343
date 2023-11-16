@@ -73,7 +73,9 @@ const mutation = new GraphQLObjectType({
                 if (!admin) {
                     throw new Error('User not authorized')
                 }
+                console.log(args.deliveryManID)
                 const deliveryMan = await DeliveryMan.findById(args.deliveryManID)
+                console.log(deliveryMan);
                 if (!deliveryMan) {
                     throw new Error('DeliveryMan not found')
                 }
@@ -81,9 +83,15 @@ const mutation = new GraphQLObjectType({
 
                 await DeliveryMan.findOneAndUpdate(
                     { _id: deliveryMan._id },
-                    { $push: { 'orders': order._id } },
+                    {
+                        $set: { 'numberOfOrder': deliveryMan.numberOfOrder + 1 },
+                        $push: { 'orders': order._id }
+                    },
                     { new: true }
                 )
+                return {
+                    ...order._doc
+                }
             }
         },
         // Delete an order
@@ -107,7 +115,10 @@ const mutation = new GraphQLObjectType({
                     if (deliveryMan) {
                         await DeliveryMan.findOneAndUpdate(
                             { _id: deliveryMan._id },
-                            { $pull: { 'orders': order._id } },
+                            {
+                                $set: { 'numberOfOrder': deliveryMan.numberOfOrder - 1 },
+                                $pull: { 'orders': order._id }
+                            },
                             { new: true }
                         )
                     }
