@@ -5,6 +5,8 @@
     import {mutation, setClient} from "svelte-apollo";
     import {LOGIN} from "../mutations/peopleMutation/personMutation.js";
     import {goto} from "$app/navigation";
+    import {hasUpdated} from "../lib/stores/updateUser.js";
+    import Trustpilot from '$lib/images/trustpilot.png';
 
     const client = new ApolloClient({
         uri: "https://bwm.happyfir.com/graphql/people",
@@ -35,6 +37,7 @@
 
             console.log(response);
             localStorage.setItem('user', JSON.stringify(response.data.login));
+            hasUpdated.set(true);
             // Navigate to the desired page
             if (!response) {
                 setTimeout(() => isWaiting = false, 100);
@@ -87,6 +90,10 @@
             <a class="signup centerBlock" href="/signup">Don't have an account? Click here to Sign-Up</a>
         </form>
 
+        <a class="trustpilot" href="https://ca.trustpilot.com/search?query=Wandering+Mangoes" target=”_blank”>
+            <img src={Trustpilot} alt="Trustpilot banner"/>
+        </a>
+
     </section>
 {/if}
 
@@ -111,6 +118,18 @@
 
     * a:focus {
         color: orange;
+    }
+
+    img {
+        object-fit: cover;
+        max-width: 300px;
+    }
+
+    .trustpilot {
+        margin-left: auto;
+        margin-right: auto;
+        position: relative;
+        top: 5em;
     }
 
     .signup {

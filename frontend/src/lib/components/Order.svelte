@@ -5,7 +5,7 @@
 
     export var orderID, submissionDate, orderItems, total;
 
-    let role = 'Customer';
+    let role = 'DELIVERYMAN';
     let user = 'Michael';
     let statusOrderText = 'Paid';
     let statusOrder = 'paid';
@@ -42,8 +42,8 @@
                 {/each}
             </div>
         </a>
-        {#if user.role === "Customer"}
-            <div class="total">{total}</div>
+        {#if role === "CLIENT"}
+            <div class="total">Status: {statusOrderText}</div>
         {:else}
             <div class="update-status">
                 <span id="status-span">Status: {statusOrderText}
