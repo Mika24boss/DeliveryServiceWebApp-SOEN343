@@ -48,7 +48,7 @@ const GET_QUOTATIONS_FOR_EACH_CLIENT = gql`
 	}
 `;
 const UPDATE_PRICE = gql`
-mutation updateQuotationPrice($quotationID: ID!, $price: INT!) {
+mutation updateQuotationPrice($quotationID: ID!, $price: Int!) {
 updateQuotationPrice(quotationID: $quotationID, price: $price) {
             id
 			quotationID
