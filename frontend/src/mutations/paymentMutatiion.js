@@ -21,5 +21,23 @@ const DELETE_PAYMENT = gql`
 		}
 	}
 `;
+const GET_PAYMENTS = gql`
+	mutation Payments {
+		payments {
+			methodOfPayment
+			dateOfPayment
+			amount
+		}
+	}
+`;
 
-export { ADD_PAYMENT, DELETE_PAYMENT };
+const GET_PAYMENT = gql`
+	mutation Payment($id: ID!) {
+		payment(id: $id) {
+			methodOfPayment
+			dateOfPayment
+			amount
+		}
+	}
+`;
+export { ADD_PAYMENT, DELETE_PAYMENT, GET_PAYMENT, GET_PAYMENTS };

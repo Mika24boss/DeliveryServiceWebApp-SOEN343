@@ -15,9 +15,9 @@
     let pageTitle = "Quotation #" + quotationID;
     let quotation = [];
     let orderItems = [];
-
     onMount(async () => {
         user = authService.getUser();
+        console.log(user)
         if (user == null || (user.role !== 'GOLD-CLIENT' && user.role !== 'REGULAR-CLIENT')) {
             await goto('/');
             return;

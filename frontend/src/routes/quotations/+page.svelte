@@ -9,23 +9,38 @@
     import Quotation from "$lib/components/Quotation.svelte";
     import {browser} from "$app/environment";
     import authService from "$lib/features/authService.js";
+    import {ApolloClient, InMemoryCache} from "@apollo/client/core";
+    import {mutation, setClient} from "svelte-apollo";
+    import {GET_QUOTATIONS_FOR_EACH_CLIENT} from "../../mutations/quotationMutation.js";
 
     let user;
     let finishedLoading = false;
     let quotations = [];
 
+    const client = new ApolloClient({
+        uri: 'https://bwm.happyfir.com/graphql/orders',
+        cache: new InMemoryCache()
+    });
 
+    setClient(client);
+    const getQuotationMutation = mutation(GET_QUOTATIONS_FOR_EACH_CLIENT);
     loadQuotations();
 
     async function loadQuotations() {
         if (!browser) return;
-         await onMount(() => {
-             user = authService.getUser();
-         })
+        await onMount(() => {
+            user = authService.getUser();
+        })
         if (user == null || (user.role !== 'GOLD-CLIENT' && user.role !== 'REGULAR-CLIENT')) {
             await goto('/');
         } else {
             //const requests = await jobService.getJobs(user.token);
+            const ordersResponse = await getQuotationMutation({
+                variables: {
+                    clientID: user.id
+                }
+            });
+            console.log(ordersResponse.data)
             let orderItems = [{itemName: 'Mango', quantity: '10'},
                 {itemName: 'Couch', quantity: '500'},
                 {itemName: 'Number 10 machine screw (0.190 inch major diameter)', quantity: '51700'}];

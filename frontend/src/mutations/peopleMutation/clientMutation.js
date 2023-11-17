@@ -39,4 +39,34 @@ const DELETE_CLIENT = gql`
 		}
 	}
 `;
-export { ADD_CLIENT, DELETE_CLIENT };
+const GET_CLIENTS = gql`
+	mutation getClients {
+		clients {
+			id
+			name
+			phoneNumber
+			emailAddress
+			loginInfo
+			role
+			quotations
+			order
+			token
+		}
+	}
+`;
+const GET_CLIENT = gql`
+	mutation getClient($id: ID!) {
+		client(id: $id) {
+			id
+			name
+			phoneNumber
+			emailAddress
+			loginInfo
+			role
+			quotations
+			order
+			token
+		}
+	}
+`;
+export { ADD_CLIENT, DELETE_CLIENT, GET_CLIENT, GET_CLIENTS };

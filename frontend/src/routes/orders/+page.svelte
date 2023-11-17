@@ -9,10 +9,21 @@
     import {goto} from "$app/navigation";
     import Order from "$lib/components/Order.svelte";
     import {browser} from "$app/environment";
+    import {ApolloClient, InMemoryCache} from "@apollo/client/core";
+    import {mutation, setClient} from "svelte-apollo";
+    import {GET_ORDERS_FOR_EACH_CLIENT, GET_ORDERS_FOR_EACH_DELIVERY_MAN} from "../../mutations/ordersMutation.js";
 
+    const client = new ApolloClient({
+        uri: 'https://bwm.happyfir.com/graphql/orders',
+        cache: new InMemoryCache()
+    });
+
+    setClient(client);
     let user;
     let finishedLoading = false;
     let orders = [];
+    const getOrdersEachClientMutation = mutation(GET_ORDERS_FOR_EACH_CLIENT);
+    const getOrdersEachDeliveryManMutation = mutation(GET_ORDERS_FOR_EACH_DELIVERY_MAN)
 
     loadOrders();
 
@@ -23,16 +34,31 @@
         })
         if (user == null || user.role === 'ADMIN') {
             await goto('/');
-        } else {
-            //const requests = await jobService.getJobs(user.token);
+        } else if (user.role === "REGULAR-CLIENT" || user.role === 'GOLD-CLIENT') {
+            const ordersResponse = await getOrdersEachClientMutation({
+                variables: {
+                    clientID: user.id
+                }
+            });
+            // const requests = await jobService.getJobs(user.token);
+            console.log(ordersResponse)
             let orderItems = [{itemName: 'Mango', quantity: '10'},
                 {itemName: 'Couch', quantity: '500'},
                 {itemName: 'Number 10 machine screw (0.190 inch major diameter)', quantity: '51700'}];
-            orders.push({
-                orderID: '57f5en320a83',
-                submissionDate: 'Fri Nov 17 2023 17:11:22',
-                orderItems: orderItems
+            orders.push(ordersResponse);
+            orders = orders;
+        } else if (user.role === "DELIVERY-MAN" || user.role === "PICKUP-MAN") {
+            const ordersResponse = await getOrdersEachDeliveryManMutation({
+                variables: {
+                    deliveryManID: user.id
+                }
             });
+            // const requests = await jobService.getJobs(user.token);
+            console.log(ordersResponse)
+            let orderItems = [{itemName: 'Mango', quantity: '10'},
+                {itemName: 'Couch', quantity: '500'},
+                {itemName: 'Number 10 machine screw (0.190 inch major diameter)', quantity: '51700'}];
+            orders.push(ordersResponse);
             orders = orders;
         }
         finishedLoading = true;

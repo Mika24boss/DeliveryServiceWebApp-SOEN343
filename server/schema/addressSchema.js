@@ -4,9 +4,9 @@ const {
     GraphQLList, GraphQLNonNull,
     GraphQLFloat, GraphQLInt, GraphQLBoolean
 } = graphql
-const {GraphQLDateTime} = require('graphql-iso-date')
+const { GraphQLDateTime } = require('graphql-iso-date')
 const Address = require('../models/addressModel')
-const {AddressType, AdminType} = require('./graphQLType')
+const { AddressType, AdminType } = require('./graphQLType')
 const Admin = require("../models/adminModel");
 
 const RootQuery = new GraphQLObjectType({
@@ -20,7 +20,7 @@ const RootQuery = new GraphQLObjectType({
         },
         address: {
             type: AddressType,
-            args: {id: {type: GraphQLID}},
+            args: { id: { type: GraphQLID } },
             resolve(parent, args) {
                 return Address.findById(args.id);
             },
@@ -36,12 +36,12 @@ const mutation = new GraphQLObjectType({
         addAddress: {
             type: AddressType, // Assuming you have an AddressType defined
             args: {
-                street: {type: GraphQLString},
-                city: {type: GraphQLString},
-                state: {type: GraphQLString},
-                province: {type: GraphQLString},
-                country: {type: GraphQLString},
-                postalCode: {type: GraphQLString},
+                street: { type: GraphQLString },
+                city: { type: GraphQLString },
+                state: { type: GraphQLString },
+                province: { type: GraphQLString },
+                country: { type: GraphQLString },
+                postalCode: { type: GraphQLString },
             },
             resolve(parent, args) {
                 const address = new Address({
@@ -59,10 +59,23 @@ const mutation = new GraphQLObjectType({
         deleteAddress: {
             type: AddressType,
             args: {
-                id: {type: GraphQLNonNull(GraphQLID)},
+                id: { type: GraphQLNonNull(GraphQLID) },
             },
             resolve(parent, args) {
                 return Client.findByIdAndRemove(args.id);
+            },
+        },
+        addresses: {
+            type: new GraphQLList(AddressType),
+            resolve() {
+                return Address.find();
+            }
+        },
+        address: {
+            type: AddressType,
+            args: { id: { type: GraphQLID } },
+            resolve(parent, args) {
+                return Address.findById(args.id);
             },
         },
     },

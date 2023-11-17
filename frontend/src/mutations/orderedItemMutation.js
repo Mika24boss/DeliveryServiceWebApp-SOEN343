@@ -21,5 +21,24 @@ const DELETE_ORDERED_ITEM = gql`
 		}
 	}
 `;
+const GET_ORDERED_ITEMS = gql`
+	mutation OrderedItems {
+		orderedItems {
+			size
+			quantity
+			items
+		}
+	}
+`;
 
-export { ADD_ORDERED_ITEM, DELETE_ORDERED_ITEM };
+const GET_ORDERED_ITEM = gql`
+	mutation OrderedItem($id: ID!) {
+		orderedItem(id: $id) {
+			size
+			quantity
+			items
+		}
+	}
+`;
+
+export { ADD_ORDERED_ITEM, DELETE_ORDERED_ITEM, GET_ORDERED_ITEM, GET_ORDERED_ITEMS };

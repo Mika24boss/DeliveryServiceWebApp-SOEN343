@@ -33,5 +33,26 @@ const DELETE_CLIENT_ORDER_JOIN = gql`
 		}
 	}
 `;
+const GET_CLIENT_ORDERS = gql`
+	mutation ClientOrders {
+		clientOrders {
+			clientID
+			orderID
+			location
+			arrivalEstimatedTime
+		}
+	}
+`;
 
-export { ADD_CLIENT_ORDER_JOIN, DELETE_CLIENT_ORDER_JOIN };
+const GET_CLIENT_ORDER = gql`
+	mutation ClientOrder($clientID: ID, $orderID: ID) {
+		clientOrder(clientID: $clientID, orderID: $orderID) {
+			clientID
+			orderID
+			location
+			arrivalEstimatedTime
+		}
+	}
+`;
+
+export { ADD_CLIENT_ORDER_JOIN, DELETE_CLIENT_ORDER_JOIN, GET_CLIENT_ORDER, GET_CLIENT_ORDERS };
