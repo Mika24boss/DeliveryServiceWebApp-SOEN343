@@ -43,5 +43,32 @@ const DELETE_ADDRESS = gql`
 		}
 	}
 `;
+const GET_ADDRESSES = gql`
+	query Addresses {
+		addresses {
+			id
+			street
+			city
+			state
+			province
+			country
+			postalCode
+		}
+	}
+`;
 
-export { ADD_ADDRESS, DELETE_ADDRESS };
+const GET_ADDRESS = gql`
+	query Address($id: ID!) {
+		address(id: $id) {
+			id
+			street
+			city
+			state
+			province
+			country
+			postalCode
+		}
+	}
+`;
+
+export { ADD_ADDRESS, DELETE_ADDRESS, GET_ADDRESS, GET_ADDRESSES };

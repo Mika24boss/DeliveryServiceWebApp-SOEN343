@@ -38,5 +38,34 @@ const ADD_ADMIN = gql`
 		}
 	}
 `;
-
-export { DELETE_ADMIN, ADD_ADMIN };
+const GET_DELIVERYMANS = gql`
+	mutation getDeliveryMans {
+		deliverymans {
+			id
+			name
+			phoneNumber
+			emailAddress
+			loginInfo
+			role
+			numberOfOrder
+			orders
+			token
+		}
+	}
+`;
+const GET_DELIVERYMAN = gql`
+	mutation getDeliveryMan($id: ID!) {
+		deliveryman(id: $id) {
+			id
+			name
+			phoneNumber
+			emailAddress
+			loginInfo
+			role
+			numberOfOrder
+			orders
+			token
+		}
+	}
+`;
+export { DELETE_ADMIN, ADD_ADMIN, GET_DELIVERYMAN, GET_DELIVERYMANS };

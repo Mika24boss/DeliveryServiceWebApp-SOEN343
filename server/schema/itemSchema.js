@@ -5,7 +5,7 @@ const {
     GraphQLFloat, GraphQLInt, GraphQLBoolean
 } = graphql
 const Item = require('../models/itemModel')
-const {ItemType, PaymentType} = require('./graphQLType')
+const { ItemType, PaymentType } = require('./graphQLType')
 const Payment = require("../models/paymentModel");
 
 const RootQuery = new GraphQLObjectType({
@@ -19,7 +19,7 @@ const RootQuery = new GraphQLObjectType({
         },
         item: {
             type: ItemType,
-            args: {id: {type: GraphQLID}},
+            args: { id: { type: GraphQLID } },
             resolve(parent, args) {
                 return Item.findById(args.id);
             },
@@ -35,9 +35,9 @@ const mutation = new GraphQLObjectType({
         addItem: {
             type: ItemType, // Assuming you have an ItemType defined
             args: {
-                name: {type: GraphQLString},
-                isFragile: {type: GraphQLBoolean},
-                price: {type: GraphQLFloat},
+                name: { type: GraphQLString },
+                isFragile: { type: GraphQLBoolean },
+                price: { type: GraphQLFloat },
             },
             resolve(parent, args) {
                 const item = new Item({
@@ -52,16 +52,29 @@ const mutation = new GraphQLObjectType({
         deleteItem: {
             type: ItemType,
             args: {
-                name: {type: GraphQLNonNull(GraphQLID)},
+                name: { type: GraphQLNonNull(GraphQLID) },
             },
             resolve(parent, args) {
-                Item.find({clientId: args.id}).then((projects) => {
+                Item.find({ clientId: args.id }).then((projects) => {
                     projects.forEach((project) => {
                         project.deleteOne();
                     });
                 });
 
                 return Item.findByIdAndRemove(args.id);
+            },
+        },
+        items: {
+            type: new GraphQLList(ItemType),
+            resolve() {
+                return Item.find();
+            }
+        },
+        item: {
+            type: ItemType,
+            args: { id: { type: GraphQLID } },
+            resolve(parent, args) {
+                return Item.findById(args.id);
             },
         },
     },

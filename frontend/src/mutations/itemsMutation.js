@@ -21,5 +21,23 @@ const DELETE_ITEM = gql`
 		}
 	}
 `;
+const GET_ITEMS = gql`
+	mutation Items {
+		items {
+			name
+			isFragile
+			price
+		}
+	}
+`;
 
-export { ADD_ITEM, DELETE_ITEM };
+const GET_ITEM = gql`
+	mutation Item($id: ID!) {
+		item(id: $id) {
+			name
+			isFragile
+			price
+		}
+	}
+`;
+export { ADD_ITEM, DELETE_ITEM, GET_ITEMS, GET_ITEM };

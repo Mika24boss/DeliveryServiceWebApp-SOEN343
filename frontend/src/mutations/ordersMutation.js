@@ -78,5 +78,91 @@ const UPDATE_ORDER = gql`
 		}
 	}
 `;
+const GET_ORDERS_FOR_EACH_CLIENT = gql`
+	mutation OrdersForEachClient($clientID: ID!) {
+		ordersForEachClient(clientID: $clientID) {
+			id
+			orderID
+			orderDate
+			status
+			payment
+			orderItems
+		}
+	}
+`;
 
-export { ADD_ORDER, ASSIGN_ORDER, DELETE_ORDER, UPDATE_ORDER_STATUS, UPDATE_ORDER };
+const GET_ORDERS_FOR_EACH_DELIVERY_MAN = gql`
+	mutation OrdersForEachDeliveryMan($deliveryManID: ID!) {
+		ordersForEachDeliveryMan(deliveryManID: $deliveryManID) {
+			id
+			orderID
+			orderDate
+			status
+			payment
+			orderItems
+		}
+	}
+`;
+
+const GET_ORDER = gql`
+	mutation getOrder($id: ID!) {
+		order(id: $id) {
+			id
+			orderID
+			orderDate
+			status
+			payment
+			orderItems
+		}
+	}
+`;
+const GET_ORDER_FOR_CLIENT = gql`
+	mutation OrderForEachClient($orderID: ID!, $clientID: ID!) {
+		orderForEachClient(orderID: $orderID, clientID: $clientID) {
+			id
+			orderID
+			orderDate
+			status
+			payment
+			orderItems
+		}
+	}
+`;
+const GET_ORDER_FOR_DELIVERY_MAN = gql`
+	mutation OrderForEachDeliveryMan($orderID: ID!, $deliveryManID: ID!) {
+		orderForEachDeliveryMan(orderID: $orderID, deliveryManID: $deliveryManID) {
+			id
+			orderID
+			orderDate
+			status
+			payment
+			orderItems
+		}
+	}
+`;
+const GET_ORDERS = gql`
+	mutation getOrders {
+		orders {
+			id
+			orderID
+			orderDate
+			status
+			payment
+			orderItems
+		}
+	}
+`;
+
+export {
+	ADD_ORDER,
+	ASSIGN_ORDER,
+	DELETE_ORDER,
+	UPDATE_ORDER_STATUS,
+	UPDATE_ORDER,
+	GET_ORDERS_FOR_EACH_CLIENT,
+	GET_ORDER,
+	GET_ORDERS_FOR_EACH_DELIVERY_MAN,
+	GET_ORDER_FOR_CLIENT,
+	GET_ORDER_FOR_DELIVERY_MAN,
+	GET_ORDERS
+};

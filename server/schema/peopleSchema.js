@@ -31,52 +31,6 @@ const RootQuery = new GraphQLObjectType({
                 return Person.find();
             }
         },
-        person: {
-            type: PersonType,
-            args: { id: { type: GraphQLID } },
-            resolve(parent, args) {
-                return Person.findById(args.id);
-            },
-        },
-        clients: {
-            type: new GraphQLList(ClientType),
-            resolve() {
-                return Client.find();
-            }
-        },
-        client: {
-            type: ClientType,
-            args: { id: { type: GraphQLID } },
-            resolve(parent, args) {
-                return Client.findById(args.id);
-            },
-        },
-        admins: {
-            type: new GraphQLList(AdminType),
-            resolve() {
-                return Admin.find();
-            }
-        },
-        admin: {
-            type: AdminType,
-            args: { id: { type: GraphQLID } },
-            resolve(parent, args) {
-                return Admin.findById(args.id);
-            },
-        },
-        deliverymans: {
-            type: new GraphQLList(DeliveryManType),
-            resolve() {
-                return DeliveryMan.find();
-            }
-        },
-        deliveryman: {
-            type: DeliveryManType,
-            args: { id: { type: GraphQLID } },
-            resolve(parent, args) {
-                return DeliveryMan.findById(args.id);
-            },
-        },
     },
 });
 
@@ -341,6 +295,58 @@ const mutation = new GraphQLObjectType({
                     token,
                     role: userRole,
                 };
+            },
+        },
+        persons: {
+            type: new GraphQLList(PersonType),
+            resolve(parent, args) {
+                return Person.find();
+            }
+        },
+        person: {
+            type: PersonType,
+            args: { id: { type: GraphQLID } },
+            resolve(parent, args) {
+                return Person.findById(args.id);
+            },
+        },
+        clients: {
+            type: new GraphQLList(ClientType),
+            resolve() {
+                return Client.find();
+            }
+        },
+        client: {
+            type: ClientType,
+            args: { id: { type: GraphQLID } },
+            resolve(parent, args) {
+                return Client.findById(args.id);
+            },
+        },
+        admins: {
+            type: new GraphQLList(AdminType),
+            resolve() {
+                return Admin.find();
+            }
+        },
+        admin: {
+            type: AdminType,
+            args: { id: { type: GraphQLID } },
+            resolve(parent, args) {
+                return Admin.findById(args.id);
+            },
+        },
+        deliverymans: {
+            type: new GraphQLList(DeliveryManType),
+            resolve() {
+                return DeliveryMan.find();
+            }
+        },
+        deliveryman: {
+            type: DeliveryManType,
+            args: { id: { type: GraphQLID } },
+            resolve(parent, args) {
+                return DeliveryMan.findById(args.id);
             },
         },
 

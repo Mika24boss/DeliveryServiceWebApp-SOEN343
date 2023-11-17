@@ -4,11 +4,11 @@ const {
     GraphQLList, GraphQLNonNull,
     GraphQLFloat, GraphQLInt, GraphQLBoolean
 } = graphql
-const {GraphQLDateTime} = require('graphql-iso-date')
+const { GraphQLDateTime } = require('graphql-iso-date')
 const ClientOrderJoin = require('../models/ClientOrderModel')
 const Order = require('../models/orderModel')
 const Client = require('../models/clientModel')
-const {ClientOrderJoinType} = require('./graphQLType')
+const { ClientOrderJoinType } = require('./graphQLType')
 
 const RootQuery = new GraphQLObjectType({
     name: 'RootQueryType',
@@ -22,11 +22,11 @@ const RootQuery = new GraphQLObjectType({
         clientOrder: {
             type: ClientOrderJoinType,
             args: {
-                clientID: {type: GraphQLID},
-                orderID: {type: GraphQLID},
+                clientID: { type: GraphQLID },
+                orderID: { type: GraphQLID },
             },
             resolve(parent, args) {
-                return ClientOrderJoin.find({clientID: args.clientID, orderID: args.orderID});
+                return ClientOrderJoin.find({ clientID: args.clientID, orderID: args.orderID });
             }
         },
     },
@@ -40,10 +40,10 @@ const mutation = new GraphQLObjectType({
         addClientOrderJoin: {
             type: ClientOrderJoinType, // Assuming you have a ClientOrderJoinType defined
             args: {
-                clientID: {type: GraphQLID},
-                orderID: {type: GraphQLID},
-                location: {type: GraphQLString},
-                arrivalEstimatedTime: {type: GraphQLDateTime},
+                clientID: { type: GraphQLID },
+                orderID: { type: GraphQLID },
+                location: { type: GraphQLString },
+                arrivalEstimatedTime: { type: GraphQLDateTime },
             },
             resolve(parent, args) {
                 const clientOrderJoin = new ClientOrderJoin({
@@ -58,10 +58,10 @@ const mutation = new GraphQLObjectType({
         deleteClientOrderJoin: {
             type: ClientOrderJoinType,
             args: {
-                orderID: {type: GraphQLID},
+                orderID: { type: GraphQLID },
             },
             resolve: async (_, args) => {
-                const clientOrderJoin = await ClientOrderJoin.findOne({orderID: args.orderID});
+                const clientOrderJoin = await ClientOrderJoin.findOne({ orderID: args.orderID });
 
                 if (!clientOrderJoin) {
                     throw new Error('ClientOrderJoin Entry not found')
@@ -77,7 +77,23 @@ const mutation = new GraphQLObjectType({
                     return await clientOrderJoin.remove();
                 }
             }
-        }
+        },
+        clientOrders: {
+            type: new GraphQLList(ClientOrderJoinType),
+            resolve() {
+                return ClientOrderJoin.find();
+            }
+        },
+        clientOrder: {
+            type: ClientOrderJoinType,
+            args: {
+                clientID: { type: GraphQLID },
+                orderID: { type: GraphQLID },
+            },
+            resolve(parent, args) {
+                return ClientOrderJoin.find({ clientID: args.clientID, orderID: args.orderID });
+            }
+        },
     },
 });
 

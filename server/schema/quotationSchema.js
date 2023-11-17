@@ -5,11 +5,12 @@ const {
     GraphQLFloat, GraphQLInt, GraphQLBoolean
 } = graphql
 const Quotation = require('../models/quotationModel')
-const { QuotationType, AdminType } = require('./graphQLType')
+const { QuotationType, AdminType, OrderType } = require('./graphQLType')
 const Admin = require("../models/adminModel");
 const Client = require("../models/clientModel");
 const protect = require("../middleware/authMiddleware");
 const DeliveryMan = require("../models/deliverManModel");
+const Order = require("../models/orderModel");
 const RootQuery = new GraphQLObjectType({
     name: 'RootQueryType',
     fields: {
@@ -71,6 +72,17 @@ const mutation = new GraphQLObjectType({
                 return quotation;
             },
         },
+        quotationForEachClient: {
+            type: new GraphQLList(QuotationType),
+            args: {
+                clientID: { type: GraphQLID }
+            },
+            async resolve(parent, args) {
+                const client = await Client.findById(args.clientID);
+                const quotations = await Quotation.find({ _id: { $in: client.quotations } });
+                return quotations;
+            },
+        },
         // Delete an order
         deleteQuotation: {
             type: QuotationType,
@@ -117,7 +129,39 @@ const mutation = new GraphQLObjectType({
                 await Quotation.findByIdAndRemove(quotation._id);
             },
         },
+        quotations: {
+            type: new GraphQLList(QuotationType),
+            resolve() {
+                return Quotation.find();
+            }
+        },
+        quotation: {
+            type: QuotationType,
+            args: { id: { type: GraphQLID } },
+            resolve(parent, args) {
+                return Quotation.findById(args.id);
+            },
+        },
         // updateQuotation by client with the price
+        updateQuotationPrice: {
+            type: QuotationType,
+            args: {
+                quotationID: { type: GraphQLID },
+                price: { type: GraphQLInt }
+            },
+            async resolve(parent, args, context) {
+                let admin = await Admin.findById(protect(context.headers['authorization']).id).select('-password');
+                if (!admin) {
+                    throw new Error("No authority")
+                }
+                await Quotation.findOneAndUpdate(
+                    { _id: args.quotationID },
+                    { $set: { 'price': args.price } },
+                    { new: true }
+                )
+                return Quotation.findById(args.quotationID)
+            }
+        }
     },
 });
 

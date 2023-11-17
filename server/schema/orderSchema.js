@@ -70,6 +70,43 @@ const RootQuery = new GraphQLObjectType({
 const mutation = new GraphQLObjectType({
     name: 'Mutation',
     fields: {
+        orders: {
+            type: new GraphQLList(OrderType),
+            resolve() {
+                return Order.find();
+            }
+        },
+        ordersForEachDeliveryMan: {
+            type: new GraphQLList(OrderType),
+            args: {
+                deliveryManID: {type: GraphQLID}
+            },
+            async resolve(parent, args) {
+                const deliveryMan = await DeliveryMan.findById(args.deliveryManID);
+                const orders = await Order.find({_id: {$in: deliveryMan.orders}});
+                return orders;
+            },
+        },
+        orderForEachClient: {
+            type: OrderType,
+            args: {
+                orderID: {type: GraphQLInt},
+                clientID: {type: GraphQLID}
+            },
+            resolve(parent, args) {
+                return Client.findById(args.clientID).order[args.orderID];
+            },
+        },
+        orderForEachDeliveryMan: {
+            type: OrderType,
+            args: {
+                orderID: {type: GraphQLInt},
+                deliveryManID: {type: GraphQLID}
+            },
+            resolve(parent, args) {
+                return DeliveryMan.findById(args.deliveryManID).orders[args.orderID];
+            },
+        },
         // @desc Register new Order
         // @access Public
         addOrder: {
@@ -103,6 +140,17 @@ const mutation = new GraphQLObjectType({
                     );
                 }));
                 return order;
+            },
+        },
+        ordersForEachClient: {
+            type: new GraphQLList(OrderType),
+            args: {
+                clientID: {type: GraphQLID}
+            },
+            async resolve(parent, args) {
+                const client = await Client.findById(args.clientID);
+                const orders = await Order.find({_id: {$in: client.order}});
+                return orders;
             },
         },
         assignOrder: {
