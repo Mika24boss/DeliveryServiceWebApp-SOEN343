@@ -56,6 +56,7 @@ updateQuotationPrice(quotationID: $quotationID, price: $price) {
 			distance
 			shippingAddress
 			price
+	}			
 }`;
 const GET_QUOTATIONS = gql`
 	mutation Quotations {
