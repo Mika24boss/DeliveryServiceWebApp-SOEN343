@@ -45,7 +45,12 @@
             let orderItems = [{itemName: 'Mango', quantity: '10'},
                 {itemName: 'Couch', quantity: '500'},
                 {itemName: 'Number 10 machine screw (0.190 inch major diameter)', quantity: '51700'}];
-            orders.push(ordersResponse);
+            orders.push({
+                quotationID: '57f5en320a83',
+                submissionDate: 'Fri Nov 17 2023 17:11:22',
+                orderItems: orderItems,
+                distance: '5 km'
+            });
             orders = orders;
         } else if (user.role === "DELIVERY-MAN" || user.role === "PICKUP-MAN") {
             const ordersResponse = await getOrdersEachDeliveryManMutation({
@@ -58,7 +63,13 @@
             let orderItems = [{itemName: 'Mango', quantity: '10'},
                 {itemName: 'Couch', quantity: '500'},
                 {itemName: 'Number 10 machine screw (0.190 inch major diameter)', quantity: '51700'}];
-            orders.push(ordersResponse);
+            orders.push({
+                quotationID: '57f5en320a83',
+                submissionDate: 'Fri Nov 17 2023 17:11:22',
+                orderItems: orderItems,
+                distance: '5 km'
+            });
+            orders = orders;
             orders = orders;
         }
         finishedLoading = true;

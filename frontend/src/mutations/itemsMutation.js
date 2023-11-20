@@ -2,31 +2,28 @@ import {gql} from '@apollo/client/core';
 
 // Mutation to add an item
 const ADD_ITEM = gql`
-	mutation AddItem($name: String!, $isFragile: Boolean!, $price: Float!) {
-		addItem(name: $name, isFragile: $isFragile, price: $price) {
+	mutation AddItem($name: String!, $quantity: Int!) {
+		addItem(name: $name, quantity: $quantity) {
 			name
-			isFragile
-			price
+			quantity
 		}
 	}
 `;
 
 // Mutation to delete an item
-const DELETE_ITEM = gql`
-	mutation DeleteItem($name: String!) {
-		deleteItem(name: $name) {
-			name
-			isFragile
-			price
-		}
-	}
-`;
+// const DELETE_ITEM = gql`
+// 	mutation DeleteItem($name: String!) {
+// 		deleteItem(name: $name) {
+// 			name
+// 			quantity
+// 		}
+// 	}
+// `;
 const GET_ITEMS = gql`
 	mutation Items {
 		items {
 			name
-			isFragile
-			price
+			quantity
 		}
 	}
 `;
@@ -35,9 +32,8 @@ const GET_ITEM = gql`
 	mutation Item($id: ID!) {
 		item(id: $id) {
 			name
-			isFragile
-			price
+			quantity
 		}
 	}
 `;
-export { ADD_ITEM, DELETE_ITEM, GET_ITEMS, GET_ITEM };
+export { ADD_ITEM, GET_ITEMS, GET_ITEM };

@@ -4,11 +4,8 @@ const Item = new mongoose.Schema({
     name: {
         type: String
     },
-    isFragile: {
-        type: Boolean
-    },
-    price: {
+    quantity: {
         type: Number
-    }
+    },
 })
 module.exports = mongoose.model('Item', Item)
