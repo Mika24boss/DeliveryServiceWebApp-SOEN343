@@ -8,6 +8,14 @@
     import {goto} from "$app/navigation";
     import {onMount} from "svelte";
     import authService from "$lib/features/authService.js";
+    import {ApolloClient, InMemoryCache} from "@apollo/client/core";
+    import {ADD_ITEM} from "../../mutations/itemsMutation.js";
+    import {mutation} from "svelte-apollo";
+
+    const client = new ApolloClient({
+        uri: 'https://bwm.happyfir.com/graphql//create_request',
+        cache: new InMemoryCache()
+    });
 
     let hasChanged = false;
     let pageTitle = "Create Delivery Request";
@@ -28,10 +36,19 @@
         pageTitle = '* ' + "Create Delivery Request";
     }
 
+    //adding order after hitting submit button
+   // const addOrder=mutation(ADD_ITEM);
+
+//adding order to ADD_ITEM
     async function submit() {
         await goto('/quotations');
+        addItem("apple", 1);
+        //addItem(itemName, itemQty);
+
+
     }
 
+    //const addOrderedItem
     function addItem() {
         let newID = 0;
         if (orderItems.length > 0)
