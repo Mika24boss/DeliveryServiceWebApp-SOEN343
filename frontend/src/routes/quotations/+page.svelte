@@ -58,7 +58,13 @@
             quotations = quotations;
         }
         finishedLoading = true;
+
     }
+
+    // async function (){
+    //
+    //
+    // }
 
 </script>
 

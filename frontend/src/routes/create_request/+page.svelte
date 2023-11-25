@@ -9,14 +9,16 @@
     import {onMount} from "svelte";
     import authService from "$lib/features/authService.js";
     import {ApolloClient, InMemoryCache} from "@apollo/client/core";
-    import {ADD_ITEM} from "../../mutations/itemsMutation.js";
-    import {mutation} from "svelte-apollo";
+    //import {ADD_ITEM} from "../../mutations/itemsMutation.js";
+    import {ADD_ADDRESS} from "../../mutations/addressesMutation.js";
+    import {mutation, setClient} from "svelte-apollo";
 
     const client = new ApolloClient({
         uri: 'https://bwm.happyfir.com/graphql//create_request',
         cache: new InMemoryCache()
     });
 
+    setClient(client);
     let hasChanged = false;
     let pageTitle = "Create Delivery Request";
     let date = new Date();
@@ -38,13 +40,34 @@
 
     //adding order after hitting submit button
    // const addOrder=mutation(ADD_ITEM);
+    const addAddressMutation = mutation(ADD_ADDRESS);
 
-//adding order to ADD_ITEM
+    //adding order to ADD_ITEM
     async function submit() {
         await goto('/quotations');
-        addItem("apple", 1);
+        //addItem("apple", 1);
         //addItem(itemName, itemQty);
+        const data = getFieldData();
+        if (!data) return;
 
+        // Use the addAddress mutation
+        try {
+            await addAddressMutation({
+                variables: {
+                    street: document.getElementById('deliveryAddress').value,
+                    city: document.getElementById('deliveryCity').value,
+                    state: document.getElementById('deliveryProvince').value,
+                    province: document.getElementById('deliveryProvince').value,
+                    country: document.getElementById('deliveryCountry').value,
+                    postalCode: document.getElementById('deliveryPostalCode').value
+                }
+            });
+            // Optionally, navigate to another page
+             await goto('/quotations');
+        } catch (error) {
+            console.error("Error adding address:", error);
+            // Handle error as needed
+        }
 
     }
 
