@@ -9,7 +9,7 @@
     import {onMount} from "svelte";
     import authService from "$lib/features/authService.js";
     import {ApolloClient, InMemoryCache} from "@apollo/client/core";
-    //import {ADD_ITEM} from "../../mutations/itemsMutation.js";
+    import {ADD_ITEM} from "../../mutations/itemsMutation.js";
     import {ADD_ADDRESS} from "../../mutations/addressesMutation.js";
     import {mutation, setClient} from "svelte-apollo";
 
@@ -41,9 +41,9 @@
     //adding order after hitting submit button
    // const addOrder=mutation(ADD_ITEM);
     const addAddressMutation = mutation(ADD_ADDRESS);
-
+    const addItemMutation = mutation(ADD_ITEM);
     //adding order to ADD_ITEM
-    async function submit() {
+    async function submit() { //where to put
         await goto('/quotations');
         //addItem("apple", 1);
         //addItem(itemName, itemQty);
@@ -72,12 +72,43 @@
     }
 
     //const addOrderedItem
-    function addItem() {
+    async function addItem() {
         let newID = 0;
         if (orderItems.length > 0)
             newID = orderItems[orderItems.length - 1].itemID + 1;
         orderItems.push({itemID: newID, itemName: "", quantity: 1});
         orderItems = orderItems;
+        //linking to backend
+        try {
+            const response = await addItemMutation({
+                variables: {
+                    name: document.getElementById('itemName').value,
+                    quantity: document.getElementById('quantity').value,
+                },
+            });
+
+            // Access the result from the mutation response
+            const newItem = response.data.addItem;
+
+            // Add the new item to the local orderItems array
+            let newID = 0;
+            if (orderItems.length > 0) {
+                newID = orderItems[orderItems.length - 1].itemID + 1;
+            }
+            orderItems = [
+                ...orderItems,
+                {
+                    itemID: newID,
+                    itemName: newItem.name,
+                    quantity: newItem.quantity,
+                },
+            ];
+
+            // Optionally, update any other UI/logic based on the response
+        } catch (error) {
+            console.error('Error adding item:', error);
+            // Handle error as needed
+        }
     }
 
     function remove(i) {
