@@ -1,25 +1,21 @@
-import {gql} from '@apollo/client/core';
-
 // Mutation to add a quotation
+import { gql } from '@apollo/client/core';
+
 const ADD_QUOTATION = gql`
-  mutation AddQuotation(
-    $pickUpAddress: String!
-    $shippingAddress: String!
-    $distance: Float!
-  ) {
-    addQuotation(
-      pickUpAddress: $pickUpAddress!
-      shippingAddress: $shippingAddress!
-      distance: $distance!
-    ) {
-      id
-      quotationID
-      pickUpAddress
-      distance
-      shippingAddress
-      price
-    }
-  }
+	mutation AddQuotation($pickUpAddress: ID!, $distance: Float!, $shippingAddress: ID!) {
+		addQuotation(
+			pickUpAddress: $pickUpAddress
+			shippingAddress: $shippingAddress
+			distance: $distance
+		) {
+			id
+			quotationID
+			pickUpAddress
+			distance
+			shippingAddress
+			price
+		}
+	}
 `;
 
 // Mutation to delete a quotation
@@ -36,7 +32,7 @@ const DELETE_QUOTATION = gql`
 	}
 `;
 const GET_QUOTATIONS_FOR_EACH_CLIENT = gql`
-	mutation quotationForEachClient($clientID: ID!) {
+	mutation QuotationForEachClient($clientID: ID!) {
 		quotationForEachClient(clientID: $clientID) {
 			id
 			quotationID
@@ -48,26 +44,26 @@ const GET_QUOTATIONS_FOR_EACH_CLIENT = gql`
 	}
 `;
 const UPDATE_PRICE = gql`
-mutation updateQuotationPrice($quotationID: ID!, $price: INT!) {
-updateQuotationPrice(quotationID: $quotationID, price: $price) {
-            id
+	mutation UpdateQuotationPrice($quotationID: ID!, $price: Int) {
+		updateQuotationPrice(quotationID: $quotationID, price: $price) {
+			id
 			quotationID
 			pickUpAddress
 			distance
 			shippingAddress
 			price
-}`;
+		}
+	}
+`;
 const GET_QUOTATIONS = gql`
 	mutation Quotations {
 		quotations {
 			id
-			name
+			quotationID
 			pickUpAddress
 			distance
 			shippingAddress
-			billingAddress
 			price
-			order
 		}
 	}
 `;
@@ -76,13 +72,11 @@ const GET_QUOTATION = gql`
 	mutation Quotation($id: ID!) {
 		quotation(id: $id) {
 			id
-			name
+			quotationID
 			pickUpAddress
 			distance
 			shippingAddress
-			billingAddress
 			price
-			order
 		}
 	}
 `;

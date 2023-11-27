@@ -32,36 +32,64 @@
         await onMount(() => {
             user = authService.getUser();
         })
+        let ordersResponse;
         if (user == null || user.role === 'ADMIN') {
             await goto('/');
         } else if (user.role === "REGULAR-CLIENT" || user.role === 'GOLD-CLIENT') {
-            const ordersResponse = await getOrdersEachClientMutation({
+            ordersResponse = await getOrdersEachClientMutation({
                 variables: {
                     clientID: user.id
                 }
             });
-            // const requests = await jobService.getJobs(user.token);
-            console.log(ordersResponse)
-            let orderItems = [{itemName: 'Mango', quantity: '10'},
-                {itemName: 'Couch', quantity: '500'},
-                {itemName: 'Number 10 machine screw (0.190 inch major diameter)', quantity: '51700'}];
-            orders.push(ordersResponse);
-            orders = orders;
+            ordersResponse = ordersResponse.data.ordersForEachClient;
         } else if (user.role === "DELIVERY-MAN" || user.role === "PICKUP-MAN") {
-            const ordersResponse = await getOrdersEachDeliveryManMutation({
+            ordersResponse = await getOrdersEachDeliveryManMutation({
                 variables: {
                     deliveryManID: user.id
                 }
             });
-            // const requests = await jobService.getJobs(user.token);
-            console.log(ordersResponse)
-            let orderItems = [{itemName: 'Mango', quantity: '10'},
-                {itemName: 'Couch', quantity: '500'},
-                {itemName: 'Number 10 machine screw (0.190 inch major diameter)', quantity: '51700'}];
-            orders.push(ordersResponse);
-            orders = orders;
+            console.log(ordersResponse);
+            ordersResponse = ordersResponse.data.ordersForEachDeliveryMan;
         }
+        orders = ordersResponse.map(function(order) {
+            return {
+                orderID: order.id,
+                submissionDate: convertDate(order.orderDate),
+                orderItems: order.orderItems,
+                status: convertStatus(order.status),
+            };
+        });
+
+        // let orderItems = [{itemName: 'Mango', quantity: '10'},
+        //     {itemName: 'Couch', quantity: '500'},
+        //     {itemName: 'Number 10 machine screw (0.190 inch major diameter)', quantity: '51700'}];
+        // orders.push({
+        //     orderID: '57f5en320a83',
+        //     submissionDate: 'Fri Nov 17 2023 17:11:22',
+        //     orderItems: orderItems,
+        //     status: 'Paid'
+        // });
+        // orders = orders;
         finishedLoading = true;
+    }
+
+    function convertStatus(backendStatus) {
+        switch (backendStatus) {
+            case "NONE":
+                return "Paid";
+            case "PICKUP":
+                return "En route to pickup";
+            case "DELIVERING":
+                return "En route to delivery";
+            case "DELIVERED":
+                return "Delivered";
+            default:
+                return "Paid";
+        }
+    }
+
+    function convertDate(backendDate){
+        return new Date(parseInt(backendDate)).toLocaleDateString([], {year: 'numeric', month: 'long', day: 'numeric'});
     }
 
 </script>

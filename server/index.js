@@ -13,6 +13,7 @@ const orderSchema = require('./schema/orderSchema')
 const paymentSchema = require('./schema/paymentSchema')
 const peopleSchema = require("./schema/peopleSchema")
 const quotationSchema = require("./schema/quotationSchema")
+const requestSchema = require('./schema/requestSchema')
 connectDB();
 
 const app = express()
@@ -56,6 +57,10 @@ app.use('/graphql/orders',
         }
     )
 )
+app.use('/graphql/create_request', graphqlHTTP({
+    schema: requestSchema,
+    graphiql: process.env.NODE_ENV === 'development'
+}))
 app.use('/graphql/payments',
     graphqlHTTP({
             schema: paymentSchema,

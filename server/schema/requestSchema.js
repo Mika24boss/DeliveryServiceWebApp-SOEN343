@@ -11,6 +11,10 @@ const Item = require("../models/itemModel");
 const Client = require("../models/clientModel");
 const protect = require("../middleware/authMiddleware");
 const Quotation = require("../models/quotationModel");
+const {OrderedItemType, AddressType, ItemType} = require('./graphQLType')
+const Address = require("../models/addressModel");
+const OrderedItems = require("../models/orderedItems")
+const Item = require("../models/itemModel");
 const RootQuery = new GraphQLObjectType({
     name: 'RootQueryType',
     fields: {
@@ -38,6 +42,8 @@ const mutation = new GraphQLObjectType({
         addOrderedItem: {
             type: OrderedItemType, // Assuming you have an OrderedItemType defined
             args: {
+                size: {type: GraphQLString},
+                quantity: {type: GraphQLInt},
                 items: {type: new GraphQLList(GraphQLString)}, // Assuming you store item IDs as strings
             },
             resolve(parent, args) {
