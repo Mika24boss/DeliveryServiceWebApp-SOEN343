@@ -21,9 +21,5 @@ const Quotation = new mongoose.Schema({
         type: Number,
         required: true
     },
-    orderItems: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'OrderedItems'
-    }
 });
 module.exports = mongoose.model('Quotation', Quotation);
