@@ -10,6 +10,7 @@
     import authService from "$lib/features/authService.js";
     import {mutation} from "svelte-apollo";
     import {UPDATE_PRICE} from "../../../mutations/quotationMutation.js";
+    import {ADD_ADDRESS} from "../../../mutations/addressesMutation.js";
 
     const quotationID = $page.url.pathname.split('/').pop();
     let pageTitle = "Delivery Request #" + quotationID;
@@ -55,9 +56,24 @@
         finishedLoading = true;
     })
 
-    function accept() {
+    //const updatePrice = mutation(UPDATE_PRICE);
+    async function accept() {
         if (price === undefined) alert("Please enter a price.")
-        else alert("Accepted at " + price + "$!");
+        else {
+            alert("Accepted at " + price + "$!");
+            // try {
+            //     const response= await UPDATE_PRICE({
+            //         variables: {
+            //             quotationID: document.getElementById('deliveryAddress').value,
+            //             newPrice: document.getElementById('deliveryCity').value,
+            //         }
+            //     });
+            //     console.log(response);
+            // } catch (error) {
+            //     console.error("Error changing price:", error);
+            // }
+
+        }
     }
 
     function reject() {
@@ -65,7 +81,7 @@
     }
 
     //make quotation(ADD_QUOTATION), only works when admin
-   // const updatePrice=mutation(UPDATE_PRICE);
+   //const updatePrice=mutation(UPDATE_PRICE);
     //function updatePrices(){
 
    // }
