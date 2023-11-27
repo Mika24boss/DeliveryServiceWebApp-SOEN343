@@ -18,9 +18,9 @@ const Order = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Payment'
     },
-    orderItems: [{
+    orderItems: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'OrderedItems'
-    }]
+    }
 });
 module.exports = mongoose.model('Order', Order)
