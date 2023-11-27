@@ -8,20 +8,29 @@
     import {onMount} from "svelte";
     import LoadingAnimation from "$lib/components/LoadingAnimation.svelte";
     import authService from "$lib/features/authService.js";
-    import {mutation} from "svelte-apollo";
+    import {mutation, setClient} from "svelte-apollo";
     import {UPDATE_PRICE} from "../../../mutations/quotationMutation.js";
     import {ADD_ADDRESS} from "../../../mutations/addressesMutation.js";
+    import {ApolloClient, InMemoryCache} from "@apollo/client/core";
 
+    let user = authService.getUser();
+    console.log(user.token)
+    const client = new ApolloClient({
+        uri: 'https://bwm.happyfir.com/graphql/create_request',
+        headers: {
+            Authorization: `Bearer ${user.token}`,
+        },
+        cache: new InMemoryCache()
+    });
+    setClient(client);
     const quotationID = $page.url.pathname.split('/').pop();
     let pageTitle = "Delivery Request #" + quotationID;
-    let user;
     let request;
     let orderItems = [];
     let finishedLoading = false;
     let price;
 
     onMount(async () => {
-        user = authService.getUser();
         if (user == null || user.role !== 'ADMIN') {
             await goto('/');
             return;
@@ -56,22 +65,24 @@
         finishedLoading = true;
     })
 
-    //const updatePrice = mutation(UPDATE_PRICE);
+    const updatePrice = mutation(UPDATE_PRICE);
     async function accept() {
         if (price === undefined) alert("Please enter a price.")
         else {
             alert("Accepted at " + price + "$!");
-            // try {
-            //     const response= await UPDATE_PRICE({
-            //         variables: {
-            //             quotationID: document.getElementById('deliveryAddress').value,
-            //             newPrice: document.getElementById('deliveryCity').value,
-            //         }
-            //     });
-            //     console.log(response);
-            // } catch (error) {
-            //     console.error("Error changing price:", error);
-            // }
+            console.log(price)
+            console.log(typeof price)
+            try {
+                const response= await updatePrice({
+                    variables: {
+                        quotationID: quotationID,
+                        price: price,
+                    }
+                });
+                console.log(response);
+            } catch (error) {
+                console.error("Error changing price:", error);
+            }
 
         }
     }
