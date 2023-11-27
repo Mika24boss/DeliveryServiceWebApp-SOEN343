@@ -5,9 +5,6 @@ const {
     GraphQLFloat, GraphQLInt, GraphQLBoolean
 } = graphql
 const {OrderedItemType, AddressType, ItemType, QuotationType} = require('./graphQLType')
-const Address = require("../models/addressModel");
-const OrderedItems = require("../models/orderedItems")
-const Item = require("../models/itemModel");
 const Client = require("../models/clientModel");
 const protect = require("../middleware/authMiddleware");
 const Quotation = require("../models/quotationModel");
