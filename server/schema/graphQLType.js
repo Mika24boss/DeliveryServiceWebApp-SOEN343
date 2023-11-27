@@ -66,7 +66,7 @@ const OrderType = new GraphQLObjectType({
         orderDate: {type: GraphQLString},
         status: {type: GraphQLString},
         payment: {type: GraphQLID},
-        orderItems: {type: GraphQLID},
+        orderItems: {type: new GraphQLList(GraphQLID)},
     }),
 });
 
@@ -78,7 +78,6 @@ const QuotationType = new GraphQLObjectType({
         pickUpAddress: {type: GraphQLID},
         distance: {type: GraphQLFloat},
         shippingAddress: {type: GraphQLID},
-        orderItems: {type: GraphQLID},
         price: {type: GraphQLFloat},
     }),
 });
@@ -97,7 +96,6 @@ const AddressType = new GraphQLObjectType({
 const ItemType = new GraphQLObjectType({
     name: 'Item',
     fields: () => ({
-        id: {type: GraphQLID},
         name: {type: GraphQLString},
         quantity: {type: GraphQLInt},
     }),
@@ -105,7 +103,6 @@ const ItemType = new GraphQLObjectType({
 const PaymentType = new GraphQLObjectType({
     name: 'Payment',
     fields: () => ({
-        id: {type: GraphQLID},
         methodOfPayment: {type: GraphQLString},
         dateOfPayment: {type: GraphQLString},
         amount: {type: GraphQLFloat},
@@ -114,14 +111,12 @@ const PaymentType = new GraphQLObjectType({
 const OrderedItemType = new GraphQLObjectType({
     name: 'OrderedItem',
     fields: () => ({
-        id: {type: GraphQLID},
         items: {type: new GraphQLList(GraphQLID)}, // Assuming you store item IDs as strings
     }),
 });
 const ClientOrderJoinType = new GraphQLObjectType({
     name: 'ClientOrderJoin',
     fields: () => ({
-        id: {type: GraphQLID},
         clientID: {type: GraphQLID},
         orderID: {type: GraphQLID},
         location: {type: GraphQLString},

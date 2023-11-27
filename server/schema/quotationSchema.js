@@ -5,7 +5,7 @@ const {
     GraphQLFloat, GraphQLInt, GraphQLBoolean
 } = graphql
 const Quotation = require('../models/quotationModel')
-const {QuotationType, AdminType, OrderType} = require('./graphQLType')
+const { QuotationType, AdminType, OrderType } = require('./graphQLType')
 const Admin = require("../models/adminModel");
 const Client = require("../models/clientModel");
 const protect = require("../middleware/authMiddleware");
@@ -22,7 +22,7 @@ const RootQuery = new GraphQLObjectType({
         },
         quotation: {
             type: QuotationType,
-            args: {id: {type: GraphQLID}},
+            args: { id: { type: GraphQLID } },
             resolve(parent, args) {
                 return Quotation.findById(args.id);
             },
@@ -36,9 +36,9 @@ const mutation = new GraphQLObjectType({
         addQuotation: {
             type: QuotationType, // Assuming you have a QuotationType defined
             args: {
-                pickUpAddress: {type: GraphQLNonNull(GraphQLID)},
-                distance: {type: GraphQLFloat}, // Adjust the data type as needed
-                shippingAddress: {type: GraphQLNonNull(GraphQLID)},
+                pickUpAddress: { type: GraphQLNonNull(GraphQLID) },
+                distance: { type: GraphQLFloat }, // Adjust the data type as needed
+                shippingAddress: { type: GraphQLNonNull(GraphQLID) },
                 // Adjust the data type as needed
             },
             async resolve(parent, args, context) {
@@ -55,17 +55,17 @@ const mutation = new GraphQLObjectType({
                     quotationID: 0
                 });
                 await Client.findOneAndUpdate(
-                    {_id: client._id},
-                    {$push: {'quotations': quotation._id}},
-                    {new: true}
+                    { _id: client._id },
+                    { $push: { 'quotations': quotation._id } },
+                    { new: true }
                 )
                 await client.save();
                 quotation.quotationID = client.quotations.length;
                 await quotation.save();
                 await Promise.all(client.quotations.map(async (quotationId, index) => {
                     await Quotation.updateOne(
-                        {_id: quotationId},
-                        {$set: {quotationID: index}}
+                        { _id: quotationId },
+                        { $set: { quotationID: index } }
                     );
                 }));
 
@@ -75,11 +75,11 @@ const mutation = new GraphQLObjectType({
         quotationForEachClient: {
             type: new GraphQLList(QuotationType),
             args: {
-                clientID: {type: GraphQLID}
+                clientID: { type: GraphQLID }
             },
             async resolve(parent, args) {
                 const client = await Client.findById(args.clientID);
-                const quotations = await Quotation.find({_id: {$in: client.quotations}});
+                const quotations = await Quotation.find({ _id: { $in: client.quotations } });
                 return quotations;
             },
         },
@@ -87,7 +87,7 @@ const mutation = new GraphQLObjectType({
         deleteQuotation: {
             type: QuotationType,
             args: {
-                quotationID: {type: GraphQLNonNull(GraphQLID)},
+                quotationID: { type: GraphQLNonNull(GraphQLInt) },
             },
             async resolve(parent, args, context) {
                 let client = await Client.findById(protect(context.headers['authorization']).id).select('-password');
@@ -95,34 +95,34 @@ const mutation = new GraphQLObjectType({
                 if (!admin && !client) {
                     throw new Error("No Authority")
                 }
-                const quotation = await Quotation.findById(args.quotationID)
+                const quotation = await Quotation.findOne({ quotationID: { $eq: parseInt(args.quotationID) } })
                 if (!client) {
-                    let client = await Client.findOne({quotations: {$in: [quotation._id]}})
+                    let client = await Client.findOne({ quotations: { $in: [quotation._id] } })
                     await Client.findByIdAndUpdate(
-                        {_id: client._id},
-                        {$pull: {'quotations': quotation._id}},
-                        {new: true}
+                        { _id: client._id },
+                        { $pull: { 'quotations': quotation._id } },
+                        { new: true }
                     )
                     await client.save();
                     client = await Client.findById(client._id);
                     await Promise.all(client.quotations.map(async (quotationId, index) => {
                         await Quotation.updateOne(
-                            {_id: quotationId},
-                            {$set: {quotationID: index}}
+                            { _id: quotationId },
+                            { $set: { quotationID: index } }
                         );
                     }));
                 } else {
                     await Client.findByIdAndUpdate(
-                        {_id: client._id},
-                        {$pull: {'quotations': quotation._id}},
-                        {new: true}
+                        { _id: client._id },
+                        { $pull: { 'quotations': quotation._id } },
+                        { new: true }
                     )
                     await client.save();
                     client = await Client.findById(client._id)
                     await Promise.all(client.quotations.map(async (quotationId, index) => {
                         await Quotation.updateOne(
-                            {_id: quotationId},
-                            {$set: {quotationID: index}}
+                            { _id: quotationId },
+                            { $set: { quotationID: index } }
                         );
                     }));
                 }
@@ -137,7 +137,7 @@ const mutation = new GraphQLObjectType({
         },
         quotation: {
             type: QuotationType,
-            args: {id: {type: GraphQLID}},
+            args: { id: { type: GraphQLID } },
             resolve(parent, args) {
                 return Quotation.findById(args.id);
             },
@@ -146,8 +146,8 @@ const mutation = new GraphQLObjectType({
         updateQuotationPrice: {
             type: QuotationType,
             args: {
-                quotationID: {type: GraphQLID},
-                price: {type: GraphQLInt}
+                quotationID: { type: GraphQLID },
+                price: { type: GraphQLInt }
             },
             async resolve(parent, args, context) {
                 let admin = await Admin.findById(protect(context.headers['authorization']).id).select('-password');
@@ -155,9 +155,9 @@ const mutation = new GraphQLObjectType({
                     throw new Error("No authority")
                 }
                 await Quotation.findOneAndUpdate(
-                    {_id: args.quotationID},
-                    {$set: {'price': args.price}},
-                    {new: true}
+                    { _id: args.quotationID },
+                    { $set: { 'price': args.price } },
+                    { new: true }
                 )
                 return Quotation.findById(args.quotationID)
             }
