@@ -8,6 +8,8 @@
     import {onMount} from "svelte";
     import LoadingAnimation from "$lib/components/LoadingAnimation.svelte";
     import authService from "$lib/features/authService.js";
+    import {mutation} from "svelte-apollo";
+    import {UPDATE_PRICE} from "../../../mutations/quotationMutation.js";
 
     const quotationID = $page.url.pathname.split('/').pop();
     let pageTitle = "Delivery Request #" + quotationID;
@@ -61,6 +63,12 @@
     function reject() {
         alert("Rejected!");
     }
+
+    //make quotation(ADD_QUOTATION), only works when admin
+   // const updatePrice=mutation(UPDATE_PRICE);
+    //function updatePrices(){
+
+   // }
 </script>
 
 {#if !finishedLoading}

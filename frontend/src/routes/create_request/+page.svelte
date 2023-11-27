@@ -14,7 +14,7 @@
     import {mutation, setClient} from "svelte-apollo";
 
     const client = new ApolloClient({
-        uri: 'https://bwm.happyfir.com/graphql//create_request',
+        uri: 'https://bwm.happyfir.com/graphql/create_request',
         cache: new InMemoryCache()
     });
 
@@ -32,6 +32,7 @@
             await goto('/');
         }
     });
+    onMount(submit);
 
     function changedText() {
         hasChanged = true;
@@ -39,20 +40,21 @@
     }
 
     //adding order after hitting submit button
-   // const addOrder=mutation(ADD_ITEM);
     const addAddressMutation = mutation(ADD_ADDRESS);
     const addItemMutation = mutation(ADD_ITEM);
+
     //adding order to ADD_ITEM
     async function submit() { //where to put
-        await goto('/quotations');
+       // await goto('/quotations');
         //addItem("apple", 1);
         //addItem(itemName, itemQty);
-        const data = getFieldData();
-        if (!data) return;
+        //const data = getFieldData();
+       // console.log(data)
+       // if (!data) return;
 
         // Use the addAddress mutation
         try {
-            await addAddressMutation({
+            const response= await addAddressMutation({
                 variables: {
                     street: document.getElementById('deliveryAddress').value,
                     city: document.getElementById('deliveryCity').value,
@@ -63,7 +65,8 @@
                 }
             });
             // Optionally, navigate to another page
-             await goto('/quotations');
+            console.log(response);
+             //await goto('/quotations');
         } catch (error) {
             console.error("Error adding address:", error);
             // Handle error as needed
@@ -104,7 +107,7 @@
                 },
             ];
 
-            // Optionally, update any other UI/logic based on the response
+            // if error
         } catch (error) {
             console.error('Error adding item:', error);
             // Handle error as needed
@@ -124,13 +127,17 @@
         }
     }
 
+    //main transition
     async function createRequest() {
-        const data = getFieldData();
-        if (!data) return;
+            // const data = getFieldData();
+            // console.log(data)
+            // if (!data) return;
+             //addItem();
+             submit();
 
         //const response = await jobService.createJob(data, user.token);
         //if (!response) {
-        alert('Failed to create job.');
+        // alert('Failed to create job.');
         //} else {
         //    await goto('/postings');
         //}
@@ -197,7 +204,7 @@
 
     <div class="header">
         <h1 use:preventTabClose={hasChanged}>Create A Delivery Request</h1>
-        <button class="payment-button" on:click="{createRequest}">Submit</button>
+        <button class="payment-button" on:click="{createRequest()}">Submit</button>
     </div>
 
     <div class="informationSection">
