@@ -3,11 +3,10 @@
     import {onMount} from "svelte";
     import {goto} from "$app/navigation";
 
-    export var orderID, submissionDate, orderItems;
+    export var orderID, submissionDate, orderItems, status;
 
     let user;
-    let statusOrderText = 'Paid';
-    let statusOrder = 'paid';
+    let statusOrder = status;
     let finishedLoading = false;
 
     loadOrder();
@@ -23,8 +22,7 @@
     }
 
     function UpdateStatusOrder(status) {
-        statusOrderText = document.getElementById(status).innerText;
-        statusOrder = status;
+        statusOrder = document.getElementById(status).innerText;
     }
 
 </script>
@@ -42,10 +40,10 @@
             </div>
         </a>
         {#if user.role === "GOLD-CLIENT" || user.role === "REGULAR-CLIENT"}
-            <div class="total">Status: {statusOrderText}</div>
+            <div class="total">Status: {statusOrder}</div>
         {:else}
             <div class="update-status">
-                <span id="status-span">Status: {statusOrderText}
+                <span id="status-span">Status: {statusOrder}
                     <label class="popup">
                     <input type="checkbox">
                     <div class="burger" tabindex="0">
@@ -57,23 +55,23 @@
                         <legend>Status</legend>
                         <ul>
                             <li>
-                                <button class="status" on:click={() => UpdateStatusOrder("paid")}>
-                                    <span id="paid">Paid</span>
+                                <button class="status" on:click={() => UpdateStatusOrder("Paid")}>
+                                    <span id="Paid">Paid</span>
                                 </button>
                             </li>
                             <li>
-                                <button class="status" on:click={() => UpdateStatusOrder("on-route-pickup")}>
-                                    <span id="on-route-pickup">On route to pickup</span>
+                                <button class="status" on:click={() => UpdateStatusOrder("On route to pickup")}>
+                                    <span id="On route to pickup">On route to pickup</span>
                                 </button>
                             </li>
                             <li>
-                                <button class="status" on:click={() => UpdateStatusOrder("on-route-delivery")}>
-                                    <span id="on-route-delivery">On route to delivery</span>
+                                <button class="status" on:click={() => UpdateStatusOrder("On route to delivery")}>
+                                    <span id="On route to delivery">On route to delivery</span>
                                 </button>
                             </li>
                             <li>
-                                <button class="status" on:click={() => UpdateStatusOrder("delivered")}>
-                                    <span id="delivered">Delivered</span>
+                                <button class="status" on:click={() => UpdateStatusOrder("Delivered")}>
+                                    <span id="Delivered">Delivered</span>
                                 </button>
                             </li>
                         </ul>

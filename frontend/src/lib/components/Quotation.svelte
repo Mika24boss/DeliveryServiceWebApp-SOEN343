@@ -1,7 +1,7 @@
 <script>
     import {goto} from "$app/navigation";
 
-    export var quotationID, submissionDate, orderItems, distance;
+    export var quotationID, orderItems, price;
 
     async function onClick() {
         await goto('/quotations' + '/payment/' + quotationID);
@@ -10,16 +10,13 @@
 </script>
 
 <div class="outline" id={quotationID}>
-    <a class="date" href="/quotations/{quotationID}">
-        {submissionDate}
+    <a class="price" href="/quotations/{quotationID}">
+        {price} $
     </a>
     <a class="items" href="/quotations/{quotationID}">
         {#each orderItems as item, i}
             {item.quantity} X {item.itemName}{ i === orderItems.length - 1 ? '' : ', '}
         {/each}
-    </a>
-    <a class="distance" href="/quotations/{quotationID}">
-        {distance}
     </a>
     <button class="payment-button" type="submit" on:click={onClick}>
         Pay
@@ -33,7 +30,7 @@
         height: 4em;
         outline: 2px solid black;
         border-radius: 1em;
-        grid-template-columns: 2fr 8fr 1fr 1fr;
+        grid-template-columns: 1fr 8fr 2fr;
         display: grid;
         align-items: center;
         gap: 1em;
@@ -48,7 +45,7 @@
         text-overflow: ellipsis;
     }
 
-    .date {
+    .price {
         text-align: left;
     }
 
