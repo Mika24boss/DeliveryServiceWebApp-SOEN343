@@ -9,7 +9,19 @@
     import authService from '$lib/features/authService.js';
     import {onMount} from 'svelte';
     import LoadingAnimation from '$lib/components/LoadingAnimation.svelte';
+    import {ApolloClient, InMemoryCache} from "@apollo/client/core";
+    import {mutation, setClient} from "svelte-apollo";
+    import {GET_ORDER_FOR_CLIENT, GET_ORDER_FOR_DELIVERY_MAN} from "../../../mutations/ordersMutation.js";
 
+    const client = new ApolloClient({
+        // uri: 'https://bwm.happyfir.com/graphql/orders',
+        uri: "http://localhost:8000/graphql/orders",
+        cache: new InMemoryCache()
+    });
+
+    setClient(client);
+    const getOrderForClient = mutation(GET_ORDER_FOR_CLIENT);
+    const getOrderForDeliveryMan = mutation(GET_ORDER_FOR_DELIVERY_MAN);
     let user;
     let finishedLoading = false;
     const orderID = $page.url.pathname.split('/').pop();
@@ -26,6 +38,32 @@
         if (user == null || user.role === 'ADMIN') {
             await goto('/');
         }
+        if (user.role === 'REGULAR-CLIENT' || user.role === 'GOLD-CLIENT') {
+            try {
+                const response = await getOrderForClient({
+                    variables: {
+                        orderID: parseInt(orderID),
+                        clientID: user.id
+                    }
+                });
+                console.log(response)
+            } catch (e) {
+                return alert("OrderID is invalid")
+            }
+        } else if (user.role === 'DELIVERY-MAN' || user.role === 'PICKUP-MAN') {
+            try {
+                const response = await getOrderForDeliveryMan({
+                    variables: {
+                        orderID: orderID,
+                        deliveryManID: user.id
+                    }
+                });
+                console.log(response)
+            } catch (e) {
+                return alert("OrderID is invalid")
+            }
+        }
+
         setTimeout(() => {
             finishedLoading = true;
         }, 300);
