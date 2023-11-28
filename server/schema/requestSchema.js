@@ -4,7 +4,11 @@ const {
     GraphQLList, GraphQLNonNull,
     GraphQLFloat, GraphQLInt, GraphQLBoolean
 } = graphql
-const {OrderedItemType, AddressType, ItemType} = require('./graphQLType')
+const {OrderedItemType, AddressType, ItemType, QuotationType} = require('./graphQLType')
+const Client = require("../models/clientModel");
+const protect = require("../middleware/authMiddleware");
+const Quotation = require("../models/quotationModel");
+
 const Address = require("../models/addressModel");
 const OrderedItems = require("../models/orderedItems")
 const Item = require("../models/itemModel");
@@ -133,12 +137,57 @@ const mutation = new GraphQLObjectType({
                 name: {type: GraphQLString},
                 quantity: {type: GraphQLInt},
             },
-            resolve(parent, args) {
+            async resolve(parent, args) {
                 const item = new Item({
                     name: args.name,
                     quantity: args.quantity,
                 });
-                return item.save();
+                await item.save();
+                return {
+                    ...item._doc,
+                    id: item._id
+                };
+            },
+        },
+        addQuotation: {
+            type: QuotationType, // Assuming you have a QuotationType defined
+            args: {
+                pickUpAddress: {type: GraphQLNonNull(GraphQLID)},
+                distance: {type: GraphQLFloat}, // Adjust the data type as needed
+                shippingAddress: {type: GraphQLNonNull(GraphQLID)},
+                orderedItems: {type: GraphQLID}
+                // Adjust the data type as needed
+            },
+            async resolve(parent, args, context) {
+                let client = await Client.findById(protect(context.headers['authorization']).id).select('-password');
+                if (!client) {
+                    throw new Error("No authority")
+                }
+
+                const quotation = new Quotation({
+                    pickUpAddress: args.pickUpAddress,
+                    distance: args.distance,
+                    shippingAddress: args.shippingAddress,
+                    orderedItems: args.orderedItems,
+                    price: 0,
+                    quotationID: 0
+                });
+                await Client.findOneAndUpdate(
+                    {_id: client._id},
+                    {$push: {'quotations': quotation._id}},
+                    {new: true}
+                )
+                await client.save();
+                quotation.quotationID = client.quotations.length;
+                await quotation.save();
+                await Promise.all(client.quotations.map(async (quotationId, index) => {
+                    await Quotation.updateOne(
+                        {_id: quotationId},
+                        {$set: {quotationID: index}}
+                    );
+                }));
+
+                return quotation;
             },
         },
     },
