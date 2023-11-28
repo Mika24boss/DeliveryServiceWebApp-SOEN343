@@ -14,7 +14,7 @@
     import {mutation, setClient} from "svelte-apollo";
 
     const client = new ApolloClient({
-        uri: 'https://localhost:8000/graphql/create_request',
+        uri: 'https://bwm.happyfir.com/graphql/create_request',
         cache: new InMemoryCache()
     });
 

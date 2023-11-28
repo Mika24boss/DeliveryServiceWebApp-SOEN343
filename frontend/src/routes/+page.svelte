@@ -9,7 +9,7 @@
     import Trustpilot from '$lib/images/trustpilot.png';
 
     const client = new ApolloClient({
-        uri: 'http://localhost:8000/graphql/people',
+        uri: 'https://bwm.happyfir.com/graphql/people',
         cache: new InMemoryCache()
     });
 

@@ -12,7 +12,7 @@
     import {hasUpdated} from "$lib/stores/updateUser.js";
 
     const client = new ApolloClient({
-        uri: "https://localhost:8000/graphql/people",
+        uri: "https://bwm.happyfir.com/graphql/people",
         cache: new InMemoryCache(),
     });
 
