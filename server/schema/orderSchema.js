@@ -7,12 +7,13 @@ const {
 const {GraphQLDateTime} = require('graphql-iso-date')
 const Order = require('../models/orderModel')
 const ClientOrderJoin = require('../models/ClientOrderModel')
-const {OrderType, AdminType} = require('./graphQLType')
+const {OrderType, AdminType, QuotationType} = require('./graphQLType')
 const DeliveryMan = require('../models/deliverManModel')
 const protect = require('../middleware/authMiddleware')
 const Client = require('../models/clientModel')
 const Person = require('../models/personModel')
 const Admin = require('../models/adminModel')
+const Quotation = require("../models/quotationModel");
 const RootQuery = new GraphQLObjectType({
     name: 'RootQueryType',
     fields: {
@@ -76,6 +77,13 @@ const mutation = new GraphQLObjectType({
                 return Order.find();
             }
         },
+        order: {
+            type: OrderType,
+            args: {id: {type: GraphQLID}},
+            resolve(parent, args) {
+                return Order.findById(args.id);
+            },
+        },
         ordersForEachDeliveryMan: {
             type: new GraphQLList(OrderType),
             args: {
@@ -93,8 +101,9 @@ const mutation = new GraphQLObjectType({
                 orderID: {type: GraphQLInt},
                 clientID: {type: GraphQLID}
             },
-            resolve(parent, args) {
-                return Client.findById(args.clientID).order[args.orderID];
+            async resolve(parent, args) {
+                const client = await Client.findById(args.clientID);
+                return Order.findById(client.order[args.orderID])
             },
         },
         orderForEachDeliveryMan: {
@@ -103,8 +112,9 @@ const mutation = new GraphQLObjectType({
                 orderID: {type: GraphQLInt},
                 deliveryManID: {type: GraphQLID}
             },
-            resolve(parent, args) {
-                return DeliveryMan.findById(args.deliveryManID).orders[args.orderID];
+            async resolve(parent, args) {
+                const deliveryMan = await DeliveryMan.findById(args.deliveryManID);
+                return Order.findById(deliveryMan.orders[args.orderID])
             },
         },
         // @desc Register new Order
