@@ -21,7 +21,6 @@
     const signUpClientMutation = mutation(ADD_CLIENT);
 
     let name, email, password, role, phoneNumber;
-    let response;
     let isWaiting = false;
     let hasMissingFields = false;
 
@@ -33,56 +32,51 @@
         phoneNumber = document.getElementById('phone').value;
 
         isWaiting = true;
-        if (role === "DELIVERYMAN") {
-            const response = await signUpDeliveryManMutation({
-                variables: {
-                    name: name,
-                    emailAddress: email,
-                    loginInfo: password,
-                    phoneNumber: phoneNumber
-                }
-            })
-            localStorage.setItem('user', JSON.stringify(response.data.addDeliveryMan));
-            hasUpdated.set(true);
-            // Navigate to the desired page
-            if (!response) {
-                setTimeout(() => {
-                    alert('Error when creating your account!');
-                    isWaiting = false;
-                }, 100);
-            } else
-                await goto('/orders');
-        } else {
-            const response = await signUpClientMutation({
-                variables: {
-                    name: name,
-                    emailAddress: email,
-                    phoneNumber: phoneNumber,
-                    loginInfo: password,
-                }
-            })
-            localStorage.setItem('user', JSON.stringify(response.data.addClient));
-            hasUpdated.set(true);
-            // Navigate to the desired page
-            if (!response) {
-                setTimeout(() => {
-                    alert('Error when creating your account!');
-                    isWaiting = false;
-                }, 100);
-            } else
-                await goto('/quotations');
+        try {
+            if (role === "DELIVERYMAN") {
+                const response = await signUpDeliveryManMutation({
+                    variables: {
+                        name: name,
+                        emailAddress: email,
+                        loginInfo: password,
+                        phoneNumber: phoneNumber
+                    }
+                })
+                localStorage.setItem('user', JSON.stringify(response.data.addDeliveryMan));
+                hasUpdated.set(true);
+                // Navigate to the desired page
+                if (!response) {
+                    setTimeout(() => {
+                        alert('Error when creating your account!');
+                        isWaiting = false;
+                    }, 100);
+                } else
+                    await goto('/orders');
+            } else {
+                const response = await signUpClientMutation({
+                    variables: {
+                        name: name,
+                        emailAddress: email,
+                        phoneNumber: phoneNumber,
+                        loginInfo: password,
+                    }
+                })
+                localStorage.setItem('user', JSON.stringify(response.data.addClient));
+                hasUpdated.set(true);
+                // Navigate to the desired page
+                if (!response) {
+                    setTimeout(() => {
+                        alert('Error when creating your account!');
+                        isWaiting = false;
+                    }, 100);
+                } else
+                    await goto('/quotations');
+            }
+        } catch (error) {
+            alert("Error when creating your account!")
+            console.log(error)
+            await goto('/')
         }
-        // response = await authService.register(userData);
-        // //console.log('Response: ', response);
-        // if (!response) {
-        //     setTimeout(() => {
-        //         alert('Error when creating your account!');
-        //         isWaiting = false;
-        //     }, 100);
-        // } else {
-        //     hasUpdated.set(true);
-        //     await goto('/profile');
-        // }
     }
 
 </script>
@@ -116,7 +110,8 @@
                                                   style='color:black'></div>
                     <div class='formGroup'><input type='password' id='password' name='Password' placeholder='Password'
                                                   required style='color:black'></div>
-                    <div class='formGroup'><input type='tel' id='phone' name='Phone' placeholder="Phone Number (e.g 123-456-7890)"
+                    <div class='formGroup'><input type='tel' id='phone' name='Phone'
+                                                  placeholder="Phone Number (e.g 123-456-7890)"
                                                   required
                                                   style='color:black'></div>
                 </div>
