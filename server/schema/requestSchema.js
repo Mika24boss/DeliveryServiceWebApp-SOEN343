@@ -12,6 +12,7 @@ const Quotation = require("../models/quotationModel");
 const Address = require("../models/addressModel");
 const OrderedItems = require("../models/orderedItems")
 const Item = require("../models/itemModel");
+const Admin = require("../models/adminModel");
 const RootQuery = new GraphQLObjectType({
     name: 'RootQueryType',
     fields: {
@@ -197,6 +198,25 @@ const mutation = new GraphQLObjectType({
                 return Quotation.findById(args.id);
             },
         },
+        updateQuotationPrice: {
+            type: QuotationType,
+            args: {
+                quotationID: {type: GraphQLID},
+                price: {type: GraphQLInt}
+            },
+            async resolve(parent, args, context) {
+                let admin = await Admin.findById(protect(context.headers['authorization']).id).select('-password');
+                if (!admin) {
+                    throw new Error("No authority")
+                }
+                await Quotation.findOneAndUpdate(
+                    {_id: args.quotationID},
+                    {$set: {'price': args.price}},
+                    {new: true}
+                )
+                return Quotation.findById(args.quotationID)
+            }
+        }
     },
 });
 

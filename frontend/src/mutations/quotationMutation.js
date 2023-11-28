@@ -51,6 +51,7 @@ const UPDATE_PRICE = gql`
 			pickUpAddress
 			distance
 			shippingAddress
+			orderItems
 			price
 		}
 	}
