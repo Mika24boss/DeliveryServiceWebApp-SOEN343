@@ -190,6 +190,13 @@ const mutation = new GraphQLObjectType({
                 return quotation;
             },
         },
+        quotation: {
+            type: QuotationType,
+            args: {id: {type: GraphQLID}},
+            resolve(parent, args) {
+                return Quotation.findById(args.id);
+            },
+        },
     },
 });
 
