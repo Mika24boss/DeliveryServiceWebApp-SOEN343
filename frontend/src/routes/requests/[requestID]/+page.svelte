@@ -7,22 +7,15 @@
     import {goto} from "$app/navigation";
     import {onMount} from "svelte";
     import LoadingAnimation from "$lib/components/LoadingAnimation.svelte";
+    import {browser} from "$app/environment";
     import authService from "$lib/features/authService.js";
-    import {mutation, setClient} from "svelte-apollo";
-    import {UPDATE_PRICE} from "../../../mutations/quotationMutation.js";
-    import {ADD_ADDRESS} from "../../../mutations/addressesMutation.js";
     import {ApolloClient, InMemoryCache} from "@apollo/client/core";
+    import {setClient} from "svelte-apollo";
 
-    let user = authService.getUser();
-    console.log(user.token)
-    const client = new ApolloClient({
-        uri: 'https://bwm.happyfir.com/graphql/create_request',
-        headers: {
-            Authorization: `Bearer ${user.token}`,
-        },
-        cache: new InMemoryCache()
-    });
-    setClient(client);
+    let user;
+    // console.log(user)
+    //console.log(user.token)
+
     const quotationID = $page.url.pathname.split('/').pop();
     let pageTitle = "Delivery Request #" + quotationID;
     let request;
@@ -30,59 +23,77 @@
     let finishedLoading = false;
     let price;
 
-    onMount(async () => {
-        if (user == null || user.role !== 'ADMIN') {
-            await goto('/');
-            return;
-        }
+    loadPage();
 
-        //request = (await jobService.getJobByID(jobID, user.token))[0];
+    function loadPage() {
+        if (!browser) return;
+        user = authService.getUser();
+        const client = new ApolloClient({
+            uri: 'http://localhost:8000/graphql/create_request',
+            headers: {
+                Authorization: `Bearer ${user.token}`,
+            },
+            cache: new InMemoryCache()
+        });
+        setClient(client);
+        onMount(async () => {
 
-        request = {
-            buyerName: 'John Smith',
-            deliveryAddress: '550 Dat Street',
-            deliveryCity: 'Pi',
-            deliveryProvince: 'Nutkuabec',
-            deliveryCountry: 'Uganda',
-            deliveryPostalCode: '13579',
-            sellerName: 'Mohammed Li',
-            pickupAddress: '550 Dis Street',
-            pickupCity: 'Golden Ratio',
-            pickupProvince: 'Kuabec',
-            pickupCountry: 'Uruguay',
-            pickupPostalCode: '24680',
-            date: 'Fri Nov 17 2023 17:11:22',
-            distance: '5 km'
-        }
-        orderItems = [{itemName: 'Mango', quantity: '10'},
-            {itemName: 'Couch', quantity: '500'},
-            {itemName: 'Number 10 machine screw (0.190 inch major diameter)', quantity: '51700'}];
+            // user = authService.getUser()
+            // if (user == null || user.role !== 'ADMIN') {
+            //     await goto('/');
+            //     return;
+            // }
+            console.log(user)
+            //request = (await jobService.getJobByID(jobID, user.token))[0];
 
-        if (request == null) {
-            alert('No request has an ID #' + quotationID + '.');
-            await goto('/requests');
-        }
-        finishedLoading = true;
-    })
+            request = {
+                buyerName: 'John Smith',
+                deliveryAddress: '550 Dat Street',
+                deliveryCity: 'Pi',
+                deliveryProvince: 'Nutkuabec',
+                deliveryCountry: 'Uganda',
+                deliveryPostalCode: '13579',
+                sellerName: 'Mohammed Li',
+                pickupAddress: '550 Dis Street',
+                pickupCity: 'Golden Ratio',
+                pickupProvince: 'Kuabec',
+                pickupCountry: 'Uruguay',
+                pickupPostalCode: '24680',
+                date: 'Fri Nov 17 2023 17:11:22',
+                distance: '5 km'
+            }
+            orderItems = [{itemName: 'Mango', quantity: '10'},
+                {itemName: 'Couch', quantity: '500'},
+                {itemName: 'Number 10 machine screw (0.190 inch major diameter)', quantity: '51700'}];
 
-    const updatePrice = mutation(UPDATE_PRICE);
+            if (request == null) {
+                alert('No request has an ID #' + quotationID + '.');
+                await goto('/requests');
+            }
+            finishedLoading = true;
+        })
+
+    }
+
+    //const updatePrice = mutation(UPDATE_PRICE);
+
     async function accept() {
         if (price === undefined) alert("Please enter a price.")
         else {
             alert("Accepted at " + price + "$!");
             console.log(price)
             console.log(typeof price)
-            try {
-                const response= await updatePrice({
-                    variables: {
-                        quotationID: quotationID,
-                        price: price,
-                    }
-                });
-                console.log(response);
-            } catch (error) {
-                console.error("Error changing price:", error);
-            }
+            // try {
+            //     const response = await updatePrice({
+            //         variables: {
+            //             quotationID: quotationID,
+            //             price: price,
+            //         }
+            //     });
+            //     console.log(response);
+            // } catch (error) {
+            //     console.error("Error changing price:", error);
+            // }
 
         }
     }
@@ -92,10 +103,10 @@
     }
 
     //make quotation(ADD_QUOTATION), only works when admin
-   //const updatePrice=mutation(UPDATE_PRICE);
+    //const updatePrice=mutation(UPDATE_PRICE);
     //function updatePrices(){
 
-   // }
+    // }
 </script>
 
 {#if !finishedLoading}

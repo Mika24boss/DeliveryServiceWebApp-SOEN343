@@ -14,7 +14,7 @@
     import {GET_QUOTATIONS_FOR_EACH_CLIENT} from "../../mutations/quotationMutation.js";
 
     const client = new ApolloClient({
-        uri: 'https://bwm.happyfir.com/graphql/quotations',
+        uri: 'http://localhost:8000/graphql/quotations',
         cache: new InMemoryCache()
     });
     //http://localhost:8000/graphql/quotations
