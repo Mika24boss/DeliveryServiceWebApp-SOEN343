@@ -34,6 +34,7 @@
         await onMount(() => {
             user = authService.getUser();
         })
+
         if (user == null || (user.role !== 'GOLD-CLIENT' && user.role !== 'REGULAR-CLIENT')) {
             await goto('/');
         } else {
@@ -42,10 +43,16 @@
                     clientID: user.id
                 }
             });
+
             quotationsResponse = quotationsResponse.data.quotationForEachClient;
             let orderItems = [{itemName: 'Mango', quantity: '10'},
                 {itemName: 'Couch', quantity: '500'},
                 {itemName: 'Number 10 machine screw (0.190 inch major diameter)', quantity: '51700'}];
+
+            quotationsResponse = quotationsResponse.filter((m) => {
+                return !(m.price === undefined || m.price === 0);
+            });
+
             quotations = quotationsResponse.map(function (quote) {
                 return {
                     quotationID: quote.id,
@@ -53,6 +60,8 @@
                     price: quote.price
                 };
             });
+            
+            //console.log(quotationsResponse)
             // let orderItems = [{itemName: 'Mango', quantity: '10'},
             //     {itemName: 'Couch', quantity: '500'},
             //     {itemName: 'Number 10 machine screw (0.190 inch major diameter)', quantity: '51700'}];

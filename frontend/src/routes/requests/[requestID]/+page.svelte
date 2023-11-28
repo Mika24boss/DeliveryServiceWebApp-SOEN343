@@ -28,18 +28,18 @@
 
         request = {
             buyerName: 'John Smith',
-            deliveryAddress: '550 Dat Street',
-            deliveryCity: 'Pi',
-            deliveryProvince: 'Nutkuabec',
+            deliveryAddress: '550 5th Avenue',
+            deliveryCity: 'New York',
+            deliveryProvince: 'Texas',
             deliveryCountry: 'Uganda',
             deliveryPostalCode: '13579',
             sellerName: 'Mohammed Li',
-            pickupAddress: '550 Dis Street',
-            pickupCity: 'Golden Ratio',
-            pickupProvince: 'Kuabec',
+            pickupAddress: '250 Rue Aphelios',
+            pickupCity: 'Paris',
+            pickupProvince: 'Quebec',
             pickupCountry: 'Uruguay',
             pickupPostalCode: '24680',
-            date: 'Fri Nov 17 2023 17:11:22',
+            date: 'November 13, 2023',
             distance: '5 km'
         }
         orderItems = [{itemName: 'Mango', quantity: '10'},
@@ -54,7 +54,7 @@
     })
 
     function accept() {
-        if (price === undefined) alert("Please enter a price.")
+        if (price === undefined || price <= 0) alert("Please enter a price.")
         else alert("Accepted at " + price + "$!");
     }
 

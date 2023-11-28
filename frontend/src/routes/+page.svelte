@@ -16,12 +16,8 @@
     setClient(client);
     const signInMutation = mutation(LOGIN);
     let email, password;
-    let response;
     let hasInvalidCredentials = false;
     let isWaiting = false;
-    let isCustomer = true;
-
-    onMount(onSubmit);
 
     // const [login, {loading, error}] = mutation(LOGIN);
     async function onSubmit() {
@@ -35,7 +31,6 @@
                 }
             });
 
-            console.log(response);
             localStorage.setItem('user', JSON.stringify(response.data.login));
             hasUpdated.set(true);
             let role = response.data.login.role;
@@ -51,7 +46,7 @@
                 await goto('/orders');
             }
         } catch (error) {
-            console.error(error);
+            hasInvalidCredentials=true;
         }
     }
 </script>
@@ -81,7 +76,7 @@
                 <input type="password" id="password" placeholder="Password" required style="color:black"/>
             </div>
             <div class="btn-container">
-                <button class="btn-pay centerBlock" type="submit" on:click={onSubmit}>Sign-In</button>
+                <button class="btn-signin centerBlock" type="submit" on:click={onSubmit}>Sign-In</button>
             </div>
 
             {#if hasInvalidCredentials}
@@ -180,7 +175,7 @@
         padding: 0.5em;
     }
 
-    .btn-pay {
+    .btn-signin {
         display: inline-block;
         padding: 0.9rem 1.8rem;
         font-size: 16px;
@@ -197,7 +192,7 @@
         border-radius: 1em;
     }
 
-    .btn-pay::before {
+    .btn-signin::before {
         content: '';
         position: absolute;
         left: 0;
@@ -210,7 +205,7 @@
         z-index: -1;
     }
 
-    .btn-pay:hover::before {
+    .btn-signin:hover::before {
         transform: translateX(0);
     }
 

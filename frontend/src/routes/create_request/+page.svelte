@@ -28,10 +28,6 @@
         pageTitle = '* ' + "Create Delivery Request";
     }
 
-    async function submit() {
-        await goto('/quotations');
-    }
-
     function addItem() {
         let newID = 0;
         if (orderItems.length > 0)
