@@ -14,8 +14,7 @@
     import {GET_ORDER_FOR_CLIENT, GET_ORDER_FOR_DELIVERY_MAN} from "../../../mutations/ordersMutation.js";
 
     const client = new ApolloClient({
-        // uri: 'https://bwm.happyfir.com/graphql/orders',
-        uri: "http://localhost:8000/graphql/orders",
+        uri: 'https://bwm.happyfir.com/graphql/orders',
         cache: new InMemoryCache()
     });
 
