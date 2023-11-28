@@ -8,7 +8,17 @@
     import authService from '$lib/features/authService.js';
     import {onMount} from 'svelte';
     import LoadingAnimation from '$lib/components/LoadingAnimation.svelte';
+    import {ApolloClient, InMemoryCache} from "@apollo/client/core";
+    import {mutation, setClient} from "svelte-apollo";
+    import {GET_QUOTATION} from "../../../mutations/quotationMutation.js";
 
+    const client = new ApolloClient({
+        uri: 'https://bwm.happyfir.com/graphql/quotations',
+        cache: new InMemoryCache()
+    });
+
+    setClient(client);
+    const getQuotation = mutation(GET_QUOTATION);
     let user;
     let finishedLoading = false;
     const quotationID = $page.url.pathname.split('/').pop();
@@ -22,7 +32,16 @@
             await goto('/');
             return;
         }
-
+        try {
+            const response = await getQuotation({
+                variables: {
+                    id: quotationID,
+                }
+            });
+            console.log(response)
+        } catch (e) {
+            return alert("QuotationID is invalid")
+        }
         //quotation = (await jobService.getJobByID(jobID, user.token))[0];
 
         quotation = {

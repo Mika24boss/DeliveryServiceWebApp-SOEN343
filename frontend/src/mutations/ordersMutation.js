@@ -117,7 +117,7 @@ const GET_ORDER = gql`
 	}
 `;
 const GET_ORDER_FOR_CLIENT = gql`
-	mutation OrderForEachClient($orderID: ID!, $clientID: ID!) {
+	mutation OrderForEachClient($orderID: Int!, $clientID: ID!) {
 		orderForEachClient(orderID: $orderID, clientID: $clientID) {
 			id
 			orderID
