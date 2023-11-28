@@ -39,6 +39,7 @@ const mutation = new GraphQLObjectType({
                 pickUpAddress: {type: GraphQLNonNull(GraphQLID)},
                 distance: {type: GraphQLFloat}, // Adjust the data type as needed
                 shippingAddress: {type: GraphQLNonNull(GraphQLID)},
+                orderItems: {type: GraphQLID},
                 // Adjust the data type as needed
             },
             async resolve(parent, args, context) {
@@ -52,7 +53,8 @@ const mutation = new GraphQLObjectType({
                     distance: args.distance,
                     shippingAddress: args.shippingAddress,
                     price: 0,
-                    quotationID: 0
+                    quotationID: 0,
+                    orderItems: args.orderItems
                 });
                 await Client.findOneAndUpdate(
                     {_id: client._id},

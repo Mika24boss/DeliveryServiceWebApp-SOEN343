@@ -1,67 +1,145 @@
-<svelte:head>
-    <title>{pageTitle}</title>
-</svelte:head>
-
 <script>
-    import {page} from "$app/stores";
+    import {page} from '$app/stores';
+    import {onMount} from 'svelte';
+    import LoadingAnimation from '$lib/components/LoadingAnimation.svelte';
+    import {browser} from '$app/environment';
+    import authService from '$lib/features/authService.js';
+    import {ApolloClient, InMemoryCache} from "@apollo/client/core";
+    import {mutation, setClient} from "svelte-apollo";
+    import {GET_QUOTATION, UPDATE_PRICE} from "../../../mutations/quotationMutation.js";
+    import {GET_ITEM} from "../../../mutations/itemsMutation.js";
     import {goto} from "$app/navigation";
-    import {onMount} from "svelte";
-    import LoadingAnimation from "$lib/components/LoadingAnimation.svelte";
-    import authService from "$lib/features/authService.js";
+    import {GET_ORDERED_ITEM} from "../../../mutations/orderedItemMutation.js";
 
-    const quotationID = $page.url.pathname.split('/').pop();
-    let pageTitle = "Delivery Request #" + quotationID;
     let user;
+    // console.log(user)
+    //console.log(user.token)
+    let quotations = [];
+    const quotationID = $page.url.pathname.split('/').pop();
+    let pageTitle = 'Delivery Request #' + quotationID;
     let request;
-    let orderItems = [];
+    let orderItems;
+    let Items = [];
     let finishedLoading = false;
     let price;
 
-    onMount(async () => {
+    loadPage();
+
+    function loadPage() {
+        if (!browser) return;
         user = authService.getUser();
-        if (user == null || user.role !== 'ADMIN') {
-            await goto('/');
-            return;
+        const client = new ApolloClient({
+            // uri: 'https://bwm.happyfir.com/graphql/create_request',
+            uri: "http://localhost:8000/graphql/create_request",
+            headers: {
+                Authorization: `Bearer ${user.token}`
+            },
+            cache: new InMemoryCache()
+        });
+        setClient(client);
+        const getQuotationMutation = mutation(GET_QUOTATION);
+        const getOrderedItemMutation = mutation(GET_ORDERED_ITEM)
+        const getItemMutation = mutation(GET_ITEM);
+        const updatePrice = mutation(UPDATE_PRICE);
+        onMount(async () => {
+
+            console.log(user);
+            console.log(quotationID)
+            try {
+                const quotationResponse = await getQuotationMutation({
+                    variables: {
+                        id: quotationID,
+                    }
+                });
+                console.log(quotationResponse)
+                request = {
+                    buyerName: quotationResponse.data.quotation.id,
+                    deliveryAddress: quotationResponse.data.quotation.shippingAddress,
+                    pickupAddress: quotationResponse.data.quotation.pickUpAddress,
+                    distance: quotationResponse.data.quotation.distance,
+                    price: quotationResponse.data.quotation.price
+                };
+                orderItems = quotationResponse.data.quotation.orderItems;
+                console.log(quotationResponse.data.quotation.orderItems)
+                let orderedItemResponse = await getOrderedItemMutation({
+                    variables: {
+                        id: quotationResponse.data.quotation.orderItems
+                    }
+                });
+                console.log(orderedItemResponse)
+                for (let index = 0; index < orderedItemResponse.data.orderedItem.items.length; index++) {
+                    console.log(orderedItemResponse.data.orderedItem.items[index])
+                    let itemResponse = await getItemMutation({
+                        variables: {
+                            id: orderedItemResponse.data.orderedItem.items[index]
+                        }
+                    })
+                    console.log(itemResponse.data.item)
+                    console.log(Items)
+                    Items.push(itemResponse.data.item)
+                }
+            } catch (e) {
+                return alert("quotationID is invalid")
+            }
+            // let itemResponse = getItemMutation({
+            //     id: quotationID
+            //
+            // });
+
+
+            if (request == null) {
+                alert('No request has an ID #' + quotationID + '.');
+                await goto('/requests');
+            }
+            finishedLoading = true;
+        });
+    }
+
+
+    async function accept() {
+        const client = new ApolloClient({
+            // uri: 'https://bwm.happyfir.com/graphql/create_request',
+            uri: "http://localhost:8000/graphql/create_request",
+            headers: {
+                Authorization: `Bearer ${user.token}`
+            },
+            cache: new InMemoryCache()
+        });
+        setClient(client);
+        const updatePrice = mutation(UPDATE_PRICE);
+        if (price === undefined) alert('Please enter a price.');
+        else {
+            alert('Accepted at ' + price + '$!');
+            console.log(price);
+            console.log(typeof price);
+            try {
+                const response = await updatePrice({
+                    variables: {
+                        quotationID: quotationID,
+                        price: parseInt(price),
+                    }
+                });
+                console.log(response);
+            } catch (error) {
+                console.error("Error changing price:", error);
+            }
         }
-
-        //request = (await jobService.getJobByID(jobID, user.token))[0];
-
-        request = {
-            buyerName: 'John Smith',
-            deliveryAddress: '550 5th Avenue',
-            deliveryCity: 'New York',
-            deliveryProvince: 'Texas',
-            deliveryCountry: 'Uganda',
-            deliveryPostalCode: '13579',
-            sellerName: 'Mohammed Li',
-            pickupAddress: '250 Rue Aphelios',
-            pickupCity: 'Paris',
-            pickupProvince: 'Quebec',
-            pickupCountry: 'Uruguay',
-            pickupPostalCode: '24680',
-            date: 'November 13, 2023',
-            distance: '5 km'
-        }
-        orderItems = [{itemName: 'Mango', quantity: '10'},
-            {itemName: 'Couch', quantity: '500'},
-            {itemName: 'Number 10 machine screw (0.190 inch major diameter)', quantity: '51700'}];
-
-        if (request == null) {
-            alert('No request has an ID #' + quotationID + '.');
-            await goto('/requests');
-        }
-        finishedLoading = true;
-    })
-
-    function accept() {
-        if (price === undefined || price <= 0) alert("Please enter a price.")
-        else alert("Accepted at " + price + "$!");
     }
 
     function reject() {
-        alert("Rejected!");
+        alert('Rejected!');
     }
+
+    //make quotation(ADD_QUOTATION), only works when admin
+    //const updatePrice=mutation(UPDATE_PRICE);
+    //function updatePrices(){
+
+    // }
 </script>
+
+<svelte:head>
+    <title>{pageTitle}</title>
+</svelte:head>
 
 {#if !finishedLoading}
     <LoadingAnimation/>
@@ -71,16 +149,14 @@
         <button class="payment-button" on:click={accept}>Accept</button>
         <button class="payment-button" on:click={reject}>Reject</button>
     </div>
-
     <h2>Delivery</h2>
     <div>{request.buyerName}</div>
     <div>{request.deliveryAddress}</div>
-    <div>{request.deliveryCity} {request.deliveryProvince} {request.deliveryPostalCode} {request.deliveryCountry}</div>
+
 
     <h2>Pickup</h2>
     <div>{request.sellerName}</div>
     <div>{request.pickupAddress}</div>
-    <div>{request.pickupCity} {request.pickupProvince} {request.pickupPostalCode} {request.pickupCountry}</div>
     <br/>
     <div>{request.date}</div>
     <br/>
@@ -88,18 +164,18 @@
 
     <h2>Order items</h2>
     <table>
-        {#each orderItems as item, i}
+        {#each Items as item, i}
             <tr>
                 <td>#{i + 1}</td>
                 <td>{item.quantity}</td>
                 <td>X</td>
-                <td>{item.itemName}</td>
+                <td>{item.name}</td>
             </tr>
         {/each}
     </table>
 
     <h2>Price</h2>
-    <span><input class="price" type='number' placeholder='Price' min="0" bind:value={price}/>$</span>
+    <span><input class="price" type="number" placeholder="Price" min="0" bind:value={price}/>$</span>
 {/if}
 
 <style>
@@ -169,7 +245,7 @@
     }
 
     .payment-button::before {
-        content: "";
+        content: '';
         position: absolute;
         left: 0;
         top: 0;
@@ -177,7 +253,7 @@
         height: 100%;
         background-color: orange;
         transform: translateX(-100%);
-        transition: all .3s;
+        transition: all 0.3s;
         z-index: -1;
     }
 
@@ -188,5 +264,4 @@
     .price {
         max-width: 200px;
     }
-
 </style>

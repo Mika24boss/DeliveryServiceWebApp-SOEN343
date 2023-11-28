@@ -51,6 +51,7 @@ const UPDATE_PRICE = gql`
 			pickUpAddress
 			distance
 			shippingAddress
+			orderItems
 			price
 		}
 	}
@@ -77,6 +78,7 @@ const GET_QUOTATION = gql`
 			distance
 			shippingAddress
 			price
+			orderItems
 		}
 	}
 `;

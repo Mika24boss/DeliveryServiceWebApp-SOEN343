@@ -11,14 +11,21 @@
     import {ApolloClient, InMemoryCache} from "@apollo/client/core";
     import {mutation, setClient} from "svelte-apollo";
     import {GET_QUOTATION} from "../../../mutations/quotationMutation.js";
+    import {GET_ADDRESS} from "../../../mutations/addressesMutation.js";
+    import {GET_ORDERED_ITEM} from "../../../mutations/orderedItemMutation.js";
+    import {GET_ITEM} from "../../../mutations/itemsMutation.js";
 
     const client = new ApolloClient({
-        uri: 'https://bwm.happyfir.com/graphql/quotations',
+        // uri: 'https://bwm.happyfir.com/graphql/create_request',
+        uri: "http://localhost:8000/graphql/create_request",
         cache: new InMemoryCache()
     });
 
     setClient(client);
     const getQuotation = mutation(GET_QUOTATION);
+    const getAddress = mutation(GET_ADDRESS)
+    const orderItemsMutation = mutation(GET_ORDERED_ITEM);
+    const itemMutation = mutation(GET_ITEM)
     let user;
     let finishedLoading = false;
     const quotationID = $page.url.pathname.split('/').pop();
@@ -33,33 +40,60 @@
             return;
         }
         try {
-            const response = await getQuotation({
+            let response = await getQuotation({
                 variables: {
                     id: quotationID,
                 }
             });
-            console.log(response)
+            console.log(response.data.quotation.pickUpAddress)
+            let pickUpAddressResponse = await getAddress({
+                variables: {
+                    id: response.data.quotation.pickUpAddress
+                }
+            })
+            console.log(pickUpAddressResponse)
+            let shippingAddressResponse = await getAddress({
+                variables: {
+                    id: response.data.quotation.shippingAddress
+                }
+            })
+            let orderItemsResponse = await orderItemsMutation({
+                variables: {
+                    id: response.data.quotation.orderItems
+                }
+            })
+            for (let index = 0; index < orderItemsResponse.data.orderedItem.items.length; index++) {
+                console.log(orderItemsResponse.data.orderedItem.items[index])
+                let itemResponse = await itemMutation({
+                    variables: {
+                        id: orderItemsResponse.data.orderedItem.items[index]
+                    }
+                })
+                console.log(itemResponse.data.item)
+                orderItems.push(itemResponse.data.item)
+            }
+            response.data.quotation.pickUpAddress = pickUpAddressResponse.data.address
+            response.data.quotation.shippingAddress = shippingAddressResponse.data.address
+            console.log(orderItems)
+            quotation = {
+                deliveryAddress: response.data.quotation.shippingAddress.street,
+                deliveryCity: response.data.quotation.shippingAddress.city,
+                deliveryProvince: response.data.quotation.shippingAddress.province,
+                deliveryCountry: response.data.quotation.shippingAddress.country,
+                deliveryPostalCode: response.data.quotation.shippingAddress.postalCode,
+                pickupAddress: response.data.quotation.pickUpAddress.street,
+                pickupCity: response.data.quotation.pickUpAddress.city,
+                pickupProvince: response.data.quotation.pickUpAddress.province,
+                pickupCountry: response.data.quotation.pickUpAddress.country,
+                pickupPostalCode: response.data.quotation.pickUpAddress.postalCode,
+                distance: response.data.quotation.distance
+            }
         } catch (e) {
             return alert("QuotationID is invalid")
         }
         //quotation = (await jobService.getJobByID(jobID, user.token))[0];
 
-        quotation = {
-            buyerName: 'John Smith',
-            deliveryAddress: '550 Dat Street',
-            deliveryCity: 'Pi',
-            deliveryProvince: 'Nutkuabec',
-            deliveryCountry: 'Uganda',
-            deliveryPostalCode: '13579',
-            sellerName: 'Mohammed Li',
-            pickupAddress: '550 Dis Street',
-            pickupCity: 'Golden Ratio',
-            pickupProvince: 'Kuabec',
-            pickupCountry: 'Uruguay',
-            pickupPostalCode: '24680',
-            date: 'Fri Nov 17 2023 17:11:22',
-            distance: '5 km'
-        }
+
         orderItems = [{itemName: 'Mango', quantity: '10'},
             {itemName: 'Couch', quantity: '500'},
             {itemName: 'Number 10 machine screw (0.190 inch major diameter)', quantity: '51700'}];
@@ -87,17 +121,12 @@
         </div>
 
         <h2>Delivery</h2>
-        <div>{quotation.buyerName}</div>
         <div>{quotation.deliveryAddress}</div>
         <div>{quotation.deliveryCity} {quotation.deliveryProvince} {quotation.deliveryPostalCode} {quotation.deliveryCountry}</div>
 
         <h2>Pickup</h2>
-        <div>{quotation.sellerName}</div>
         <div>{quotation.pickupAddress}</div>
         <div>{quotation.pickupCity} {quotation.pickupProvince} {quotation.pickupPostalCode} {quotation.pickupCountry}</div>
-        <br/>
-        <div>{quotation.date}</div>
-        <br/>
         <div>{quotation.distance}</div>
 
         <h2>Order items</h2>

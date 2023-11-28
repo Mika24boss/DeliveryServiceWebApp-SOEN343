@@ -58,7 +58,7 @@ const GET_ADDRESSES = gql`
 `;
 
 const GET_ADDRESS = gql`
-	query Address($id: ID!) {
+	mutation Address($id: ID!) {
 		address(id: $id) {
 			id
 			street
