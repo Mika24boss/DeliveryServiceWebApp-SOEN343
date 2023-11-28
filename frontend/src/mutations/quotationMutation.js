@@ -77,6 +77,7 @@ const GET_QUOTATION = gql`
 			distance
 			shippingAddress
 			price
+			orderItems
 		}
 	}
 `;

@@ -95,7 +95,7 @@ const mutation = new GraphQLObjectType({
                 return address.save();
             },
         },
-        // Delete a client
+
         deleteAddress: {
             type: AddressType,
             args: {

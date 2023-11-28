@@ -43,13 +43,13 @@
 
 	//adding order to ADD_ITEM
 
-	//const addOrderedItem
+	//const addOrdereed
 	async function addItem() {
 		let newID = 0;
 		if (orderItems.length > 0) newID = orderItems[orderItems.length - 1].itemID + 1;
 		orderItems.push({ itemID: newID, itemName: '', quantity: 1 });
 		orderItems = orderItems;
-		//linking to backend
+
 	}
 
 	function remove(i) {

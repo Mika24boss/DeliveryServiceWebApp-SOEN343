@@ -6,12 +6,13 @@
 	import { browser } from '$app/environment';
 	import authService from '$lib/features/authService.js';
 	import { ApolloClient, InMemoryCache } from '@apollo/client/core';
-	import { setClient } from 'svelte-apollo';
+	import {mutation, setClient} from 'svelte-apollo';
+	import {GET_QUOTATION} from "../../../mutations/quotationMutation.js";
 
 	let user;
 	// console.log(user)
 	//console.log(user.token)
-
+	let quotations = [];
 	const quotationID = $page.url.pathname.split('/').pop();
 	let pageTitle = 'Delivery Request #' + quotationID;
 	let request;
@@ -20,7 +21,8 @@
 	let price;
 
 	loadPage();
-
+	const getQuotationMutation = mutation(GET_QUOTATION);
+	const getItemMutation=mutation(GET_ITEM);
 	function loadPage() {
 		if (!browser) return;
 		user = authService.getUser();
@@ -33,35 +35,20 @@
 		});
 		setClient(client);
 		onMount(async () => {
-			// user = authService.getUser()
-			// if (user == null || user.role !== 'ADMIN') {
-			//     await goto('/');
-			//     return;
-			// }
-			console.log(user);
-			//request = (await jobService.getJobByID(jobID, user.token))[0];
 
+			console.log(user);
+			let quotationResponse= getQuotationMutation(quotationID);
+			let itemResponse=getItemMutation({
+				id: quotationID
+			});
 			request = {
-				buyerName: 'John Smith',
-				deliveryAddress: '550 Dat Street',
-				deliveryCity: 'Pi',
-				deliveryProvince: 'Nutkuabec',
-				deliveryCountry: 'Uganda',
-				deliveryPostalCode: '13579',
-				sellerName: 'Mohammed Li',
-				pickupAddress: '550 Dis Street',
-				pickupCity: 'Golden Ratio',
-				pickupProvince: 'Kuabec',
-				pickupCountry: 'Uruguay',
-				pickupPostalCode: '24680',
-				date: 'Fri Nov 17 2023 17:11:22',
-				distance: '5 km'
+				buyerName: quotationResponse.id,
+				deliveryAddress: quotationResponse.shippingAddress,
+				pickupAddress: quotationResponse.pickUpAddress,
+				distance: quotationResponse.distance,
+				price: quotationResponse.price
 			};
-			orderItems = [
-				{ itemName: 'Mango', quantity: '10' },
-				{ itemName: 'Couch', quantity: '500' },
-				{ itemName: 'Number 10 machine screw (0.190 inch major diameter)', quantity: '51700' }
-			];
+			orderItems = quotationResponse.orderItems;
 
 			if (request == null) {
 				alert('No request has an ID #' + quotationID + '.');
