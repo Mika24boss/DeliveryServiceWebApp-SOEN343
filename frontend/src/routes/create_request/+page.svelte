@@ -6,12 +6,12 @@
     import {preventTabClose} from '$lib/features/preventTabClose.js'
     import {DateInput} from 'date-picker-svelte';
     import {goto} from "$app/navigation";
-    import {onMount} from "svelte";
     import authService from "$lib/features/authService.js";
     import {ApolloClient, InMemoryCache} from "@apollo/client/core";
     import {ADD_ITEM} from "../../mutations/itemsMutation.js";
     import {ADD_ADDRESS} from "../../mutations/addressesMutation.js";
     import {mutation, setClient} from "svelte-apollo";
+    import {browser} from "$app/environment";
 
     const client = new ApolloClient({
         uri: 'https://bwm.happyfir.com/graphql/create_request',
@@ -26,13 +26,15 @@
     let orderItems = [];
     let user;
 
-    onMount(async () => {
+    loadPage();
+
+    async function loadPage() {
+        if (!browser) return;
         user = authService.getUser();
         if (user == null || (user.role !== 'GOLD-CLIENT' && user.role !== 'REGULAR-CLIENT')) {
             await goto('/');
         }
-    });
-    onMount(submit);
+    }
 
     function changedText() {
         hasChanged = true;
@@ -44,35 +46,6 @@
     const addItemMutation = mutation(ADD_ITEM);
 
     //adding order to ADD_ITEM
-    async function submit() { //where to put
-        // await goto('/quotations');
-        //addItem("apple", 1);
-        //addItem(itemName, itemQty);
-        //const data = getFieldData();
-        // console.log(data)
-        // if (!data) return;
-
-        // Use the addAddress mutation
-        try {
-            const response = await addAddressMutation({
-                variables: {
-                    street: document.getElementById('deliveryAddress').value,
-                    city: document.getElementById('deliveryCity').value,
-                    state: document.getElementById('deliveryProvince').value,
-                    province: document.getElementById('deliveryProvince').value,
-                    country: document.getElementById('deliveryCountry').value,
-                    postalCode: document.getElementById('deliveryPostalCode').value
-                }
-            });
-            // Optionally, navigate to another page
-            console.log(response);
-            //await goto('/quotations');
-        } catch (error) {
-            console.error("Error adding address:", error);
-            // Handle error as needed
-        }
-
-    }
 
     //const addOrderedItem
     async function addItem() {
@@ -82,36 +55,7 @@
         orderItems.push({itemID: newID, itemName: "", quantity: 1});
         orderItems = orderItems;
         //linking to backend
-        try {
-            const response = await addItemMutation({
-                variables: {
-                    name: document.getElementById('itemName').value,
-                    quantity: document.getElementById('quantity').value,
-                },
-            });
 
-            // Access the result from the mutation response
-            const newItem = response.data.addItem;
-
-            // Add the new item to the local orderItems array
-            let newID = 0;
-            if (orderItems.length > 0) {
-                newID = orderItems[orderItems.length - 1].itemID + 1;
-            }
-            orderItems = [
-                ...orderItems,
-                {
-                    itemID: newID,
-                    itemName: newItem.name,
-                    quantity: newItem.quantity,
-                },
-            ];
-
-            // if error
-        } catch (error) {
-            console.error('Error adding item:', error);
-            // Handle error as needed
-        }
     }
 
     function remove(i) {
@@ -129,18 +73,55 @@
 
     //main transition
     async function createRequest() {
-        // const data = getFieldData();
-        // console.log(data)
-        // if (!data) return;
-        //addItem();
-        submit();
+        console.log("Creating request...")
+        const data = getFieldData();
+        if (!data) return;
 
-        //const response = await jobService.createJob(data, user.token);
-        //if (!response) {
-        // alert('Failed to create job.');
-        //} else {
-        //    await goto('/postings');
-        //}
+        try {
+            let ids = [];
+            for (let index = 0; index < orderItems.length; index++) {
+                const response = await addItemMutation({
+                    variables: {
+                        name: orderItems[index].itemName,
+                        quantity: orderItems[index].quantity
+                    },
+                });
+
+                console.log("Some item: " + response);
+                // Access the result from the mutation response
+                const newItem = response.data.addItem;
+                // Add the new item to the local orderItems array
+                let newID = 0;
+                if (orderItems.length > 0) {
+                    newID = orderItems[orderItems.length - 1].itemID + 1;
+                }
+            }
+
+
+            // if error
+        } catch (error) {
+            console.error('Error adding item:', error);
+            // Handle error as needed
+        }
+
+        try {
+            const response = await addAddressMutation({
+                variables: {
+                    street: document.getElementById('deliveryAddress').value,
+                    city: document.getElementById('deliveryCity').value,
+                    state: document.getElementById('deliveryProvince').value,
+                    province: document.getElementById('deliveryProvince').value,
+                    country: document.getElementById('deliveryCountry').value,
+                    postalCode: document.getElementById('deliveryPostalCode').value
+                }
+            });
+            // Optionally, navigate to another page
+            console.log("Response mutation: " + response);
+            //await goto('/quotations');
+        } catch (error) {
+            console.error("Error adding address:", error);
+            // Handle error as needed
+        }
     }
 
     function getFieldData() {
@@ -177,7 +158,6 @@
             if (orderItems[i].quantity < 1)
                 alertText += 'Invalid quantity for item #' + (i + 1) + '!\n';
         }
-        console.log(date)
         if (alertText) {
             alert(alertText);
             return null;
@@ -204,7 +184,7 @@
 
     <div class="header">
         <h1 use:preventTabClose={hasChanged}>Create A Delivery Request</h1>
-        <button class="payment-button" on:click="{createRequest()}">Submit</button>
+        <button class="payment-button" on:click="{createRequest}">Submit</button>
     </div>
 
     <div class="informationSection">
