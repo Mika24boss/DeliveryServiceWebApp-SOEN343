@@ -54,7 +54,7 @@
             </div>
         </div>
         <div class='btn-container'>
-            <button class="btn-pay centerBlock" type="submit" on:click="{makePayment}">Pay</button>
+            <button class="btn-signin centerBlock" type="submit" on:click="{makePayment}">Pay</button>
         </div>
     </div>
 {/await}
@@ -118,7 +118,7 @@
         margin: 10px;
     }
 
-    .btn-pay {
+    .btn-signin {
         width: 20em;
         height: 5em;
         font-size: 24px;
@@ -138,7 +138,7 @@
         margin-right: auto;
     }
 
-    .btn-pay::before {
+    .btn-signin::before {
         content: "";
         position: absolute;
         left: 0;
@@ -151,7 +151,7 @@
         z-index: -1;
     }
 
-    .btn-pay:hover::before {
+    .btn-signin:hover::before {
         transform: translateX(0);
     }
 </style>

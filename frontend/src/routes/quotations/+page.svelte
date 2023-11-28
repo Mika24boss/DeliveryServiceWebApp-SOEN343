@@ -34,28 +34,44 @@
         await onMount(() => {
             user = authService.getUser();
         })
+
         if (user == null || (user.role !== 'GOLD-CLIENT' && user.role !== 'REGULAR-CLIENT')) {
             await goto('/');
         } else {
-            //const requests = await jobService.getJobs(user.token);
-            console.log(user.id)
-            const ordersResponse = await getQuotationMutation({
+            let quotationsResponse = await getQuotationMutation({
                 variables: {
                     clientID: user.id
                 }
             });
-            console.log(ordersResponse)
-            // console.log(ordersResponse.data)
+
+            quotationsResponse = quotationsResponse.data.quotationForEachClient;
             let orderItems = [{itemName: 'Mango', quantity: '10'},
                 {itemName: 'Couch', quantity: '500'},
                 {itemName: 'Number 10 machine screw (0.190 inch major diameter)', quantity: '51700'}];
-            quotations.push({
-                quotationID: '57f5en320a83',
-                submissionDate: 'Fri Nov 17 2023 17:11:22',
-                orderItems: orderItems,
-                distance: '5 km'
+
+            quotationsResponse = quotationsResponse.filter((m) => {
+                return !(m.price === undefined || m.price === 0);
             });
-            quotations = quotations;
+
+            quotations = quotationsResponse.map(function (quote) {
+                return {
+                    quotationID: quote.id,
+                    orderItems: orderItems,
+                    price: quote.price
+                };
+            });
+            
+            //console.log(quotationsResponse)
+            // let orderItems = [{itemName: 'Mango', quantity: '10'},
+            //     {itemName: 'Couch', quantity: '500'},
+            //     {itemName: 'Number 10 machine screw (0.190 inch major diameter)', quantity: '51700'}];
+            // quotations.push({
+            //     quotationID: '57f5en320a83',
+            //     submissionDate: 'Fri Nov 17 2023 17:11:22',
+            //     orderItems: orderItems,
+            //     price: '55555'
+            // });
+            // quotations = quotations;
         }
         finishedLoading = true;
 

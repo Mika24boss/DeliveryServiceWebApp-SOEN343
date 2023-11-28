@@ -24,14 +24,22 @@
 
         if (user == null || user.role !== 'ADMIN') {
             await goto('/');
-        } else {
-            //const requests = await jobService.getJobs(user.token);
-            let orderItems = [{itemName: 'Mango', quantity: '10'},
-                {itemName: 'Couch', quantity: '500'},
-                {itemName: 'Number 10 machine screw (0.190 inch major diameter)', quantity: '51700'}];
-            requests.push({quotationID: '57f5en320a83', submissionDate: 'Fri Nov 17 2023 17:11:22', orderItems: orderItems, distance: '5 km'});
-            requests = requests;
+            return;
         }
+        let orderItems = [{itemName: 'Mango', quantity: '10'},
+            {itemName: 'Couch', quantity: '500'},
+            {itemName: 'Number 10 machine screw (0.190 inch major diameter)', quantity: '51700'}];
+        requests.push({
+            quotationID: '57f5en320a83',
+            submissionDate: 'November 13, 2023',
+            orderItems: orderItems,
+            distance: '5 km',
+            price: 0
+        });
+        requests = requests.filter((m) => {
+            return (m.price === undefined || m.price === 0);
+        });
+
     }
 
 
@@ -53,7 +61,7 @@
 
 <style>
 
-    h1, p {
+    h1 {
         color: black;
     }
 
