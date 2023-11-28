@@ -12,7 +12,7 @@
     import {hasUpdated} from "$lib/stores/updateUser.js";
 
     const client = new ApolloClient({
-        uri: "https://bwm.happyfir.com/graphql/people",
+        uri: "https://localhost:8000/graphql/people",
         cache: new InMemoryCache(),
     });
 
@@ -116,7 +116,8 @@
                                                   style='color:black'></div>
                     <div class='formGroup'><input type='password' id='password' name='Password' placeholder='Password'
                                                   required style='color:black'></div>
-                    <div class='formGroup'><input type='tel' id='phone' name='Phone' placeholder="Phone Number (e.g 123-456-7890)"
+                    <div class='formGroup'><input type='tel' id='phone' name='Phone'
+                                                  placeholder="Phone Number (e.g 123-456-7890)"
                                                   required
                                                   style='color:black'></div>
                 </div>

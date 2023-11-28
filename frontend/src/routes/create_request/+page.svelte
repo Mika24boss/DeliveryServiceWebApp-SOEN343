@@ -14,7 +14,7 @@
     import {mutation, setClient} from "svelte-apollo";
 
     const client = new ApolloClient({
-        uri: 'https://bwm.happyfir.com/graphql/create_request',
+        uri: 'https://localhost:8000/graphql/create_request',
         cache: new InMemoryCache()
     });
 
@@ -45,16 +45,16 @@
 
     //adding order to ADD_ITEM
     async function submit() { //where to put
-       // await goto('/quotations');
+        // await goto('/quotations');
         //addItem("apple", 1);
         //addItem(itemName, itemQty);
         //const data = getFieldData();
-       // console.log(data)
-       // if (!data) return;
+        // console.log(data)
+        // if (!data) return;
 
         // Use the addAddress mutation
         try {
-            const response= await addAddressMutation({
+            const response = await addAddressMutation({
                 variables: {
                     street: document.getElementById('deliveryAddress').value,
                     city: document.getElementById('deliveryCity').value,
@@ -66,7 +66,7 @@
             });
             // Optionally, navigate to another page
             console.log(response);
-             //await goto('/quotations');
+            //await goto('/quotations');
         } catch (error) {
             console.error("Error adding address:", error);
             // Handle error as needed
@@ -129,11 +129,11 @@
 
     //main transition
     async function createRequest() {
-            // const data = getFieldData();
-            // console.log(data)
-            // if (!data) return;
-             //addItem();
-             submit();
+        // const data = getFieldData();
+        // console.log(data)
+        // if (!data) return;
+        //addItem();
+        submit();
 
         //const response = await jobService.createJob(data, user.token);
         //if (!response) {
