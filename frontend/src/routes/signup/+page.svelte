@@ -20,20 +20,25 @@
     const signUpDeliveryManMutation = mutation(ADD_DELIVERY_MAN);
     const signUpClientMutation = mutation(ADD_CLIENT);
 
-    let name, email, password, role, phoneNumber;
+    let name, email, password, phoneNumber;
+    let role = "customer";
     let isWaiting = false;
     let hasMissingFields = false;
 
     async function onSubmit() {
         name = document.getElementById('name').value;
-        role = role;
         email = document.getElementById('email').value;
         password = document.getElementById('password').value;
         phoneNumber = document.getElementById('phone').value;
 
+        hasMissingFields = name === "" || role === "" || email === "" || password === "" || phoneNumber === "";
+        if (hasMissingFields) {
+            return;
+        }
+
         isWaiting = true;
         try {
-            if (role === "DELIVERYMAN") {
+            if (role === "employee") {
                 const response = await signUpDeliveryManMutation({
                     variables: {
                         name: name,
@@ -73,9 +78,9 @@
                     await goto('/quotations');
             }
         } catch (error) {
-            alert("Error when creating your account!")
             console.log(error)
-            await goto('/')
+            alert("Error when creating your account!")
+            isWaiting = false;
         }
     }
 
@@ -97,7 +102,7 @@
                         <div class="plus2"></div>
                     </div>
                     <label for='customer'>Customer</label>
-                    <input type='radio' id='employee' name='user-type' value='Employee' required bind:group={role}>
+                    <input type='radio' id='employee' name='user-type' value='employee' required bind:group={role}>
                     <div class="plus1">
                         <div class="plus2"></div>
                     </div>
@@ -141,10 +146,6 @@
         position: relative;
         text-align: center;
         margin: 5em auto auto;
-    }
-
-    h1 {
-        width: 100%;
     }
 
     .signup-title {

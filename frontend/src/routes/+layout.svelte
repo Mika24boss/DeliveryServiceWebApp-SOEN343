@@ -21,7 +21,7 @@
     }
 
     *{
-        font-family: 'Inter',serif;
+        font-family: 'Inter', Verdana, sans-serif;
         color: black;
     }
 
