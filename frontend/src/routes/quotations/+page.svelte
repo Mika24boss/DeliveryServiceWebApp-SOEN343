@@ -65,6 +65,8 @@
         finishedLoading = true;
 
     }
+    //payment
+
 
 
 </script>
