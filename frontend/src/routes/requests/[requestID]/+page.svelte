@@ -12,14 +12,11 @@
     import {goto} from "$app/navigation";
 
     let user;
-    // console.log(user)
-    //console.log(user.token)
     let quotations = [];
     const quotationID = $page.url.pathname.split('/').pop();
     let pageTitle = 'Delivery Request #' + quotationID;
     let request;
-    let orderItems;
-    let Items = [];
+    let items = [];
     let finishedLoading = false;
     let price;
 
@@ -43,37 +40,43 @@
         const updatePrice = mutation(UPDATE_PRICE);
         onMount(async () => {
             try {
-                const quotationResponse = await getQuotationMutation({
+                let quotationResponse = await getQuotationMutation({
                     variables: {
                         id: quotationID,
                     }
                 });
+
+                let quotationData = quotationResponse.data.quotation;
                 request = {
-                    buyerName: quotationResponse.data.quotation.id,
-                    deliveryAddress: quotationResponse.data.quotation.shippingAddress,
-                    pickupAddress: quotationResponse.data.quotation.pickUpAddress,
-                    distance: quotationResponse.data.quotation.distance,
-                    price: quotationResponse.data.quotation.price,
-                    pickUpDate: quotationResponse.data.quotation.pickUpDate
+                    buyerName: quotationData.id,
+                    deliveryAddress: quotationData.shippingAddress,
+                    pickupAddress: quotationData.pickUpAddress,
+                    distance: quotationData.distance,
+                    price: quotationData.price,
+                    pickUpDate: quotationData.pickUpDate
                 };
-                orderItems = quotationResponse.data.quotation.orderItems;
+
                 let orderedItemResponse = await getOrderedItemMutation({
                     variables: {
                         id: quotationResponse.data.quotation.orderItems
                     }
                 });
-                for (let index = 0; index < orderedItemResponse.data.orderedItem.items.length; index++) {
-                    console.log(orderedItemResponse.data.orderedItem.items[index])
+
+                let orderedItems = orderedItemResponse.data.orderedItem.items;
+
+                for (let index = 0; index < orderedItems.length; index++) {
                     let itemResponse = await getItemMutation({
                         variables: {
-                            id: orderedItemResponse.data.orderedItem.items[index]
+                            id: orderedItems[index]
                         }
                     })
-                    Items.push(itemResponse.data.item)
+
+                    items.push(itemResponse.data.item)
                 }
             } catch (e) {
                 return alert("quotationID is invalid")
             }
+
             if (request == null) {
                 alert('No request has an ID #' + quotationID + '.');
                 await goto('/requests');
@@ -151,7 +154,7 @@
 
     <h2>Order items</h2>
     <table>
-        {#each Items as item, i}
+        {#each items as item, i}
             <tr>
                 <td>#{i + 1}</td>
                 <td>{item.quantity}</td>

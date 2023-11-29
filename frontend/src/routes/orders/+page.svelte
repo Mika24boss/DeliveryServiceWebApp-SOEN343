@@ -48,7 +48,6 @@
                     deliveryManID: user.id
                 }
             });
-            console.log(ordersResponse);
             ordersResponse = ordersResponse.data.ordersForEachDeliveryMan;
         }
         orders = ordersResponse.map(function(order) {
@@ -59,6 +58,7 @@
                 status: convertStatus(order.status),
             };
         });
+        console.log(orders)
 
         // let orderItems = [{itemName: 'Mango', quantity: '10'},
         //     {itemName: 'Couch', quantity: '500'},
@@ -75,7 +75,7 @@
 
     function convertStatus(backendStatus) {
         switch (backendStatus) {
-            case "NONE":
+            case "PAID":
                 return "Paid";
             case "PICKUP":
                 return "En route to pickup";

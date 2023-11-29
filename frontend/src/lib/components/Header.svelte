@@ -53,7 +53,7 @@
             <ul>
                 {#if isLoggedOut}
                     <li>
-                        <a href='/'>Login</a>
+                        <a href='/login'>Login</a>
                     </li>
                 {:else}
                     {#if isCustomer}
