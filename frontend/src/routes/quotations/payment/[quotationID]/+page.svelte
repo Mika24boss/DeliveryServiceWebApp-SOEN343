@@ -28,52 +28,52 @@
         alert("Order created!");
     }
 
-    //javascript api
-    const xhttpr = new XMLHttpRequest();
-    xhttpr.open('GET', 'https://sandbox.api.visa.com/pav/v1/cardvalidation', true);
-
-    xhttpr.send();
-
-    xhttpr.onload = ()=> {
-        if (xhttpr.status === 200) {
-            const response = JSON.parse(xhttpr.response);
-            // Process the response data here
-        } else {
-            // Handle error
-        }
-    };
-
-
-    function getFieldData() {
-        let cardNum = document.getElementById('cardNum').value;
-        let acquirerCountryCode = document.getElementById('acquirerCountryCode').value;
-        let acquiringBin = document.getElementById('acquiringBin').value;
-        let expiryDate = document.getElementById('expiryDate').value;
-        let cvc = document.getElementById('cvc').value;
-        let streetAddress = document.getElementById('streetAddress').value;
-        let postalcode = document.getElementById('zipCode').value;
-        let alertText = '';
-        if (!cardNum.trim()) alertText += 'Missing your name!\n';
-        if (!acquirerCountryCode.trim()) alertText += 'Missing delivery address!\n';
-        if (!expiryDate.trim()) alertText += 'Missing delivery province!\n';
-        if (!streetAddress.trim()) alertText += 'Missing delivery country!\n';
-        if (!postalcode.trim()) alertText += 'Missing delivery postal code!\n';
-        if (!cvc.trim()) alertText += "Missing seller's name!\n";
-        if (alertText) {
-            alert(alertText);
-            return null;
-        } else
-            return {
-                cardNum,
-                acquirerCountryCode,
-                acquiringBin,
-                expiryDate,
-                cvc,
-                streetAddress,
-                postalcode,
-
-            };
-    }
+    // ///////////////////////////javascript api//////////////////////////////////
+    // const xhttpr = new XMLHttpRequest();
+    // xhttpr.open('GET', 'https://sandbox.api.visa.com/pav/v1/cardvalidation', true);
+    //
+    // xhttpr.send();
+    //
+    // xhttpr.onload = ()=> {
+    //     if (xhttpr.status === 200) {
+    //         const response = JSON.parse(xhttpr.response);
+    //         // Process the response data here
+    //     } else {
+    //         // Handle error
+    //     }
+    // };
+    //
+    //
+    // function getFieldData() {
+    //     let cardNum = document.getElementById('cardNum').value;
+    //     let acquirerCountryCode = document.getElementById('acquirerCountryCode').value;
+    //     let acquiringBin = document.getElementById('acquiringBin').value;
+    //     let expiryDate = document.getElementById('expiryDate').value;
+    //     let cvc = document.getElementById('cvc').value;
+    //     let streetAddress = document.getElementById('streetAddress').value;
+    //     let postalcode = document.getElementById('zipCode').value;
+    //     let alertText = '';
+    //     if (!cardNum.trim()) alertText += 'Missing your name!\n';
+    //     if (!acquirerCountryCode.trim()) alertText += 'Missing delivery address!\n';
+    //     if (!expiryDate.trim()) alertText += 'Missing delivery province!\n';
+    //     if (!streetAddress.trim()) alertText += 'Missing delivery country!\n';
+    //     if (!postalcode.trim()) alertText += 'Missing delivery postal code!\n';
+    //     if (!cvc.trim()) alertText += "Missing seller's name!\n";
+    //     if (alertText) {
+    //         alert(alertText);
+    //         return null;
+    //     } else
+    //         return {
+    //             cardNum,
+    //             acquirerCountryCode,
+    //             acquiringBin,
+    //             expiryDate,
+    //             cvc,
+    //             streetAddress,
+    //             postalcode,
+    //
+    //         };
+    // }
 
 
 </script>

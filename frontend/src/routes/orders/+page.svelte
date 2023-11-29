@@ -11,7 +11,11 @@
     import {browser} from "$app/environment";
     import {ApolloClient, InMemoryCache} from "@apollo/client/core";
     import {mutation, setClient} from "svelte-apollo";
-    import {GET_ORDERS_FOR_EACH_CLIENT, GET_ORDERS_FOR_EACH_DELIVERY_MAN} from "../../mutations/ordersMutation.js";
+    import {
+        GET_ORDERS_FOR_EACH_CLIENT,
+        GET_ORDERS_FOR_EACH_DELIVERY_MAN,
+        UPDATE_ORDER_STATUS
+    } from "../../mutations/ordersMutation.js";
 
     const client = new ApolloClient({
         uri: 'https://bwm.happyfir.com/graphql/orders',
@@ -23,7 +27,8 @@
     let finishedLoading = false;
     let orders = [];
     const getOrdersEachClientMutation = mutation(GET_ORDERS_FOR_EACH_CLIENT);
-    const getOrdersEachDeliveryManMutation = mutation(GET_ORDERS_FOR_EACH_DELIVERY_MAN)
+    const getOrdersEachDeliveryManMutation = mutation(GET_ORDERS_FOR_EACH_DELIVERY_MAN);
+    const updateStatusMutation = mutation(UPDATE_ORDER_STATUS);
 
     loadOrders();
 
@@ -80,6 +85,23 @@
 
     function convertDate(backendDate){
         return new Date(parseInt(backendDate)).toLocaleDateString([], {year: 'numeric', month: 'long', day: 'numeric'});
+    }
+
+    function changeOrderStatus(){
+        let orderID = 'your_order_id'; // Replace with actual order ID
+        let newStatus = 'new_status'; // Replace with the desired new status
+
+        const handleUpdateStatus = async () => {
+            try {
+                const { data } = await updateStatusMutation({ variables: { orderID, status: newStatus } });
+
+                // Handle the response data as needed
+                console.log('Order status updated successfully:', data.updateOrderStatus);
+            } catch (err) {
+                // Handle errors
+                console.error('Error updating order status:', err);
+            }
+        };
     }
 
 </script>
