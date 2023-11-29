@@ -55,23 +55,14 @@
             })
             let items = []
             // orderItemResponse.data.orderedItem.items.forEach(getItems)
-            orderItemResponse.data.orderedItem.items.map(async function (item) {
+            await Promise.all(orderItemResponse.data.orderedItem.items.map(async function (item) {
                 let itemResponse = await getItemMutation({
                     variables: {
                         id: item
                     }
                 })
                 items.push(itemResponse.data.item)
-            })
-            // async function getItems(item) {
-            //     let itemResponse = await getItemMutation({
-            //         variables: {
-            //             id: item
-            //         }
-            //     })
-            // }
-
-            console.log(items)
+            }))
             return {
                 quotationID: quotation.id,
                 submissionDate: convertDate(quotation.orderDate),
@@ -80,14 +71,9 @@
                 price: quotation.price
             };
         }));
-
-        // function addResquest(quotation) {
-        //     requests.push(quotation)
-        // }
-        console.log("HERE")
-        let orderItems = [{itemName: 'Mango', quantity: '10'},
-            {itemName: 'Couch', quantity: '500'},
-            {itemName: 'Number 10 machine screw (0.190 inch major diameter)', quantity: '51700'}];
+        let orderItems = [{name: 'Mango', quantity: '10'},
+            {name: 'Couch', quantity: '500'},
+            {name: 'Number 10 machine screw (0.190 inch major diameter)', quantity: '51700'}];
         requests.push({
             quotationID: '57f5en320a83',
             submissionDate: 'November 13, 2023',
