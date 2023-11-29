@@ -14,6 +14,7 @@ const ADD_QUOTATION = gql`
 			distance
 			shippingAddress
 			price
+			pickUpDate
 		}
 	}
 `;
@@ -28,6 +29,7 @@ const DELETE_QUOTATION = gql`
 			distance
 			shippingAddress
 			price
+			pickUpDate
 		}
 	}
 `;
@@ -40,6 +42,7 @@ const GET_QUOTATIONS_FOR_EACH_CLIENT = gql`
 			distance
 			shippingAddress
 			price
+			pickUpDate
 		}
 	}
 `;
@@ -53,6 +56,7 @@ const UPDATE_PRICE = gql`
 			shippingAddress
 			orderItems
 			price
+			pickUpDate
 		}
 	}
 `;
@@ -64,6 +68,8 @@ const GET_QUOTATIONS = gql`
 			pickUpAddress
 			distance
 			shippingAddress
+			orderItems
+			pickUpDate
 			price
 		}
 	}
@@ -78,6 +84,7 @@ const GET_QUOTATION = gql`
 			distance
 			shippingAddress
 			price
+			pickUpDate
 			orderItems
 		}
 	}

@@ -8,8 +8,8 @@
     import {mutation, setClient} from "svelte-apollo";
     import {GET_QUOTATION, UPDATE_PRICE} from "../../../mutations/quotationMutation.js";
     import {GET_ITEM} from "../../../mutations/itemsMutation.js";
-    import {goto} from "$app/navigation";
     import {GET_ORDERED_ITEM} from "../../../mutations/orderedItemMutation.js";
+    import {goto} from "$app/navigation";
 
     let user;
     // console.log(user)
@@ -29,8 +29,7 @@
         if (!browser) return;
         user = authService.getUser();
         const client = new ApolloClient({
-            // uri: 'https://bwm.happyfir.com/graphql/create_request',
-            uri: "http://localhost:8000/graphql/create_request",
+            uri: 'https://bwm.happyfir.com/graphql/create_request',
             headers: {
                 Authorization: `Bearer ${user.token}`
             },
@@ -42,31 +41,26 @@
         const getItemMutation = mutation(GET_ITEM);
         const updatePrice = mutation(UPDATE_PRICE);
         onMount(async () => {
-
-            console.log(user);
-            console.log(quotationID)
             try {
                 const quotationResponse = await getQuotationMutation({
                     variables: {
                         id: quotationID,
                     }
                 });
-                console.log(quotationResponse)
                 request = {
                     buyerName: quotationResponse.data.quotation.id,
                     deliveryAddress: quotationResponse.data.quotation.shippingAddress,
                     pickupAddress: quotationResponse.data.quotation.pickUpAddress,
                     distance: quotationResponse.data.quotation.distance,
-                    price: quotationResponse.data.quotation.price
+                    price: quotationResponse.data.quotation.price,
+                    pickUpDate: quotationResponse.data.quotation.pickUpDate
                 };
                 orderItems = quotationResponse.data.quotation.orderItems;
-                console.log(quotationResponse.data.quotation.orderItems)
                 let orderedItemResponse = await getOrderedItemMutation({
                     variables: {
                         id: quotationResponse.data.quotation.orderItems
                     }
                 });
-                console.log(orderedItemResponse)
                 for (let index = 0; index < orderedItemResponse.data.orderedItem.items.length; index++) {
                     console.log(orderedItemResponse.data.orderedItem.items[index])
                     let itemResponse = await getItemMutation({
@@ -74,19 +68,11 @@
                             id: orderedItemResponse.data.orderedItem.items[index]
                         }
                     })
-                    console.log(itemResponse.data.item)
-                    console.log(Items)
                     Items.push(itemResponse.data.item)
                 }
             } catch (e) {
                 return alert("quotationID is invalid")
             }
-            // let itemResponse = getItemMutation({
-            //     id: quotationID
-            //
-            // });
-
-
             if (request == null) {
                 alert('No request has an ID #' + quotationID + '.');
                 await goto('/requests');
@@ -158,7 +144,7 @@
     <div>{request.sellerName}</div>
     <div>{request.pickupAddress}</div>
     <br/>
-    <div>{request.date}</div>
+    <div>{request.pickUpDate}</div>
     <br/>
     <div>{request.distance}</div>
 

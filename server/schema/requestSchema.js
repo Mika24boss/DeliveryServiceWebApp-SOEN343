@@ -198,6 +198,12 @@ const mutation = new GraphQLObjectType({
                 return Quotation.findById(args.id);
             },
         },
+        quotations: {
+            type: new GraphQLList(QuotationType),
+            resolve() {
+                return Quotation.find();
+            }
+        },
         updateQuotationPrice: {
             type: QuotationType,
             args: {
