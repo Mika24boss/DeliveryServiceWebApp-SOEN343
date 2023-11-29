@@ -30,6 +30,7 @@
         user = authService.getUser();
         const client = new ApolloClient({
             uri: 'https://bwm.happyfir.com/graphql/create_request',
+            // uri: 'http://localhost:8000/graphql/create_request',
             headers: {
                 Authorization: `Bearer ${user.token}`
             },

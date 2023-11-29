@@ -20,8 +20,8 @@
     let isWaiting = true;
     let user;
     const client = new ApolloClient({
-        // uri: 'https://bwm.happyfir.com/graphql/quotations',
-        uri: 'http://localhost:8000/graphql/create_request',
+        uri: 'https://bwm.happyfir.com/graphql/quotations',
+        // uri: 'http://localhost:8000/graphql/create_request',
         cache: new InMemoryCache()
     });
     setClient(client);
