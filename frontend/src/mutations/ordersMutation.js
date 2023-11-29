@@ -2,12 +2,25 @@ import {gql} from '@apollo/client/core';
 
 // Mutation to add an order
 const ADD_ORDER = gql`
-	mutation AddOrder($orderID: ID!, $status: String!, $orderItems: [String]!, $payment: Float!) {
-		addOrder(orderID: $orderID, status: $status, orderItems: $orderItems, payment: $payment) {
+	mutation AddOrder(
+		$orderID: ID!
+		$status: String!
+		$orderItems: [String]!
+		$payment: Float!
+		$pickUpDate: Date!
+	) {
+		addOrder(
+			orderID: $orderID
+			status: $status
+			orderItems: $orderItems
+			payment: $payment
+			pickUpDate: $pickUpDate
+		) {
 			id
 			orderID
 			orderDate
 			status
+			pickUpDate
 			payment
 			orderItems
 		}
@@ -24,6 +37,7 @@ const ASSIGN_ORDER = gql`
 			status
 			payment
 			orderItems
+			pickUpDate
 		}
 	}
 `;
@@ -38,6 +52,7 @@ const DELETE_ORDER = gql`
 			status
 			payment
 			orderItems
+			pickUpDate
 		}
 	}
 `;
@@ -51,6 +66,7 @@ const UPDATE_ORDER_STATUS = gql`
 			status
 			payment
 			orderItems
+			pickUpDate
 		}
 	}
 `;
@@ -61,6 +77,7 @@ const UPDATE_ORDER = gql`
 		$status: String
 		$payment: Float
 		$orderItems: [String]
+		$pickUpDate: Date!
 	) {
 		updateOrder(
 			orderID: $orderID
@@ -68,10 +85,12 @@ const UPDATE_ORDER = gql`
 			status: $status
 			payment: $payment
 			orderItems: $orderItems
+			pickUpDate: $pickUpDate
 		) {
 			id
 			orderID
 			orderDate
+			pickUpDate
 			status
 			payment
 			orderItems
@@ -84,6 +103,7 @@ const GET_ORDERS_FOR_EACH_CLIENT = gql`
 			id
 			orderID
 			orderDate
+			pickUpDate
 			status
 			payment
 			orderItems
@@ -97,6 +117,7 @@ const GET_ORDERS_FOR_EACH_DELIVERY_MAN = gql`
 			id
 			orderID
 			orderDate
+			pickUpDate
 			status
 			payment
 			orderItems
@@ -111,6 +132,7 @@ const GET_ORDER = gql`
 			orderID
 			orderDate
 			status
+			pickUpDate
 			payment
 			orderItems
 		}
@@ -122,6 +144,7 @@ const GET_ORDER_FOR_CLIENT = gql`
 			id
 			orderID
 			orderDate
+			pickUpDate
 			status
 			payment
 			orderItems
@@ -134,6 +157,7 @@ const GET_ORDER_FOR_DELIVERY_MAN = gql`
 			id
 			orderID
 			orderDate
+			pickUpDate
 			status
 			payment
 			orderItems
@@ -147,6 +171,7 @@ const GET_ORDERS = gql`
 			orderID
 			orderDate
 			status
+			pickUpDate
 			payment
 			orderItems
 		}

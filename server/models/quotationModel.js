@@ -17,6 +17,9 @@ const Quotation = new mongoose.Schema({
         required: true,
         ref: 'Address'
     },
+    pickUpDate: {
+        type: Date,
+    },
     price: {
         type: Number,
         required: true

@@ -11,6 +11,7 @@ const Client = require("../models/clientModel");
 const protect = require("../middleware/authMiddleware");
 const DeliveryMan = require("../models/deliverManModel");
 const Order = require("../models/orderModel");
+const {GraphQLDateTime} = require("graphql-iso-date");
 const RootQuery = new GraphQLObjectType({
     name: 'RootQueryType',
     fields: {
@@ -40,6 +41,7 @@ const mutation = new GraphQLObjectType({
                 distance: {type: GraphQLFloat}, // Adjust the data type as needed
                 shippingAddress: {type: GraphQLNonNull(GraphQLID)},
                 orderItems: {type: GraphQLID},
+                pickUpDate: {type: GraphQLDateTime}
                 // Adjust the data type as needed
             },
             async resolve(parent, args, context) {
@@ -54,7 +56,8 @@ const mutation = new GraphQLObjectType({
                     shippingAddress: args.shippingAddress,
                     price: 0,
                     quotationID: 0,
-                    orderItems: args.orderItems
+                    orderItems: args.orderItems,
+                    pickUpDate: args.pickUpDate
                 });
                 await Client.findOneAndUpdate(
                     {_id: client._id},

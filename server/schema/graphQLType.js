@@ -66,6 +66,7 @@ const OrderType = new GraphQLObjectType({
         orderDate: {type: GraphQLString},
         status: {type: GraphQLString},
         payment: {type: GraphQLID},
+        pickUpDate: {type: GraphQLDateTime},
         orderItems: {type: GraphQLID},
     }),
 });
@@ -79,6 +80,7 @@ const QuotationType = new GraphQLObjectType({
         distance: {type: GraphQLFloat},
         shippingAddress: {type: GraphQLID},
         orderItems: {type: GraphQLID},
+        pickUpDate: {type: GraphQLDateTime},
         price: {type: GraphQLFloat},
     }),
 });

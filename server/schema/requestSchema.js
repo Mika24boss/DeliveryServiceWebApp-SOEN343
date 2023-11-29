@@ -13,6 +13,7 @@ const Address = require("../models/addressModel");
 const OrderedItems = require("../models/orderedItems")
 const Item = require("../models/itemModel");
 const Admin = require("../models/adminModel");
+const {GraphQLDateTime} = require("graphql-iso-date");
 const RootQuery = new GraphQLObjectType({
     name: 'RootQueryType',
     fields: {
@@ -40,8 +41,6 @@ const mutation = new GraphQLObjectType({
         addOrderedItem: {
             type: OrderedItemType, // Assuming you have an OrderedItemType defined
             args: {
-                size: {type: GraphQLString},
-                quantity: {type: GraphQLInt},
                 items: {type: new GraphQLList(GraphQLString)}, // Assuming you store item IDs as strings
             },
             resolve(parent, args) {
@@ -156,7 +155,8 @@ const mutation = new GraphQLObjectType({
                 pickUpAddress: {type: GraphQLNonNull(GraphQLID)},
                 distance: {type: GraphQLFloat}, // Adjust the data type as needed
                 shippingAddress: {type: GraphQLNonNull(GraphQLID)},
-                orderedItems: {type: GraphQLID}
+                orderItems: {type: GraphQLID},
+                pickUpDate: {type: GraphQLDateTime}
                 // Adjust the data type as needed
             },
             async resolve(parent, args, context) {
@@ -169,9 +169,10 @@ const mutation = new GraphQLObjectType({
                     pickUpAddress: args.pickUpAddress,
                     distance: args.distance,
                     shippingAddress: args.shippingAddress,
-                    orderedItems: args.orderedItems,
+                    orderItems: args.orderItems,
                     price: 0,
-                    quotationID: 0
+                    quotationID: 0,
+                    pickUpDate: args.pickUpDate
                 });
                 await Client.findOneAndUpdate(
                     {_id: client._id},
@@ -187,7 +188,6 @@ const mutation = new GraphQLObjectType({
                         {$set: {quotationID: index}}
                     );
                 }));
-
                 return quotation;
             },
         },
