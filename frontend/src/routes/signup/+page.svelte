@@ -129,7 +129,7 @@
 
                 <div class='btn-container'>
                     <button class='btn-signup centerBlock' type='submit' on:click='{onSubmit}'>Sign-Up</button>
-                    <a href='/'>
+                    <a href='/login'>
                         <button class='btn-back centerBlock'>Back</button>
                     </a>
                 </div>
