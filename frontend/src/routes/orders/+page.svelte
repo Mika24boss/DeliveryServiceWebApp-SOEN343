@@ -53,7 +53,6 @@
                     deliveryManID: user.id
                 }
             });
-            console.log(ordersResponse);
             ordersResponse = ordersResponse.data.ordersForEachDeliveryMan;
         }
         orders = ordersResponse.map(function(order) {
@@ -64,13 +63,14 @@
                 status: convertStatus(order.status),
             };
         });
+        console.log(orders)
 
         finishedLoading = true;
     }
 
     function convertStatus(backendStatus) {
         switch (backendStatus) {
-            case "NONE":
+            case "PAID":
                 return "Paid";
             case "PICKUP":
                 return "En route to pickup";

@@ -2,16 +2,18 @@
     import authService from '$lib/features/authService.js';
     import {onMount} from "svelte";
     import {goto} from "$app/navigation";
+    import {browser} from "$app/environment";
 
     export var orderID, submissionDate, orderItems, status;
 
-    let user;
+    let user = {role:'REGULAR-CLIENT'};
     let statusOrder = status;
     let finishedLoading = false;
 
     loadOrder();
 
     async function loadOrder() {
+        if (!browser) return;
         await onMount(() => {
             user = authService.getUser();
         })
@@ -26,18 +28,14 @@
     }
 
 </script>
-{#if !finishedLoading}
-{:else}
     <div class="outline" id={orderID}>
         <a href="/orders/{orderID}">
             <div class="submission-date">{submissionDate}</div>
         </a>
-        <a href="/orders/{orderID}">
-            <div class="items">
+        <a class="items" href="/orders/{orderID}">
                 {#each orderItems as item, i}
                     {item.quantity} X {item.itemName}{ i === orderItems.length - 1 ? '' : ', '}
                 {/each}
-            </div>
         </a>
         {#if user.role === "GOLD-CLIENT" || user.role === "REGULAR-CLIENT"}
             <div class="total">Status: {statusOrder}</div>
@@ -83,8 +81,6 @@
 
     </div>
 
-{/if}
-
 <style>
 
     .outline {
@@ -93,7 +89,6 @@
         outline: 2px solid black;
         border-radius: 1em;
         grid-template-columns: 1fr 3fr 1fr;
-        grid-template-areas: "date details total";
         display: grid;
         place-items: center;
     }
@@ -101,10 +96,12 @@
     .submission-date {
         text-align: left;
         grid-area: date;
+        padding-left: 1em;
     }
 
     a {
         text-decoration: none;
+        width: 100%;
     }
 
     a:link {
@@ -122,6 +119,13 @@
 
     a:active {
         color: black;
+    }
+
+    .items {
+        width: 100%;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 
     .popup {
