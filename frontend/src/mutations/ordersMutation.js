@@ -16,8 +16,8 @@ const ADD_ORDER = gql`
 
 // Mutation to assign an order
 const ASSIGN_ORDER = gql`
-	mutation AssignOrder($orderID: ID!) {
-		assignOrder(orderID: $orderID) {
+	mutation AssignOrder($orderID: ID!, $deliveryMan: ID!) {
+		assignOrder(orderID: $orderID, deliveryMan: $deliveryMan) {
 			id
 			orderID
 			orderDate

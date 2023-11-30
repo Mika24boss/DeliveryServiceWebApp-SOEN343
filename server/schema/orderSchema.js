@@ -166,7 +166,7 @@ const mutation = new GraphQLObjectType({
         assignOrder: {
             type: OrderType,
             args: {
-                orderID: {type: GraphQLNonNull(GraphQLInt)},
+                orderID: {type: GraphQLNonNull(GraphQLID)},
                 deliveryManID: {type: GraphQLID},
             },
             async resolve(parent, args, context) {
@@ -180,12 +180,12 @@ const mutation = new GraphQLObjectType({
                 if (!deliveryMan) {
                     throw new Error('DeliveryMan not found')
                 }
-                const order = await Order.findOne({orderID: {$eq: args.orderID}});
+                const order = await Order.findById(args.orderID);
 
                 await DeliveryMan.findOneAndUpdate(
                     {_id: deliveryMan._id},
                     {
-                        $set: {'numberOfOrder': deliveryMan.numberOfOrder + 1},
+                        $set: {'numberOfOrder': parseInt(deliveryMan.numberOfOrder) + 1},
                         $push: {'orders': order._id}
                     },
                     {new: true}
