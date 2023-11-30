@@ -81,11 +81,6 @@
             } catch (e) {
                 return alert("quotationID is invalid")
             }
-            // let itemResponse = getItemMutation({
-            //     id: quotationID
-            //
-            // });
-
 
             if (request == null) {
                 alert('No request has an ID #' + quotationID + '.');
@@ -130,11 +125,7 @@
         alert('Rejected!');
     }
 
-    //make quotation(ADD_QUOTATION), only works when admin
-    //const updatePrice=mutation(UPDATE_PRICE);
-    //function updatePrices(){
 
-    // }
 </script>
 
 <svelte:head>

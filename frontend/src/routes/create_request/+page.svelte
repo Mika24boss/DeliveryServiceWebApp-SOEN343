@@ -9,8 +9,9 @@
 	import {mutation, setClient} from 'svelte-apollo';
 	import {browser} from '$app/environment';
 	import {ADD_QUOTATION} from "../../mutations/quotationMutation.js";
+    import {ADD_ORDERED_ITEM} from "../../mutations/orderedItemMutation.js";
 
-	const client = new ApolloClient({
+    const client = new ApolloClient({
         uri: 'https://bwm.happyfir.com/graphql/create_request',
         cache: new InMemoryCache()
     });
@@ -42,11 +43,10 @@
     const addAddressMutation = mutation(ADD_ADDRESS);
     const addItemMutation = mutation(ADD_ITEM);
     const addQuotationMutation = mutation(ADD_QUOTATION);
-    //const addOrderItemMutation =mutation(ADD_ORDERED_ITEM);
+    const addOrderItemMutation =mutation(ADD_ORDERED_ITEM);
 
     //adding order to ADD_ITEM
 
-    //const addOrdereed
     async function addItem() {
         let newID = 0;
         if (orderItems.length > 0) newID = orderItems[orderItems.length - 1].itemID + 1;
@@ -131,6 +131,21 @@
             //await goto('/quotations');
         } catch (error) {
             console.error('Error adding address:', error);
+            // Handle error as needed
+        }
+        try {//adding orderedItems
+            for (let index = 0; index < orderItems.length; index++) {
+                const response = await addOrderItemMutation()({
+                    variables: {
+                        items: orderItems[index].items
+                    }
+                });
+            }
+            // Optionally, navigate to another page
+            console.log('AddOrderItemsResponse mutation: ' + response);
+            //await goto('/quotations');
+        } catch (error) {
+            console.error('Error AddorderItems:', error);
             // Handle error as needed
         }
     }
