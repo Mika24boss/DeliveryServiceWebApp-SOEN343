@@ -7,6 +7,9 @@ const ADD_QUOTATION = gql`
 			pickUpAddress: $pickUpAddress
 			shippingAddress: $shippingAddress
 			distance: $distance
+			price: $price
+			orderItems: $orderItems
+			pickUpDate: $pickUpDate
 		) {
 			id
 			quotationID

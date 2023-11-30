@@ -87,6 +87,7 @@
         return new Date(parseInt(backendDate)).toLocaleDateString([], {year: 'numeric', month: 'long', day: 'numeric'});
     }
 
+    //for delivery man
     function changeOrderStatus(){
         let orderID = 'your_order_id'; // Replace with actual order ID
         let newStatus = 'new_status'; // Replace with the desired new status

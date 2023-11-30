@@ -93,11 +93,9 @@
                     newID = orderItems[orderItems.length - 1].itemID + 1;
                 }
             }
-
             // if error
         } catch (error) {
             console.error('Error adding item:', error);
-            // Handle error as needed
         }
 
         try {
@@ -110,7 +108,22 @@
                     country: document.getElementById('deliveryCountry').value,
                     postalCode: document.getElementById('deliveryPostalCode').value
                 }
-            });
+            })
+            console.log(response1.data.addAddress.id)
+             shippingAddressResponse = response1.data.addAddress.id;
+            const response2 = await addAddressMutation({
+                variables: {
+                    street: document.getElementById('pickupAddress').value,
+                    city: document.getElementById('pickupCity').value,
+                    state: document.getElementById('pickupProvince').value,
+                    province: document.getElementById('pickupProvince').value,
+                    country: document.getElementById('pickupCountry').value,
+                    postalCode: document.getElementById('pickupPostalCode').value
+                }
+            })
+            console.log(response2.data.addAddress.id)
+
+             pickUpAddressResponse=response2.data.addAddress.id;
             // Optionally, navigate to another page
             console.log('Response mutation: ' + response);
             //await goto('/quotations');
@@ -121,9 +134,11 @@
         try {//adding quotation
             const response = await addQuotationMutation()({
                 variables: {
-                    pickUpAddress: document.getElementById('pickupAddress').value,
-                    shippingAddress: document.getElementById('deliveryAddress').value,
-                    distance: '3'
+                    pickUpAddress: pickUpAddressResponse,
+                    shippingAddress: shippingAddressResponse,
+                    distance: 3,
+                    pickUpDate: date.toJSON(),
+                    orderItems: orderItemsToSendResponse
                 }
             });
             // Optionally, navigate to another page
