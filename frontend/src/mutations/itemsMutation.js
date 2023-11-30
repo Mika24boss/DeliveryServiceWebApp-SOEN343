@@ -4,6 +4,7 @@ import {gql} from '@apollo/client/core';
 const ADD_ITEM = gql`
 	mutation AddItem($name: String!, $quantity: Int!) {
 		addItem(name: $name, quantity: $quantity) {
+		    id
 			name
 			quantity
 		}

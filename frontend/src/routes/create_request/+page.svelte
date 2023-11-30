@@ -12,7 +12,8 @@
     import {ADD_ORDERED_ITEM} from "../../mutations/orderedItemMutation.js";
 
     const client = new ApolloClient({
-        uri: 'https://bwm.happyfir.com/graphql/create_request',
+        // uri: 'https://bwm.happyfir.com/graphql/create_request',
+        uri: 'http://localhost:8000/graphql/create_request',
         cache: new InMemoryCache()
     });
 
@@ -73,6 +74,7 @@
         console.log('Creating request...');
         const data = getFieldData();
         if (!data) return;
+        const orderedItemToSend = []
 
         try {
             let ids = [];
@@ -80,26 +82,29 @@
                 const response = await addItemMutation({
                     variables: {
                         name: orderItems[index].itemName,
-                        quantity: orderItems[index].quantity
+                        quantity: parseInt(orderItems[index].quantity)
                     }
                 });
+                orderedItemToSend.push(response.data.addItem.id)
 
                 console.log('Some item: ' + response);
-                // Access the result from the mutation response
-                const newItem = response.data.addItem;
-                // Add the new item to the local orderItems array
-                let newID = 0;
-                if (orderItems.length > 0) {
-                    newID = orderItems[orderItems.length - 1].itemID + 1;
-                }
+                // // Access the result from the mutation response
+                // const newItem = response.data.addItem;
+                // // Add the new item to the local orderItems array
+                // let newID = 0;
+                // if (orderItems.length > 0) {
+                //     newID = orderItems[orderItems.length - 1].itemID + 1;
+                // }
             }
             // if error
         } catch (error) {
             console.error('Error adding item:', error);
         }
-
+        console.log(orderedItemToSend)
+        let shippingAddressResponse;
+        let pickUpAddressResponse;
         try {
-            const response = await addAddressMutation({
+            const response1 = await addAddressMutation({
                 variables: {
                     street: document.getElementById('deliveryAddress').value,
                     city: document.getElementById('deliveryCity').value,
@@ -125,14 +130,37 @@
 
              pickUpAddressResponse=response2.data.addAddress.id;
             // Optionally, navigate to another page
-            console.log('Response mutation: ' + response);
+            console.log('Response mutation: ' + response1);
             //await goto('/quotations');
         } catch (error) {
             console.error('Error adding address:', error);
             // Handle error as needed
         }
+        let orderItemsToSendResponse;
+
+        try { //adding orderedItems
+            const response = await addOrderItemMutation({
+                variables: {
+                    items: orderedItemToSend
+                }
+            });
+            console.log(response)
+            orderItemsToSendResponse = response.data.addOrderedItem.id;
+                // Optionally, navigate to another page
+            console.log('AddOrderItemsResponse mutation: ' + response);
+            //await goto('/quotations');
+        } catch (error) {
+            console.error('Error AddorderItems:', error);
+            // Handle error as needed
+        }
+
+        console.log(date.toJSON())
+        console.log(pickUpAddressResponse)
+        console.log(shippingAddressResponse)
+        console.log(date.toJSON())
+        console.log(orderItemsToSendResponse)
         try {//adding quotation
-            const response = await addQuotationMutation()({
+            const response = await addQuotationMutation({
                 variables: {
                     pickUpAddress: pickUpAddressResponse,
                     shippingAddress: shippingAddressResponse,
@@ -145,22 +173,7 @@
             console.log('Response mutation: ' + response);
             //await goto('/quotations');
         } catch (error) {
-            console.error('Error adding address:', error);
-            // Handle error as needed
-        }
-        try {//adding orderedItems
-            for (let index = 0; index < orderItems.length; index++) {
-                const response = await addOrderItemMutation()({
-                    variables: {
-                        items: orderItems[index].items
-                    }
-                });
-            }
-            // Optionally, navigate to another page
-            console.log('AddOrderItemsResponse mutation: ' + response);
-            //await goto('/quotations');
-        } catch (error) {
-            console.error('Error AddorderItems:', error);
+            console.error('Error adding quotation:', error);
             // Handle error as needed
         }
     }
