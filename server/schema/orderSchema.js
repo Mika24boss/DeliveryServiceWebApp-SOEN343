@@ -167,21 +167,19 @@ const mutation = new GraphQLObjectType({
             type: OrderType,
             args: {
                 orderID: {type: GraphQLNonNull(GraphQLID)},
-                deliveryManID: {type: GraphQLID},
             },
             async resolve(parent, args, context) {
                 const admin = await Admin.findById(protect(context.headers['authorization']).id).select('-password');
                 if (!admin) {
                     throw new Error('User not authorized')
                 }
-                console.log(args.deliveryManID)
-                const deliveryMan = await DeliveryMan.findById(args.deliveryManID)
-                console.log(deliveryMan);
-                if (!deliveryMan) {
-                    throw new Error('DeliveryMan not found')
-                }
-                const order = await Order.findById(args.orderID);
 
+                const order = await Order.findById(args.orderID);
+                const deliveryMen = await DeliveryMan.find();
+                if (!deliveryMen) {
+                    return "No DeliveryMan to assign"
+                }
+                const deliveryMan = deliveryMen[Math.floor(Math.random() * deliveryMen.length)]
                 await DeliveryMan.findOneAndUpdate(
                     {_id: deliveryMan._id},
                     {
