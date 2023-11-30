@@ -122,8 +122,9 @@ const mutation = new GraphQLObjectType({
         addOrder: {
             type: OrderType, // Assuming you have an OrderType defined
             args: {
-                orderItems: {type: new GraphQLList(GraphQLID)},
-                payment: {type: GraphQLID}
+                orderItems: {type: GraphQLID},
+                payment: {type: GraphQLID},
+                pickUpDate: {type: GraphQLDateTime},
             },
             async resolve(parent, args, context) {
                 const client = await Client.findById(protect(context.headers['authorization']).id).select('-password');
@@ -133,6 +134,7 @@ const mutation = new GraphQLObjectType({
                     status: "PAID",
                     orderItems: args.orderItems,
                     payment: args.payment,
+                    pickUpDate: args.pickUpDate,
                 });
                 await order.save();
                 await Client.findOneAndUpdate(
@@ -270,7 +272,8 @@ const mutation = new GraphQLObjectType({
                 orderDate: {type: GraphQLString},
                 status: {type: GraphQLString},
                 payment: {type: GraphQLID},
-                orderItems: {type: new GraphQLList(GraphQLID)}
+                orderItems: {type: new GraphQLList(GraphQLID)},
+                pickUpDate: {type: GraphQLDateTime}
             },
             async resolve(args, context) {
                 const admin = await Admin.findById(protect(context.headers['authorization']).id).select('-password');
@@ -292,6 +295,9 @@ const mutation = new GraphQLObjectType({
                 }
                 if (args.orderItems) {
                     order.orderItems = args.orderItems
+                }
+                if (args.pickUpDate) {
+                    order.pickUpDate = args.pickUpDate
                 }
                 await order.save();
                 return order;

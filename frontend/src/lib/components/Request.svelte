@@ -8,7 +8,7 @@
     </div>
     <div class="items">
         {#each orderItems as item, i}
-            {item.quantity} X {item.itemName}{ i === orderItems.length - 1 ? '' : ', '}
+            {item.quantity} X {item.name}{ i === orderItems.length - 1 ? '' : ', '}
         {/each}
     </div>
     <div class="distance">

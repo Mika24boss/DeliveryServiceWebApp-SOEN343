@@ -20,69 +20,68 @@
     const signUpDeliveryManMutation = mutation(ADD_DELIVERY_MAN);
     const signUpClientMutation = mutation(ADD_CLIENT);
 
-    let name, email, password, role, phoneNumber;
-    let response;
+    let name, email, password, phoneNumber;
+    let role = "customer";
     let isWaiting = false;
     let hasMissingFields = false;
 
     async function onSubmit() {
         name = document.getElementById('name').value;
-        role = role;
         email = document.getElementById('email').value;
         password = document.getElementById('password').value;
         phoneNumber = document.getElementById('phone').value;
 
-        isWaiting = true;
-        if (role === "DELIVERYMAN") {
-            const response = await signUpDeliveryManMutation({
-                variables: {
-                    name: name,
-                    emailAddress: email,
-                    loginInfo: password,
-                    phoneNumber: phoneNumber
-                }
-            })
-            localStorage.setItem('user', JSON.stringify(response.data.addDeliveryMan));
-            hasUpdated.set(true);
-            // Navigate to the desired page
-            if (!response) {
-                setTimeout(() => {
-                    alert('Error when creating your account!');
-                    isWaiting = false;
-                }, 100);
-            } else
-                await goto('/orders');
-        } else {
-            const response = await signUpClientMutation({
-                variables: {
-                    name: name,
-                    emailAddress: email,
-                    phoneNumber: phoneNumber,
-                    loginInfo: password,
-                }
-            })
-            localStorage.setItem('user', JSON.stringify(response.data.addClient));
-            hasUpdated.set(true);
-            // Navigate to the desired page
-            if (!response) {
-                setTimeout(() => {
-                    alert('Error when creating your account!');
-                    isWaiting = false;
-                }, 100);
-            } else
-                await goto('/quotations');
+        hasMissingFields = name === "" || role === "" || email === "" || password === "" || phoneNumber === "";
+        if (hasMissingFields) {
+            return;
         }
-        // response = await authService.register(userData);
-        // //console.log('Response: ', response);
-        // if (!response) {
-        //     setTimeout(() => {
-        //         alert('Error when creating your account!');
-        //         isWaiting = false;
-        //     }, 100);
-        // } else {
-        //     hasUpdated.set(true);
-        //     await goto('/profile');
-        // }
+
+        isWaiting = true;
+        try {
+            if (role === "employee") {
+                const response = await signUpDeliveryManMutation({
+                    variables: {
+                        name: name,
+                        emailAddress: email,
+                        loginInfo: password,
+                        phoneNumber: phoneNumber
+                    }
+                })
+                localStorage.setItem('user', JSON.stringify(response.data.addDeliveryMan));
+                hasUpdated.set(true);
+                // Navigate to the desired page
+                if (!response) {
+                    setTimeout(() => {
+                        alert('Error when creating your account!');
+                        isWaiting = false;
+                    }, 100);
+                } else
+                    await goto('/orders');
+            } else {
+                const response = await signUpClientMutation({
+                    variables: {
+                        name: name,
+                        emailAddress: email,
+                        phoneNumber: phoneNumber,
+                        loginInfo: password,
+                    }
+                })
+                localStorage.setItem('user', JSON.stringify(response.data.addClient));
+                hasUpdated.set(true);
+                // Navigate to the desired page
+                if (!response) {
+                    setTimeout(() => {
+                        alert('Error when creating your account!');
+                        isWaiting = false;
+                    }, 100);
+                } else
+                    await goto('/quotations');
+            }
+        } catch (error) {
+            console.log(error)
+            alert("Error when creating your account!")
+            isWaiting = false;
+        }
     }
 
 </script>
@@ -103,7 +102,7 @@
                         <div class="plus2"></div>
                     </div>
                     <label for='customer'>Customer</label>
-                    <input type='radio' id='employee' name='user-type' value='Employee' required bind:group={role}>
+                    <input type='radio' id='employee' name='user-type' value='employee' required bind:group={role}>
                     <div class="plus1">
                         <div class="plus2"></div>
                     </div>
@@ -130,7 +129,7 @@
 
                 <div class='btn-container'>
                     <button class='btn-signup centerBlock' type='submit' on:click='{onSubmit}'>Sign-Up</button>
-                    <a href='/'>
+                    <a href='/login'>
                         <button class='btn-back centerBlock'>Back</button>
                     </a>
                 </div>
@@ -147,10 +146,6 @@
         position: relative;
         text-align: center;
         margin: 5em auto auto;
-    }
-
-    h1 {
-        width: 100%;
     }
 
     .signup-title {

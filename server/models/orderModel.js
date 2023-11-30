@@ -14,6 +14,10 @@ const Order = new mongoose.Schema({
         trim: true,
         default: "PAID",
     },
+    pickUpDate: {
+        type: Date,
+        required: true,
+    },
     payment: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Payment'
