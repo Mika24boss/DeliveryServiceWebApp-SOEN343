@@ -4,6 +4,7 @@ import {gql} from '@apollo/client/core';
 const ADD_ORDERED_ITEM = gql`
 	mutation AddOrderedItem($items: [ID]!) {
 		addOrderedItem(items: $items) {
+		    id
 			items
 		}
 	}

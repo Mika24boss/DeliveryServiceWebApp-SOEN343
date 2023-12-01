@@ -41,7 +41,7 @@ const mutation = new GraphQLObjectType({
         addOrderedItem: {
             type: OrderedItemType, // Assuming you have an OrderedItemType defined
             args: {
-                items: {type: new GraphQLList(GraphQLString)}, // Assuming you store item IDs as strings
+                items: {type: new GraphQLList(GraphQLID)}, // Assuming you store item IDs as strings
             },
             resolve(parent, args) {
                 const orderedItem = new OrderedItems({
@@ -156,7 +156,7 @@ const mutation = new GraphQLObjectType({
                 distance: {type: GraphQLFloat}, // Adjust the data type as needed
                 shippingAddress: {type: GraphQLNonNull(GraphQLID)},
                 orderItems: {type: GraphQLID},
-                pickUpDate: {type: GraphQLDateTime}
+                pickUpDate: {type: GraphQLString}
                 // Adjust the data type as needed
             },
             async resolve(parent, args, context) {

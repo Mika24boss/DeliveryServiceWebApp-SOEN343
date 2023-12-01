@@ -120,11 +120,7 @@
         alert('Rejected!');
     }
 
-    //make quotation(ADD_QUOTATION), only works when admin
-    //const updatePrice=mutation(UPDATE_PRICE);
-    //function updatePrices(){
 
-    // }
 </script>
 
 <svelte:head>

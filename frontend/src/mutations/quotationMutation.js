@@ -2,11 +2,19 @@
 import { gql } from '@apollo/client/core';
 
 const ADD_QUOTATION = gql`
-	mutation AddQuotation($pickUpAddress: ID!, $distance: Float!, $shippingAddress: ID!) {
+	mutation AddQuotation(
+		$pickUpAddress: ID!
+		$distance: Float!
+		$shippingAddress: ID!
+		$orderItems: ID!
+		$pickUpDate: String!
+	) {
 		addQuotation(
 			pickUpAddress: $pickUpAddress
-			shippingAddress: $shippingAddress
 			distance: $distance
+			shippingAddress: $shippingAddress
+			orderItems: $orderItems
+			pickUpDate: $pickUpDate
 		) {
 			id
 			quotationID
