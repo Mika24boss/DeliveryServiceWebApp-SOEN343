@@ -17,7 +17,7 @@
         UPDATE_ORDER_STATUS
     } from "../../../mutations/ordersMutation.js";
 
-    const client = new ApolloClient({
+    let client = new ApolloClient({
         uri: 'https://bwm.happyfir.com/graphql/orders',
         cache: new InMemoryCache()
     });
@@ -78,7 +78,7 @@
 
     function UpdateStatusOrder(status) {
         statusOrder = document.getElementById(status).innerText;
-        //UpdateStatus(convertStatusReverse(status));
+        UpdateStatus(convertStatusReverse(status));
     }
 
     function convertStatus(backendStatus) {
@@ -111,10 +111,18 @@
         }
     }
 
-    /*async function UpdateStatus(newStatus) {
-        console.log({ orderID: parseInt(orderID), status: newStatus })
+    async function UpdateStatus(newStatus) {
+        console.log({orderID: parseInt(orderID), status: newStatus})
         try {
-            const { data } = await updateStatusMutation({ variables: { orderID: parseInt(orderID), status: newStatus } });
+
+            const {data} = await updateStatusMutation(
+                    {
+                        variables: {
+                            orderID: parseInt(orderID), status: newStatus
+                        }
+                    }
+                )
+            ;
 
             // Handle the response data as needed
             console.log('Order status updated successfully:', data.updateOrderStatus);
@@ -123,7 +131,7 @@
             console.error('Error updating order status:', err);
         }
 
-    }*/
+    }
 
 </script>
 

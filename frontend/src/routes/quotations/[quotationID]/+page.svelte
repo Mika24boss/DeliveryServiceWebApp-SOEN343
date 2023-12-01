@@ -16,8 +16,8 @@
     import {GET_ITEM} from "../../../mutations/itemsMutation.js";
 
     const client = new ApolloClient({
-        // uri: 'https://bwm.happyfir.com/graphql/create_request',
-        uri: "http://localhost:8000/graphql/create_request",
+        uri: 'https://bwm.happyfir.com/graphql/create_request',
+        // uri: "http://localhost:8000/graphql/create_request",
         cache: new InMemoryCache()
     });
 
@@ -44,7 +44,7 @@
                     id: quotationID,
                 }
             });
-
+            console.log(response)
             let pickUpAddressResponse = await getAddress({
                 variables: {
                     id: response.data.quotation.pickUpAddress
@@ -93,9 +93,9 @@
         //quotation = (await jobService.getJobByID(jobID, user.token))[0];
 
 
-       /* orderItems = [{itemName: 'Mango', quantity: '10'},
-            {itemName: 'Couch', quantity: '500'},
-            {itemName: 'Number 10 machine screw (0.190 inch major diameter)', quantity: '51700'}];*/
+        /* orderItems = [{itemName: 'Mango', quantity: '10'},
+             {itemName: 'Couch', quantity: '500'},
+             {itemName: 'Number 10 machine screw (0.190 inch major diameter)', quantity: '51700'}];*/
 
         if (quotation == null) {
             alert('No quotation has an ID #' + quotationID + '.');
