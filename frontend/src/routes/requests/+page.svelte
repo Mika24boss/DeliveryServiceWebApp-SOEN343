@@ -47,7 +47,7 @@
         const response = await getQuotationsMutation()
 
         requests = await Promise.all(response.data.quotations.map(async function (quotation) {
-            console.log(quotation.orderItems)
+            //console.log(quotation.orderItems)
             let orderItemResponse = await getOrderItemsMutation({
                 variables: {
                     id: quotation.orderItems
@@ -63,9 +63,10 @@
                 })
                 items.push(itemResponse.data.item)
             }))
+            console.log(quotation)
             return {
                 quotationID: quotation.id,
-                submissionDate: convertDate(quotation.orderDate),
+                submissionDate: convertDate(quotation.pickUpDate),
                 orderItems: items,
                 distance: quotation.distance,
                 price: quotation.price
