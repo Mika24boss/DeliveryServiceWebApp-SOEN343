@@ -72,7 +72,7 @@
                 });
                 ordersResponse = ordersResponse.data.ordersForEachDeliveryMan;
             }
-            const client = new ApolloClient({
+            /*const client = new ApolloClient({
                 // uri: 'http://localhost:8000/graphql/create_request',
                 uri: 'https://bwm.happyfir.com/graphql/create_request',
                 headers: {
@@ -80,7 +80,7 @@
                 },
                 cache: new InMemoryCache()
             });
-            setClient(client);
+            setClient(client);*/
             // getOrderItemsMutation = mutation(GET_ORDERED_ITEM);
             // getItemMutation = mutation(GET_ITEM);
 
@@ -102,14 +102,18 @@
                 console.log(items);*/
             //});
 
-            // orders = ordersResponse.map(function (order) {
-            //     return {
-            //         orderID: order.id,
-            //         submissionDate: convertDate(order.orderDate),
-            //         orderItems: order.orderItems,
-            //         status: convertStatus(order.status),
-            //     };
-            // });
+            let orderItems = [{itemName: 'Mango', quantity: '10'},
+                {itemName: 'Couch', quantity: '500'},
+                {itemName: 'Number 10 machine screw (0.190 inch major diameter)', quantity: '51700'}];
+
+            orders = ordersResponse.map(function (order) {
+                return {
+                    orderID: order.orderID,
+                    submissionDate: convertDate(order.orderDate),
+                    orderItems: orderItems,
+                    status: convertStatus(order.status),
+                };
+            });
 
             finishedLoading = true;
         })
