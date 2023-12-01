@@ -4,7 +4,7 @@ const {
     GraphQLList, GraphQLNonNull,
     GraphQLFloat, GraphQLInt, GraphQLBoolean
 } = graphql
-const {OrderedItemType, AddressType, ItemType, QuotationType} = require('./graphQLType')
+const {OrderedItemType, AddressType, ItemType, QuotationType, OrderType} = require('./graphQLType')
 const Client = require("../models/clientModel");
 const protect = require("../middleware/authMiddleware");
 const Quotation = require("../models/quotationModel");
@@ -14,6 +14,7 @@ const OrderedItems = require("../models/orderedItems")
 const Item = require("../models/itemModel");
 const Admin = require("../models/adminModel");
 const {GraphQLDateTime} = require("graphql-iso-date");
+const Order = require("../models/orderModel");
 const RootQuery = new GraphQLObjectType({
     name: 'RootQueryType',
     fields: {
@@ -233,7 +234,63 @@ const mutation = new GraphQLObjectType({
                 )
                 return Quotation.findById(args.quotationID)
             }
-        }
+        },
+        deleteQuotation: {
+            type: QuotationType,
+            args: {
+                quotationID: {type: GraphQLNonNull(GraphQLID)},
+            },
+            async resolve(parent, args, context) {
+                let client = await Client.findById(protect(context.headers['authorization']).id).select('-password');
+                const admin = await Admin.findById(protect(context.headers['authorization']).id).select('-password');
+                if (!admin && !client) {
+                    throw new Error("No Authority")
+                }
+                const quotation = await Quotation.findById(args.quotationID)
+                if (!client) {
+                    let client = await Client.findOne({quotations: {$in: [quotation._id]}})
+                    await Client.findByIdAndUpdate(
+                        {_id: client._id},
+                        {$pull: {'quotations': quotation._id}},
+                        {new: true}
+                    )
+                    await client.save();
+                    client = await Client.findById(client._id);
+                    await Promise.all(client.quotations.map(async (quotationId, index) => {
+                        await Quotation.updateOne(
+                            {_id: quotationId},
+                            {$set: {quotationID: index}}
+                        );
+                    }));
+                } else {
+                    await Client.findByIdAndUpdate(
+                        {_id: client._id},
+                        {$pull: {'quotations': quotation._id}},
+                        {new: true}
+                    )
+                    await client.save();
+                    client = await Client.findById(client._id)
+                    await Promise.all(client.quotations.map(async (quotationId, index) => {
+                        await Quotation.updateOne(
+                            {_id: quotationId},
+                            {$set: {quotationID: index}}
+                        );
+                    }));
+                }
+                await Quotation.findByIdAndRemove(quotation._id);
+            },
+        },
+        ordersForEachClient: {
+            type: new GraphQLList(OrderType),
+            args: {
+                clientID: {type: GraphQLID}
+            },
+            async resolve(parent, args) {
+                const client = await Client.findById(args.clientID);
+                const orders = await Order.find({_id: {$in: client.order}});
+                return orders;
+            },
+        },
     },
 });
 

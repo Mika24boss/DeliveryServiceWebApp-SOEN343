@@ -92,7 +92,7 @@ const mutation = new GraphQLObjectType({
         deleteQuotation: {
             type: QuotationType,
             args: {
-                quotationID: {type: GraphQLNonNull(GraphQLInt)},
+                quotationID: {type: GraphQLNonNull(GraphQLID)},
             },
             async resolve(parent, args, context) {
                 let client = await Client.findById(protect(context.headers['authorization']).id).select('-password');
