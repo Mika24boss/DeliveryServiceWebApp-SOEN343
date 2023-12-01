@@ -46,6 +46,8 @@
     <img src={Trustpilot} alt="Trustpilot banner"/>
 </a>
 
+<a href="mailto: customer-support@wm.com" style="text-decoration: none;">Contact us at customer-support@wm.com!</a>
+
 <style>
 
     .trucks {
