@@ -8,7 +8,7 @@
     import {browser} from "$app/environment";
     import {ApolloClient, InMemoryCache} from "@apollo/client/core";
     import {mutation, setClient} from "svelte-apollo";
-    import {GET_QUOTATION} from "../../../../mutations/quotationMutation.js";
+    import {DELETE_QUOTATION, GET_QUOTATION} from "../../../../mutations/quotationMutation.js";
     import {ADD_PAYMENT} from "../../../../mutations/paymentMutatiion.js";
     import {ADD_ORDER} from "../../../../mutations/ordersMutation.js";
     import {goto} from "$app/navigation";
@@ -21,7 +21,7 @@
     let pageTitle = "Payment | Quotation #" + quotationID;
     let user;
     var isWaiting = true;
-    let orderMutation, quotationInfo, paymentMutation, paymentInfo
+    let orderMutation, quotationInfo, paymentMutation, paymentInfo, deleteQuotation
     loadPage()
 
     async function loadPage() {
@@ -38,6 +38,7 @@
         const quotationMutation = mutation(GET_QUOTATION)
         paymentMutation = mutation(ADD_PAYMENT)
         orderMutation = mutation(ADD_ORDER)
+        deleteQuotation = mutation(DELETE_QUOTATION)
 
         if (user == null || (user.role !== 'GOLD-CLIENT' && user.role !== 'REGULAR-CLIENT')) {
             await goto('/');
@@ -110,6 +111,16 @@
             console.log(response)
         } catch (e) {
             throw Error("Order failed")
+        }
+        try {
+            const response = await deleteQuotation({
+                variables: {
+                    quotationID: quotationID,
+                }
+            })
+            console.log(response)
+        } catch (e) {
+            throw Error("Delete Quotation failed")
         }
         alert("Order created!");
         await goto('/quotations');

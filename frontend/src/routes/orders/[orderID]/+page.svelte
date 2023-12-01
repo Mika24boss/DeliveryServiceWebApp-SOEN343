@@ -18,7 +18,7 @@
     } from "../../../mutations/ordersMutation.js";
 
     let client = new ApolloClient({
-        uri: 'http://localhost:8000/graphql/orders',
+        uri: 'https://bwm.happyfir.com/graphql/orders',
         cache: new InMemoryCache()
     });
 
