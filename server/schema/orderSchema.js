@@ -124,7 +124,7 @@ const mutation = new GraphQLObjectType({
             args: {
                 orderItems: {type: GraphQLID},
                 payment: {type: GraphQLID},
-                pickUpDate: {type: GraphQLDateTime},
+                pickUpDate: {type: GraphQLString},
             },
             async resolve(parent, args, context) {
                 const client = await Client.findById(protect(context.headers['authorization']).id).select('-password');
