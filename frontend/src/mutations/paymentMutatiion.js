@@ -4,6 +4,7 @@ import {gql} from '@apollo/client/core';
 const ADD_PAYMENT = gql`
 	mutation AddPayment($methodOfPayment: String!, $dateOfPayment: String!, $amount: Float!) {
 		addPayment(methodOfPayment: $methodOfPayment, dateOfPayment: $dateOfPayment, amount: $amount) {
+			id
 			methodOfPayment
 			dateOfPayment
 			amount
@@ -15,6 +16,7 @@ const ADD_PAYMENT = gql`
 const DELETE_PAYMENT = gql`
 	mutation DeletePayment($orderID: ID!) {
 		deletePayment(orderID: $orderID) {
+			id
 			methodOfPayment
 			dateOfPayment
 			amount
@@ -24,6 +26,7 @@ const DELETE_PAYMENT = gql`
 const GET_PAYMENTS = gql`
 	mutation Payments {
 		payments {
+			id
 			methodOfPayment
 			dateOfPayment
 			amount
@@ -34,6 +37,7 @@ const GET_PAYMENTS = gql`
 const GET_PAYMENT = gql`
 	mutation Payment($id: ID!) {
 		payment(id: $id) {
+			id
 			methodOfPayment
 			dateOfPayment
 			amount

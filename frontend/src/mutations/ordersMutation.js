@@ -2,20 +2,8 @@ import {gql} from '@apollo/client/core';
 
 // Mutation to add an order
 const ADD_ORDER = gql`
-	mutation AddOrder(
-		$orderID: ID!
-		$status: String!
-		$orderItems: [String]!
-		$payment: Float!
-		$pickUpDate: Date!
-	) {
-		addOrder(
-			orderID: $orderID
-			status: $status
-			orderItems: $orderItems
-			payment: $payment
-			pickUpDate: $pickUpDate
-		) {
+	mutation AddOrder($orderItems: ID!, $payment: ID!, $pickUpDate: String!) {
+		addOrder(orderItems: $orderItems, payment: $payment, pickUpDate: $pickUpDate) {
 			id
 			orderID
 			orderDate
