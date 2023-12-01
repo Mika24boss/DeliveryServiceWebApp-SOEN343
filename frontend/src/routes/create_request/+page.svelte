@@ -1,38 +1,50 @@
 <script>
-	import {preventTabClose} from '$lib/features/preventTabClose.js';
-	import {DateInput} from 'date-picker-svelte';
-	import {goto} from '$app/navigation';
-	import authService from '$lib/features/authService.js';
-	import {ApolloClient, InMemoryCache} from '@apollo/client/core';
-	import {ADD_ITEM} from '../../mutations/itemsMutation.js';
-	import {ADD_ADDRESS} from '../../mutations/addressesMutation.js';
-	import {mutation, setClient} from 'svelte-apollo';
-	import {browser} from '$app/environment';
-	import {ADD_QUOTATION} from "../../mutations/quotationMutation.js";
+    import {preventTabClose} from '$lib/features/preventTabClose.js';
+    import {DateInput} from 'date-picker-svelte';
+    import {goto} from '$app/navigation';
+    import authService from '$lib/features/authService.js';
+    import {ADD_ITEM} from '../../mutations/itemsMutation.js';
+    import {ADD_ADDRESS} from '../../mutations/addressesMutation.js';
+    import {mutation, setClient} from 'svelte-apollo';
+    import {browser} from '$app/environment';
+    import {ADD_QUOTATION} from "../../mutations/quotationMutation.js";
     import {ADD_ORDERED_ITEM} from "../../mutations/orderedItemMutation.js";
+    import {ApolloClient, InMemoryCache} from "@apollo/client/core";
 
-    const client = new ApolloClient({
-        // uri: 'https://bwm.happyfir.com/graphql/create_request',
-        uri: 'http://localhost:8000/graphql/create_request',
-        cache: new InMemoryCache()
-    });
 
-    setClient(client);
     let hasChanged = false;
     let pageTitle = 'Create Delivery Request';
     let date = new Date();
     let maxDate = new Date(date.getFullYear() + 1 + '-' + date.getMonth() + '-' + date.getDate());
     let orderItems = [];
     let user;
-
+    let addAddressMutation
+    let addItemMutation
+    let addQuotationMutation
+    let addOrderItemMutation
     loadPage();
 
     async function loadPage() {
         if (!browser) return;
         user = authService.getUser();
+        console.log(user.token)
+        const client = new ApolloClient({
+            // uri: 'https://bwm.happyfir.com/graphql/create_request',
+            uri: 'http://localhost:8000/graphql/create_request',
+            headers: {
+                Authorization: `Bearer ${user.token}`
+            },
+            cache: new InMemoryCache()
+        });
+        setClient(client);
         if (user == null || (user.role !== 'GOLD-CLIENT' && user.role !== 'REGULAR-CLIENT')) {
             await goto('/');
         }
+        //adding order after hitting submit button
+        addAddressMutation = mutation(ADD_ADDRESS);
+        addItemMutation = mutation(ADD_ITEM);
+        addQuotationMutation = mutation(ADD_QUOTATION);
+        addOrderItemMutation = mutation(ADD_ORDERED_ITEM);
     }
 
     function changedText() {
@@ -40,11 +52,6 @@
         pageTitle = '* ' + 'Create Delivery Request';
     }
 
-    //adding order after hitting submit button
-    const addAddressMutation = mutation(ADD_ADDRESS);
-    const addItemMutation = mutation(ADD_ITEM);
-    const addQuotationMutation = mutation(ADD_QUOTATION);
-    const addOrderItemMutation =mutation(ADD_ORDERED_ITEM);
 
     //adding order to ADD_ITEM
 
@@ -100,7 +107,6 @@
         } catch (error) {
             console.error('Error adding item:', error);
         }
-        console.log(orderedItemToSend)
         let shippingAddressResponse;
         let pickUpAddressResponse;
         try {
@@ -114,8 +120,7 @@
                     postalCode: document.getElementById('deliveryPostalCode').value
                 }
             })
-            console.log(response1.data.addAddress.id)
-             shippingAddressResponse = response1.data.addAddress.id;
+            shippingAddressResponse = response1.data.addAddress.id;
             const response2 = await addAddressMutation({
                 variables: {
                     street: document.getElementById('pickupAddress').value,
@@ -126,9 +131,7 @@
                     postalCode: document.getElementById('pickupPostalCode').value
                 }
             })
-            console.log(response2.data.addAddress.id)
-
-             pickUpAddressResponse=response2.data.addAddress.id;
+            pickUpAddressResponse = response2.data.addAddress.id;
             // Optionally, navigate to another page
             console.log('Response mutation: ' + response1);
             //await goto('/quotations');
@@ -137,30 +140,22 @@
             // Handle error as needed
         }
         let orderItemsToSendResponse;
-
         try { //adding orderedItems
             const response = await addOrderItemMutation({
                 variables: {
                     items: orderedItemToSend
                 }
             });
-            console.log(response)
             orderItemsToSendResponse = response.data.addOrderedItem.id;
-                // Optionally, navigate to another page
+            // Optionally, navigate to another page
             console.log('AddOrderItemsResponse mutation: ' + response);
             //await goto('/quotations');
         } catch (error) {
             console.error('Error AddorderItems:', error);
             // Handle error as needed
         }
-
-        console.log(date.toJSON())
-        console.log(pickUpAddressResponse)
-        console.log(shippingAddressResponse)
-        console.log(date.toJSON())
-        console.log(orderItemsToSendResponse)
         try {//adding quotation
-            const response = await addQuotationMutation({
+            const response123 = await addQuotationMutation({
                 variables: {
                     pickUpAddress: pickUpAddressResponse,
                     shippingAddress: shippingAddressResponse,
@@ -170,8 +165,10 @@
                 }
             });
             // Optionally, navigate to another page
-            console.log('Response mutation: ' + response);
-            //await goto('/quotations');
+            console.log('Response mutation: ' + response123);
+            alert("Success")
+            await goto('/quotations');
+
         } catch (error) {
             console.error('Error adding quotation:', error);
             // Handle error as needed

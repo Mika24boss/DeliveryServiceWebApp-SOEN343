@@ -156,7 +156,7 @@ const mutation = new GraphQLObjectType({
                 distance: {type: GraphQLFloat}, // Adjust the data type as needed
                 shippingAddress: {type: GraphQLNonNull(GraphQLID)},
                 orderItems: {type: GraphQLID},
-                pickUpDate: {type: GraphQLDateTime}
+                pickUpDate: {type: GraphQLString}
                 // Adjust the data type as needed
             },
             async resolve(parent, args, context) {
