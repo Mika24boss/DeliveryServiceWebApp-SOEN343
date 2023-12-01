@@ -4,7 +4,7 @@ const {
     GraphQLList, GraphQLNonNull,
     GraphQLFloat, GraphQLInt, GraphQLBoolean
 } = graphql
-const {OrderedItemType, AddressType, ItemType, QuotationType, OrderType} = require('./graphQLType')
+const {OrderedItemType, AddressType, ItemType, QuotationType, OrderType, PaymentType} = require('./graphQLType')
 const Client = require("../models/clientModel");
 const protect = require("../middleware/authMiddleware");
 const Quotation = require("../models/quotationModel");
@@ -15,6 +15,7 @@ const Item = require("../models/itemModel");
 const Admin = require("../models/adminModel");
 const {GraphQLDateTime} = require("graphql-iso-date");
 const Order = require("../models/orderModel");
+const Payment = require("../models/paymentModel");
 const RootQuery = new GraphQLObjectType({
     name: 'RootQueryType',
     fields: {
@@ -210,11 +211,62 @@ const mutation = new GraphQLObjectType({
                 return Quotation.findById(args.id);
             },
         },
+        addPayment: {
+            type: PaymentType, // Assuming you have a PaymentType defined
+            args: {
+                methodOfPayment: {type: GraphQLString},
+                dateOfPayment: {type: GraphQLString},
+                amount: {type: GraphQLFloat},
+            },
+            async resolve(parent, args) {
+                const payment = new Payment({
+                    methodOfPayment: args.methodOfPayment,
+                    dateOfPayment: new Date(),
+                    amount: args.amount,
+                });
+                return payment.save();
+            },
+        },
         quotations: {
             type: new GraphQLList(QuotationType),
             resolve() {
                 return Quotation.find();
             }
+        },
+        addOrder: {
+            type: OrderType, // Assuming you have an OrderType defined
+            args: {
+                orderItems: {type: GraphQLID},
+                payment: {type: GraphQLID},
+                pickUpDate: {type: GraphQLString},
+            },
+            async resolve(parent, args, context) {
+                const client = await Client.findById(protect(context.headers['authorization']).id).select('-password');
+                const order = new Order({
+                    orderID: 0,
+                    orderDate: new Date(),
+                    status: "PAID",
+                    orderItems: args.orderItems,
+                    payment: args.payment,
+                    pickUpDate: args.pickUpDate,
+                });
+                await order.save();
+                await Client.findOneAndUpdate(
+                    {_id: client._id},
+                    {$push: {order: order._id}},
+                    {new: true}
+                );
+                await client.save();
+                order.orderID = client.order.length;
+                await order.save();
+                await Promise.all(client.order.map(async (orderID, index) => {
+                    await Order.updateOne(
+                        {_id: orderID},
+                        {$set: {quotationID: index}}
+                    );
+                }));
+                return order;
+            },
         },
         updateQuotationPrice: {
             type: QuotationType,
