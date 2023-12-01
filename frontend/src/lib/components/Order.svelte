@@ -6,9 +6,8 @@
 
     export var orderID, submissionDate, orderItems, status;
 
-    let user = {role:'REGULAR-CLIENT'};
+    let user = {role: 'REGULAR-CLIENT'};
     let statusOrder = status;
-    let finishedLoading = false;
 
     loadOrder();
 
@@ -20,66 +19,21 @@
         if (user == null) {
             await goto('/');
         }
-        finishedLoading = true;
-    }
-
-    function UpdateStatusOrder(status) {
-        statusOrder = document.getElementById(status).innerText;
     }
 
 </script>
-    <div class="outline" id={orderID}>
-        <a href="/orders/{orderID}">
-            <div class="submission-date">{submissionDate}</div>
-        </a>
-        <a class="items" href="/orders/{orderID}">
-                {#each orderItems as item, i}
-                    {item.quantity} X {item.itemName}{ i === orderItems.length - 1 ? '' : ', '}
-                {/each}
-        </a>
-        {#if user.role === "GOLD-CLIENT" || user.role === "REGULAR-CLIENT"}
-            <div class="total">Status: {statusOrder}</div>
-        {:else}
-            <div class="update-status">
-                <span id="status-span">Status: {statusOrder}
-                    <label class="popup">
-                    <input type="checkbox">
-                    <div class="burger" tabindex="0">
-                        <span></span>
-                        <span></span>
-                        <span></span>
-                    </div>
-                    <nav class="popup-window">
-                        <legend>Status</legend>
-                        <ul>
-                            <li>
-                                <button class="status" on:click={() => UpdateStatusOrder("Paid")}>
-                                    <span id="Paid">Paid</span>
-                                </button>
-                            </li>
-                            <li>
-                                <button class="status" on:click={() => UpdateStatusOrder("On route to pickup")}>
-                                    <span id="On route to pickup">On route to pickup</span>
-                                </button>
-                            </li>
-                            <li>
-                                <button class="status" on:click={() => UpdateStatusOrder("On route to delivery")}>
-                                    <span id="On route to delivery">On route to delivery</span>
-                                </button>
-                            </li>
-                            <li>
-                                <button class="status" on:click={() => UpdateStatusOrder("Delivered")}>
-                                    <span id="Delivered">Delivered</span>
-                                </button>
-                            </li>
-                        </ul>
-                    </nav>
-                </label>
-                </span>
-            </div>
-        {/if}
 
-    </div>
+<div class="outline" id={orderID}>
+    <a href="/orders/{orderID}">
+        <div class="submission-date">{submissionDate}</div>
+    </a>
+    <a class="items" href="/orders/{orderID}">
+        {#each orderItems as item, i}
+            {item.quantity} X {item.itemName}{ i === orderItems.length - 1 ? '' : ', '}
+        {/each}
+    </a>
+    <div class="total">Status: {statusOrder}</div>
+</div>
 
 <style>
 

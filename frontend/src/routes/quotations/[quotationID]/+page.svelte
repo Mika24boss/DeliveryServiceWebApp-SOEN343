@@ -34,7 +34,6 @@
     let orderItems = [];
     onMount(async () => {
         user = authService.getUser();
-        console.log(user)
         if (user == null || (user.role !== 'GOLD-CLIENT' && user.role !== 'REGULAR-CLIENT')) {
             await goto('/');
             return;
@@ -45,13 +44,13 @@
                     id: quotationID,
                 }
             });
-            console.log(response.data.quotation.pickUpAddress)
+
             let pickUpAddressResponse = await getAddress({
                 variables: {
                     id: response.data.quotation.pickUpAddress
                 }
             })
-            console.log(pickUpAddressResponse)
+
             let shippingAddressResponse = await getAddress({
                 variables: {
                     id: response.data.quotation.shippingAddress
@@ -63,18 +62,18 @@
                 }
             })
             for (let index = 0; index < orderItemsResponse.data.orderedItem.items.length; index++) {
-                console.log(orderItemsResponse.data.orderedItem.items[index])
+                //console.log(orderItemsResponse.data.orderedItem.items[index])
                 let itemResponse = await itemMutation({
                     variables: {
                         id: orderItemsResponse.data.orderedItem.items[index]
                     }
                 })
-                console.log(itemResponse.data.item)
+                //console.log(itemResponse.data.item)
                 orderItems.push(itemResponse.data.item)
             }
             response.data.quotation.pickUpAddress = pickUpAddressResponse.data.address
             response.data.quotation.shippingAddress = shippingAddressResponse.data.address
-            console.log(orderItems)
+
             quotation = {
                 deliveryAddress: response.data.quotation.shippingAddress.street,
                 deliveryCity: response.data.quotation.shippingAddress.city,
@@ -94,9 +93,9 @@
         //quotation = (await jobService.getJobByID(jobID, user.token))[0];
 
 
-        orderItems = [{itemName: 'Mango', quantity: '10'},
+       /* orderItems = [{itemName: 'Mango', quantity: '10'},
             {itemName: 'Couch', quantity: '500'},
-            {itemName: 'Number 10 machine screw (0.190 inch major diameter)', quantity: '51700'}];
+            {itemName: 'Number 10 machine screw (0.190 inch major diameter)', quantity: '51700'}];*/
 
         if (quotation == null) {
             alert('No quotation has an ID #' + quotationID + '.');
@@ -127,7 +126,7 @@
         <h2>Pickup</h2>
         <div>{quotation.pickupAddress}</div>
         <div>{quotation.pickupCity} {quotation.pickupProvince} {quotation.pickupPostalCode} {quotation.pickupCountry}</div>
-        <div>{quotation.distance}</div>
+        <div>{quotation.distance} km</div>
 
         <h2>Order items</h2>
         <table>
@@ -136,7 +135,7 @@
                     <td>#{i + 1}</td>
                     <td>{item.quantity}</td>
                     <td>X</td>
-                    <td>{item.itemName}</td>
+                    <td>{item.name}</td>
                 </tr>
             {/each}
         </table>

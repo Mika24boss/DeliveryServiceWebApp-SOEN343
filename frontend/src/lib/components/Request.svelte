@@ -12,7 +12,7 @@
         {/each}
     </div>
     <div class="distance">
-        {distance}
+        {distance} km
     </div>
 </a>
 

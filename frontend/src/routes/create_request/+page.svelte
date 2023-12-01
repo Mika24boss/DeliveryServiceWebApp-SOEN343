@@ -159,7 +159,7 @@
                 variables: {
                     pickUpAddress: pickUpAddressResponse,
                     shippingAddress: shippingAddressResponse,
-                    distance: 3,
+                    distance: Math.floor(Math.random() * 3500 + 100) / 10,
                     pickUpDate: date.toJSON(),
                     orderItems: orderItemsToSendResponse
                 }

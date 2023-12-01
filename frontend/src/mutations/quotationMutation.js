@@ -49,6 +49,7 @@ const GET_QUOTATIONS_FOR_EACH_CLIENT = gql`
 			pickUpAddress
 			distance
 			shippingAddress
+			orderItems
 			price
 			pickUpDate
 		}
