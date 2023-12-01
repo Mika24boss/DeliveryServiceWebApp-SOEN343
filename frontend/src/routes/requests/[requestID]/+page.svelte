@@ -22,9 +22,13 @@
 
     loadPage();
 
-    function loadPage() {
+    async function loadPage() {
         if (!browser) return;
         user = authService.getUser();
+        if (user == null || user.role !== 'ADMIN') {
+            await goto('/');
+            return;
+        }
         const client = new ApolloClient({
             uri: 'https://bwm.happyfir.com/graphql/create_request',
             // uri: 'http://localhost:8000/graphql/create_request',
@@ -146,7 +150,7 @@
     <br/>
     <div>{request.pickUpDate}</div>
     <br/>
-    <div>{request.distance}</div>
+    <div>{request.distance} km</div>
 
     <h2>Order items</h2>
     <table>

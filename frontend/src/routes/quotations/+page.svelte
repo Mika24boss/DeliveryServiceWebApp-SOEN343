@@ -12,32 +12,38 @@
     import {ApolloClient, InMemoryCache} from "@apollo/client/core";
     import {mutation, setClient} from "svelte-apollo";
     import {GET_QUOTATIONS_FOR_EACH_CLIENT} from "../../mutations/quotationMutation.js";
+    import {GET_ORDERED_ITEM} from "../../mutations/orderedItemMutation.js";
+    import {GET_ITEM} from "../../mutations/itemsMutation.js";
 
-    const client = new ApolloClient({
-        uri: 'https://bwm.happyfir.com/graphql/quotations',
-        cache: new InMemoryCache()
-    });
-    //http://localhost:8000/graphql/quotations
-    //'https://bwm.happyfir.com/graphql/orders'
-
-    setClient(client);
     let user;
     let finishedLoading = false;
     let quotations = [];
 
-
-    const getQuotationMutation = mutation(GET_QUOTATIONS_FOR_EACH_CLIENT);
     loadQuotations();
 
     async function loadQuotations() {
         if (!browser) return;
-        await onMount(() => {
-            user = authService.getUser();
-        })
-
+        user = authService.getUser();
         if (user == null || (user.role !== 'GOLD-CLIENT' && user.role !== 'REGULAR-CLIENT')) {
             await goto('/');
-        } else {
+            return
+        }
+        const client = new ApolloClient({
+            //uri: 'https://bwm.happyfir.com/graphql/quotations',
+            //uri: 'http://localhost:8000/graphql/create_request',
+            uri: 'https://bwm.happyfir.com/graphql/create_request',
+            cache: new InMemoryCache()
+        });
+        //http://localhost:8000/graphql/quotations
+        //'https://bwm.happyfir.com/graphql/orders'
+        setClient(client);
+
+        const getQuotationMutation = mutation(GET_QUOTATIONS_FOR_EACH_CLIENT);
+        const getOrderItemsMutation = mutation(GET_ORDERED_ITEM)
+        const getItemMutation = mutation(GET_ITEM)
+
+
+        onMount(async () => {
             let quotationsResponse = await getQuotationMutation({
                 variables: {
                     clientID: user.id
@@ -45,28 +51,39 @@
             });
 
             quotationsResponse = quotationsResponse.data.quotationForEachClient;
-            let orderItems = [{itemName: 'Mango', quantity: '10'},
-                {itemName: 'Couch', quantity: '500'},
-                {itemName: 'Number 10 machine screw (0.190 inch major diameter)', quantity: '51700'}];
-
             quotationsResponse = quotationsResponse.filter((m) => {
                 return !(m.price === undefined || m.price === 0);
             });
 
-            quotations = quotationsResponse.map(function (quote) {
+            quotations = await Promise.all(quotationsResponse.map(async function (quote) {
+                console.log(quote.orderItems)
+                let orderItemResponse = await getOrderItemsMutation({
+                    variables: {
+                        id: quote.orderItems
+                    }
+                })
+                let items = []
+                await Promise.all(orderItemResponse.data.orderedItem.items.map(async function (item) {
+                    let itemResponse = await getItemMutation({
+                        variables: {
+                            id: item
+                        }
+                    })
+                    items.push(itemResponse.data.item)
+                }));
+
                 return {
                     quotationID: quote.id,
-                    orderItems: orderItems,
+                    orderItems: items,
                     price: quote.price
                 };
-            });
+            }));
 
-        }
-        finishedLoading = true;
-
+            finishedLoading = true;
+        })
     }
-    //payment
 
+    //payment
 
 
 </script>

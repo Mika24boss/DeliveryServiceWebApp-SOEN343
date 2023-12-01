@@ -71,16 +71,7 @@
                 price: quotation.price
             };
         }));
-        let orderItems = [{name: 'Mango', quantity: '10'},
-            {name: 'Couch', quantity: '500'},
-            {name: 'Number 10 machine screw (0.190 inch major diameter)', quantity: '51700'}];
-        requests.push({
-            quotationID: '57f5en320a83',
-            submissionDate: 'November 13, 2023',
-            orderItems: orderItems,
-            distance: '5 km',
-            price: 0
-        });
+
         requests = requests.filter((m) => {
             return (m.price === undefined || m.price === 0);
         });

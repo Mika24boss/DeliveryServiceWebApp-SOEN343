@@ -15,7 +15,7 @@
     </a>
     <a class="items" href="/quotations/{quotationID}">
         {#each orderItems as item, i}
-            {item.quantity} X {item.itemName}{ i === orderItems.length - 1 ? '' : ', '}
+            {item.quantity} X {item.name}{ i === orderItems.length - 1 ? '' : ', '}
         {/each}
     </a>
     <button class="payment-button" type="submit" on:click={onClick}>

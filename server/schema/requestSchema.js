@@ -60,6 +60,17 @@ const mutation = new GraphQLObjectType({
                 return OrderedItems.findByIdAndRemove(args.id);
             },
         },
+        quotationForEachClient: {
+            type: new GraphQLList(QuotationType),
+            args: {
+                clientID: {type: GraphQLID}
+            },
+            async resolve(parent, args) {
+                const client = await Client.findById(args.clientID);
+                const quotations = await Quotation.find({_id: {$in: client.quotations}});
+                return quotations;
+            },
+        },
         orderedItems: {
             type: new GraphQLList(OrderedItemType),
             resolve() {
