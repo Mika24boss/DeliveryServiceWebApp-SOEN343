@@ -11,7 +11,11 @@
     import LoadingAnimation from '$lib/components/LoadingAnimation.svelte';
     import {ApolloClient, InMemoryCache} from "@apollo/client/core";
     import {mutation, setClient} from "svelte-apollo";
-    import {GET_ORDER_FOR_CLIENT, GET_ORDER_FOR_DELIVERY_MAN} from "../../../mutations/ordersMutation.js";
+    import {
+        GET_ORDER_FOR_CLIENT,
+        GET_ORDER_FOR_DELIVERY_MAN,
+        UPDATE_ORDER_STATUS
+    } from "../../../mutations/ordersMutation.js";
 
     const client = new ApolloClient({
         uri: 'https://bwm.happyfir.com/graphql/orders',
@@ -21,6 +25,7 @@
     setClient(client);
     const getOrderForClient = mutation(GET_ORDER_FOR_CLIENT);
     const getOrderForDeliveryMan = mutation(GET_ORDER_FOR_DELIVERY_MAN);
+    const updateStatusMutation = mutation(UPDATE_ORDER_STATUS);
     let user;
     let finishedLoading = false;
     const orderID = $page.url.pathname.split('/').pop();
@@ -73,6 +78,7 @@
 
     function UpdateStatusOrder(status) {
         statusOrder = document.getElementById(status).innerText;
+        //UpdateStatus(convertStatusReverse(status));
     }
 
     function convertStatus(backendStatus) {
@@ -80,15 +86,44 @@
             case "PAID":
                 return "Paid";
             case "PICKUP":
-                return "En route to pickup";
+                return "On route to pickup";
             case "DELIVERING":
-                return "En route to delivery";
+                return "On route to delivery";
             case "DELIVERED":
                 return "Delivered";
             default:
                 return "Paid";
         }
     }
+
+    function convertStatusReverse(status) {
+        switch (status) {
+            case "Paid":
+                return "PAID";
+            case "On route to pickup":
+                return "PICKUP";
+            case "On route to delivery":
+                return "DELIVERING";
+            case "Delivered":
+                return "DELIVERED";
+            default:
+                return "PAID";
+        }
+    }
+
+    /*async function UpdateStatus(newStatus) {
+        console.log({ orderID: parseInt(orderID), status: newStatus })
+        try {
+            const { data } = await updateStatusMutation({ variables: { orderID: parseInt(orderID), status: newStatus } });
+
+            // Handle the response data as needed
+            console.log('Order status updated successfully:', data.updateOrderStatus);
+        } catch (err) {
+            // Handle errors
+            console.error('Error updating order status:', err);
+        }
+
+    }*/
 
 </script>
 

@@ -46,7 +46,7 @@ const DELETE_ORDER = gql`
 `;
 
 const UPDATE_ORDER_STATUS = gql`
-	mutation UpdateOrderStatus($orderID: ID!, $status: String!) {
+	mutation UpdateOrderStatus($orderID: Int!, $status: String!) {
 		updateOrderStatus(orderID: $orderID, status: $status) {
 			id
 			orderID
