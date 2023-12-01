@@ -140,7 +140,7 @@ const GET_ORDER_FOR_CLIENT = gql`
 	}
 `;
 const GET_ORDER_FOR_DELIVERY_MAN = gql`
-	mutation OrderForEachDeliveryMan($orderID: ID!, $deliveryManID: ID!) {
+	mutation OrderForEachDeliveryMan($orderID: Int!, $deliveryManID: ID!) {
 		orderForEachDeliveryMan(orderID: $orderID, deliveryManID: $deliveryManID) {
 			id
 			orderID
