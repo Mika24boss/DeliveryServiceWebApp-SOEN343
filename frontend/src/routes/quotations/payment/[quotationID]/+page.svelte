@@ -4,14 +4,14 @@
 
 <script>
     import {page} from "$app/stores";
-    import {goto} from "$app/navigation";
     import authService from '$lib/features/authService.js';
+    import {browser} from "$app/environment";
     import {ApolloClient, InMemoryCache} from "@apollo/client/core";
     import {mutation, setClient} from "svelte-apollo";
-    import {browser} from "$app/environment";
     import {GET_QUOTATION} from "../../../../mutations/quotationMutation.js";
     import {ADD_PAYMENT} from "../../../../mutations/paymentMutatiion.js";
     import {ADD_ORDER} from "../../../../mutations/ordersMutation.js";
+    import {goto} from "$app/navigation";
 
 
     let subtotal;
@@ -21,22 +21,24 @@
     let pageTitle = "Payment | Quotation #" + quotationID;
     let user;
     var isWaiting = true;
-    let orderMutation, quotationMutation, quotationInfo, paymentMutation, paymentInfo
+    let orderMutation, quotationInfo, paymentMutation, paymentInfo
     loadPage()
 
     async function loadPage() {
         if (!browser) return;
         user = authService.getUser();
         const client = new ApolloClient({
-            uri: 'https://bwm.happyfir.com/graphql/quotations',
-            // uri: 'http://localhost:8000/graphql/create_request',
+            uri: 'https://bwm.happyfir.com/graphql/create_request',
             headers: {
                 Authorization: `Bearer ${user.token}`
             },
             cache: new InMemoryCache()
         });
         setClient(client);
-        quotationMutation = mutation(GET_QUOTATION)
+        const quotationMutation = mutation(GET_QUOTATION)
+        paymentMutation = mutation(ADD_PAYMENT)
+        orderMutation = mutation(ADD_ORDER)
+
         if (user == null || (user.role !== 'GOLD-CLIENT' && user.role !== 'REGULAR-CLIENT')) {
             await goto('/');
         }
@@ -51,23 +53,26 @@
             subtotal = quotationInfo.price
             taxes = subtotal * 0.15;
             total = subtotal + taxes;
-            console.log(quotationInfo)
         } catch (e) {
             throw Error("Quotation not found")
         }
     }
 
     async function makePayment() {
-        console.log(quotationInfo)
-        const client = new ApolloClient({
-            uri: 'https://bwm.happyfir.com/graphql/payments',
-            // uri: 'http://localhost:8000/graphql/payments',
-            cache: new InMemoryCache()
-        });
-        // console.log(client)
-        setClient(client);
-        paymentMutation = mutation(ADD_PAYMENT)
+        // console.log(quotationInfo)
+        // const client = new ApolloClient({
+        //     uri: 'https://bwm.happyfir.com/graphql/payments',
+        //     // uri: 'http://localhost:8000/graphql/payments',
+        //     cache: new InMemoryCache()
+        // });
+        // // console.log(client)
+        // setClient(client);
+        // paymentMutation = mutation(ADD_PAYMENT)
+        // console.log(quotationInfo.orderItems)
+        // console.log(paymentInfo)
+        // console.log(quotationInfo.pickUpDate)
         try {
+            console.log("HERE")
             const response = await paymentMutation({
                 variables: {
                     methodOfPayment: "CREDIT",
@@ -82,20 +87,17 @@
         }
 
 
-        const client2 = new ApolloClient({
-            // uri: 'https://bwm.happyfir.com/graphql/orders',
-            uri: 'http://localhost:8000/graphql/orders',
-            headers: {
-                Authorization: `Bearer ${user.token}`
-            },
-            cache: new InMemoryCache()
-        });
-        setClient(client2);
-        console.log(client2)
-        orderMutation = mutation(ADD_ORDER)
-        console.log(quotationInfo.orderItems)
-        console.log(paymentInfo)
-        console.log(quotationInfo.pickUpDate)
+        // const client2 = await new ApolloClient({
+        //     // uri: 'https://bwm.happyfir.com/graphql/orders',
+        //     uri: 'http://localhost:8000/graphql/orders',
+        //     headers: {
+        //         Authorization: `Bearer ${user.token}`
+        //     },
+        //     cache: new InMemoryCache()
+        // });
+        // await setClient(client2);
+        // orderMutation = mutation(ADD_ORDER)
+
 
         try {
             const response = await orderMutation({
@@ -165,6 +167,7 @@
     // });
 
     // async function makePayment() {
+    //     console.log("HELOO")
     //
     //     const xhttpr = new XMLHttpRequest();
     //     await xhttpr.open('POST', 'https://sandbox.api.visa.com/pav/v1/cardvalidation', true);
