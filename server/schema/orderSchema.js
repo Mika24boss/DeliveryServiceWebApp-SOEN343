@@ -309,11 +309,7 @@ const mutation = new GraphQLObjectType({
                 orderID: {type: GraphQLInt},
                 status: {type: GraphQLString},
             },
-            async resolve(args, context) {
-                const deliveryMan = await DeliveryMan.findById(protect(context.headers['authorization']).id).select('-password');
-                if (!deliveryMan) {
-                    throw new Error('User not authorized')
-                }
+            async resolve(parents, args, context) {
                 const order = await Order.findOne({orderID: {$eq: args.orderID}});
                 if (!order) {
                     throw new Error('Order not found')
