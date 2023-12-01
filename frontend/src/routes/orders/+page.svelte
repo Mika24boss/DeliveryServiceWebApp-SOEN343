@@ -55,14 +55,19 @@
             });
             ordersResponse = ordersResponse.data.ordersForEachDeliveryMan;
         }
-        orders = ordersResponse.map(function(order) {
+
+        let orderItems = [{itemName: 'Mango', quantity: '10'},
+            {itemName: 'Couch', quantity: '500'},
+            {itemName: 'Number 10 machine screw (0.190 inch major diameter)', quantity: '51700'}];
+        orders = ordersResponse.map(function (order) {
             return {
-                orderID: order.id,
+                orderID: order.orderID,
                 submissionDate: convertDate(order.orderDate),
-                orderItems: order.orderItems,
+                orderItems: orderItems,
                 status: convertStatus(order.status),
             };
         });
+
         console.log(orders)
 
         finishedLoading = true;

@@ -46,7 +46,7 @@ const DELETE_ORDER = gql`
 `;
 
 const UPDATE_ORDER_STATUS = gql`
-	mutation UpdateOrderStatus($orderID: ID!, $status: String!) {
+	mutation UpdateOrderStatus($orderID: Int!, $status: String!) {
 		updateOrderStatus(orderID: $orderID, status: $status) {
 			id
 			orderID
@@ -140,7 +140,7 @@ const GET_ORDER_FOR_CLIENT = gql`
 	}
 `;
 const GET_ORDER_FOR_DELIVERY_MAN = gql`
-	mutation OrderForEachDeliveryMan($orderID: ID!, $deliveryManID: ID!) {
+	mutation OrderForEachDeliveryMan($orderID: Int!, $deliveryManID: ID!) {
 		orderForEachDeliveryMan(orderID: $orderID, deliveryManID: $deliveryManID) {
 			id
 			orderID

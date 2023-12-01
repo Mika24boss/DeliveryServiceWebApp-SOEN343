@@ -11,7 +11,11 @@
     import LoadingAnimation from '$lib/components/LoadingAnimation.svelte';
     import {ApolloClient, InMemoryCache} from "@apollo/client/core";
     import {mutation, setClient} from "svelte-apollo";
-    import {GET_ORDER_FOR_CLIENT, GET_ORDER_FOR_DELIVERY_MAN} from "../../../mutations/ordersMutation.js";
+    import {
+        GET_ORDER_FOR_CLIENT,
+        GET_ORDER_FOR_DELIVERY_MAN,
+        UPDATE_ORDER_STATUS
+    } from "../../../mutations/ordersMutation.js";
 
     const client = new ApolloClient({
         uri: 'https://bwm.happyfir.com/graphql/orders',
@@ -21,16 +25,16 @@
     setClient(client);
     const getOrderForClient = mutation(GET_ORDER_FOR_CLIENT);
     const getOrderForDeliveryMan = mutation(GET_ORDER_FOR_DELIVERY_MAN);
+    const updateStatusMutation = mutation(UPDATE_ORDER_STATUS);
     let user;
     let finishedLoading = false;
     const orderID = $page.url.pathname.split('/').pop();
     let pageTitle = "Order #" + orderID;
     let estimatedDeliveryDate = '12 December 2023';
-    let details = "mangoes, toys, candies";
+    let details = "Mango, Couch, Number 10 machine screw (0.190 inch major diameter)";
     let total = '888$';
     let deliveryType = 'Small trucks';
-    let statusOrder = 'paid';
-    let statusOrderText = 'Paid';
+    let statusOrder = 'Paid';
 
     onMount(async () => {
         user = authService.getUser();
@@ -46,20 +50,24 @@
                     }
                 });
                 console.log(response)
+                statusOrder = convertStatus(response.data.orderForEachClient.status)
             } catch (e) {
-                return alert("OrderID is invalid")
+                alert("OrderID is invalid")
+                await goto('/orders');
             }
         } else if (user.role === 'DELIVERY-MAN' || user.role === 'PICKUP-MAN') {
             try {
                 const response = await getOrderForDeliveryMan({
                     variables: {
-                        orderID: orderID,
+                        orderID: parseInt(orderID),
                         deliveryManID: user.id
                     }
                 });
                 console.log(response)
+                statusOrder = convertStatus(response.data.orderForEachDeliveryMan.status)
             } catch (e) {
-                return alert("OrderID is invalid")
+                alert("OrderID is invalid")
+                await goto('/orders');
             }
         }
 
@@ -69,9 +77,53 @@
     });
 
     function UpdateStatusOrder(status) {
-        statusOrderText = document.getElementById(status).innerText;
-        statusOrder = status;
+        statusOrder = document.getElementById(status).innerText;
+        //UpdateStatus(convertStatusReverse(status));
     }
+
+    function convertStatus(backendStatus) {
+        switch (backendStatus) {
+            case "PAID":
+                return "Paid";
+            case "PICKUP":
+                return "On route to pickup";
+            case "DELIVERING":
+                return "On route to delivery";
+            case "DELIVERED":
+                return "Delivered";
+            default:
+                return "Paid";
+        }
+    }
+
+    function convertStatusReverse(status) {
+        switch (status) {
+            case "Paid":
+                return "PAID";
+            case "On route to pickup":
+                return "PICKUP";
+            case "On route to delivery":
+                return "DELIVERING";
+            case "Delivered":
+                return "DELIVERED";
+            default:
+                return "PAID";
+        }
+    }
+
+    /*async function UpdateStatus(newStatus) {
+        console.log({ orderID: parseInt(orderID), status: newStatus })
+        try {
+            const { data } = await updateStatusMutation({ variables: { orderID: parseInt(orderID), status: newStatus } });
+
+            // Handle the response data as needed
+            console.log('Order status updated successfully:', data.updateOrderStatus);
+        } catch (err) {
+            // Handle errors
+            console.error('Error updating order status:', err);
+        }
+
+    }*/
 
 </script>
 
@@ -86,7 +138,7 @@
             <div class='order-container'>
                 <div class="delivery-type">Delivery type: {deliveryType}</div>
                 <div class="update-status">
-                    <span>Status: {statusOrderText}
+                    <span>Status: {statusOrder}
                         {#if user.role === "DELIVERY-MAN" || user.role === "PICKUP-MAN"}
                         <label class="popup">
                     <input type="checkbox">
@@ -100,23 +152,23 @@
                         <legend>Status</legend>
                         <ul>
                             <li>
-                                <button class="status" on:click={() => UpdateStatusOrder("paid")}>
-                                    <span id="paid">Paid</span>
+                                <button class="status" on:click={() => UpdateStatusOrder("Paid")}>
+                                    <span id="Paid">Paid</span>
                                 </button>
                             </li>
                             <li>
-                                <button class="status" on:click={() => UpdateStatusOrder("on-route-pickup")}>
-                                    <span id="on-route-pickup">On route to pickup</span>
+                                <button class="status" on:click={() => UpdateStatusOrder("On route to pickup")}>
+                                    <span id="On route to pickup">On route to pickup</span>
                                 </button>
                             </li>
                             <li>
-                                <button class="status" on:click={() => UpdateStatusOrder("on-route-delivery")}>
-                                    <span id="on-route-delivery">On route to delivery</span>
+                                <button class="status" on:click={() => UpdateStatusOrder("On route to delivery")}>
+                                    <span id="On route to delivery">On route to delivery</span>
                                 </button>
                             </li>
                             <li>
-                                <button class="status" on:click={() => UpdateStatusOrder("delivered")}>
-                                    <span id="delivered">Delivered</span>
+                                <button class="status" on:click={() => UpdateStatusOrder("Delivered")}>
+                                    <span id="Delivered">Delivered</span>
                                 </button>
                             </li>
                         </ul>
