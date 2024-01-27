@@ -17,7 +17,7 @@ Repository for the delivery service website for the Software Architecture and De
   <li>Admins can review the request and calculate a fee, thus creating a quotation.</li>
   <li>The buyer can pay the indicated amount of the quotation.</li>
   <li>The buyer can access the status of the delivery including the estimated time of arrival and location.</li>
-  <li>Users can leave a comment on the delivery service through the website.</li>
+  <li>Users can send an review email to the delivery system team about the delivery's performance.</li>
 </ul>
 <hr>
 
